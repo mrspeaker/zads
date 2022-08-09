@@ -46,7 +46,7 @@ function step(bytes, env) {
   let { pc } = env;
   const op = bytes[pc++];
   let opers;
-  let r1, r2, r3, b2, d1, d2, d3;
+  let r1, r2, r3, b2, d1, d2, d3, x1, x2;
   let d;
 
   switch (op) {
@@ -59,9 +59,15 @@ function step(bytes, env) {
     case 0x5a:
       // A R1,D2(X2,B2) [rx] - 4 bytes
       // 0:"5a" 8:r1 12:x2, 16:b2, 20:d2
-      opers = bytes.slice(pc, pc + 3);
+      opers = bytes
+        .slice(pc, pc + 3)
+        .map(nib)
+        .flat();
       pc += 3;
-      console.log("A", opers);
+      [r1, x2, b2, d1, d2, d3] = opers;
+      d = nib3_to_byte(d1, d2, d3);
+      regs[r1][3] = regs[r1][3] + mem[x2 + b2 + d2];
+      console.log("A", r1, x2, b2, d, regs[r1]); // 2 7 12 22
       break;
     case 0x98:
       // LM R1,R3,D2(b2) - 4bytes
