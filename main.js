@@ -38,18 +38,8 @@ function run(bytes) {
 }
 
 const nib = (byte) => [byte >> 4, byte % 16];
-const nib_hi = (byte) => [];
-const nib_lo = (byte) => [];
 const byte_from = (nib1, nib2) => (nib1 << 4) + nib;
 const nib3_to_byte = (nib1, nib2, nib3) => (nib1 << 8) + (nib2 << 4) + nib3;
-
-const nibs = (bytes, ...lengths) => {
-  const nibs = bytes.map(nib).flat();
-  return lengths.reduce((ac, len) => {
-    //
-    return ac;
-  }, []);
-};
 
 function step(bytes, env) {
   const { regs, mem } = env;
