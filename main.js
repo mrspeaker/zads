@@ -1,5 +1,43 @@
+import { displayObj } from "./emulate.js";
+import { bindAssembleUI, assembleText } from "./assemble.js";
+
 const mk_mem = (size) => [...Array(size)].fill(0);
 const mk_regs = (num) => [...Array(num)].fill(0).map((r) => [0, 0, 0, 0]);
+const mk_state = () => ({
+  env: {
+    pc: 0,
+    regs: mk_regs(15),
+    mem: mk_mem(4096),
+  },
+  src: "",
+  obj: [],
+  action: function (type, value) {
+    const s = this;
+    console.log(type);
+    switch (type) {
+      case "LOAD_OBJ":
+        console.log(value.obj);
+        s.obj = value.obj;
+        return s;
+      default:
+        console.log("Unhandled ", type);
+    }
+  },
+});
+
+export const $ = (sel) => document.querySelector(sel);
+export const $click = (sel, f) => $(sel).addEventListener("click", f, false);
+
+function display(msg) {
+  alert(msg);
+}
+
+function refresh(state) {
+  const { env, obj } = state;
+  $("#obj").value = obj;
+  $("#regs").value = env.regs.join("\n");
+  $("#mem").value = env.mem;
+}
 
 const loadTxtObj = async (path) => {
   const obj = await fetch(path)
@@ -17,24 +55,26 @@ const loadTxtObj = async (path) => {
   return bytes;
 };
 
-(async function main() {
-  const bytes = await loadTxtObj("/a.obj");
-  console.log(bytes);
-  run(bytes);
-})();
+(async function main(state) {
+  bindAssembleUI((obj) => {
+    state.action("LOAD_OBJ", { obj });
+    refresh(state);
+  });
 
-function run(bytes) {
-  const env = {
-    pc: 0,
-    regs: mk_regs(15),
-    mem: mk_mem(4096),
-  };
+  const obj = await loadTxtObj("/a.obj");
+  state.action("LOAD_OBJ", { obj });
+  displayObj(state.obj, state.env);
+  run(state.obj, state.env);
+  refresh(state);
+})(mk_state());
+
+function run(obj, env) {
   env.mem[10] = 0xff;
 
-  env.pc = step(bytes, env);
-  env.pc = step(bytes, env);
-  env.pc = step(bytes, env);
-  env.pc = step(bytes, env);
+  env.pc = step(obj, env);
+  env.pc = step(obj, env);
+  env.pc = step(obj, env);
+  env.pc = step(obj, env);
 }
 
 const nib = (byte) => [byte >> 4, byte % 16];
@@ -42,6 +82,7 @@ const byte_from = (nib1, nib2) => (nib1 << 4) + nib;
 const nib3_to_byte = (nib1, nib2, nib3) => (nib1 << 8) + (nib2 << 4) + nib3;
 
 function step(bytes, env) {
+  console.log(bytes, env);
   const { regs, mem } = env;
   let { pc } = env;
   const op = bytes[pc++];
