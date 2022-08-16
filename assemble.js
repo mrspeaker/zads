@@ -1,11 +1,26 @@
-import { $, $click } from "./main.js";
+import { ops, op_name } from "./ops.js";
+import { $, $click } from "./utils.js";
 
 export const bindAssembleUI = (onAssemble) => {
-    $click("#btnAsm", () => {
-        onAssemble(assembleText($("#src").value));
-    });
-}
+  $click("#btnAsm", () => {
+    onAssemble(assembleText($("#src").value));
+  });
+};
 
-export const assembleText = txt => {
-    return txt.split("").map(()=>0x00);
-}
+const assembleLine = (line) => {
+  const tok = line.split(" ");
+  const o = op_name[tok[0].toUpperCase()];
+  if (o) {
+    const opers = tok[1].split(",");
+    console.log("OP:", ops[o][0], opers);
+
+    return [o, ...opers];
+  } else {
+    console.log("whats this?", o);
+  }
+  return -1;
+};
+
+export const assembleText = (txt) => {
+  return txt.split("\n").map(assembleLine);
+};
