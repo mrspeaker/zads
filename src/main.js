@@ -34,7 +34,7 @@ const chkBytes = (arr, bytes, offset = 0) =>
     refresh(state);
   });
 
-  const obj = await loadTxtObj("/one.o");
+  const obj = await loadTxtObj("../obj/one.o");
   action("LOAD_OBJ", { obj });
 
   state.obj.forEach((o, i) => {
