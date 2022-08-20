@@ -1,8 +1,7 @@
 import { ops, op_name, nop } from "./ops.js";
 import { nib  } from "./utils.js";
 
-export function run(obj, env) {
-  env.mem[10] = 0xff;
+export function disassemble(obj, env) {
   env.pc = 0; // Ah, not PC but Location Counter!
   while (env.pc < obj.length) {
     env.pc = step(obj, env);

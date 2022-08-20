@@ -1,0 +1,131 @@
+1                                         High Level Assembler Option Summary                   (PTF UI79283)   Page    1            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+0  No Overriding ASMAOPT Parameters                                                                                                  
+   Overriding Parameters-  TERM,LIST(MAX),TERM,ASA,OBJECT                                                                            
+   No Process Statements                                                                                                             
+                                                                                                                                     
+                                                                                                                                     
+   Options for this Assembly                                                                                                         
+0                    NOADATA                                                                                                         
+                       ALIGN                                                                                                         
+ 3 PARM/OPTION         ASA                                                                                                           
+                       BATCH                                                                                                         
+                       CODEPAGE(047C)                                                                                                
+                     NOCOMPAT                                                                                                        
+                     NODATAMAP                                                                                                       
+                     NODBCS                                                                                                          
+                     NODECK                                                                                                          
+                       DXREF                                                                                                         
+                       ESD                                                                                                           
+                     NOEXIT                                                                                                          
+                       FAIL(NOMSG,NOMNOTE,MAXERRS(500))                                                                              
+                       FLAG(0,ALIGN,CONT,EXLITW,NOIMPLEN,NOLONGER,NOPAGE0,PUSH,RECORD,RENT,NOSIGNED,NOSUBSTR,NOTRUNC,USING0)         
+                     NOFOLD                                                                                                          
+                     NOGOFF                                                                                                          
+                       ILMA                                                                                                          
+                     NOINFO                                                                                                          
+                       LANGUAGE(EN)                                                                                                  
+                     NOLIBMAC                                                                                                        
+                       LINECOUNT(60)                                                                                                 
+ 3 PARM/OPTION         LIST(MAX)                                                                                                     
+                       MACHINE(,NOLIST)                                                                                              
+                       MXREF(SOURCE)                                                                                                 
+ 3 PARM/OPTION         OBJECT                                                                                                        
+                       OPTABLE(UNI,NOLIST)                                                                                           
+                     NOPCONTROL                                                                                                      
+                     NOPESTOP                                                                                                        
+                     NOPROFILE                                                                                                       
+                     NORA2                                                                                                           
+                     NORENT                                                                                                          
+                       RLD                                                                                                           
+                       RXREF                                                                                                         
+                       SECTALGN(8)                                                                                                   
+                       SIZE(MAX)                                                                                                     
+                     NOSUPRWARN                                                                                                      
+                       SYSPARM()                                                                                                     
+ 3 PARM/OPTION         TERM(WIDE)                                                                                                    
+                     NOTEST                                                                                                          
+                       THREAD                                                                                                        
+                     NOTRANSLATE                                                                                                     
+                       TYPECHECK(MAGNITUDE,REGISTER,SIGNED)                                                                          
+                       USING(NOLIMIT,MAP,WARN(15))                                                                                   
+                     NOWORKFILE                                                                                                      
+                       XREF(SHORT,UNREFS)                                                                                            
+                                                                                                                                     
+   Standard   DD Names- SYSLIN   SYSLIB   SYSIN    SYSPRINT SYSPUNCH SYSUT1   SYSTERM  SYSADATA ASMAOPT                              
+   Overriding DD Names- SYS00017 SYS00005 SYS00015 SYS00016                   SYS00014                                               
+1                                              External Symbol Dictionary                                       Page    2            
+-Symbol   Type   Id     Address  Length   Owner Id Flags Alias-of                            HLASM R6.0  2022/08/19 08.33            
+0MAX       SD 00000001 00000000 00000028             00                                                                              
+1                                                                                                               Page    3            
+   Active Usings: None                                                                                                               
+0  Loc    Object Code      Addr1    Addr2    Stmt  Source Statement                          HLASM R6.0  2022/08/19 08.33            
+000000000                00000000 00000028      1 max      csect                                                                     
+                     R:F 00000000               2          using max,15                                                              
+ 00000000 5810 F01C               0000001C      3          l     1,w1          get First number                                      
+ 00000004 5820 F020               00000020      4          l     2,w2          Get second number                                     
+ 00000008 1912                                  5          cr    1,2           set the condition code                                
+ 0000000A 4720 F014               00000014      6          bc    b'0010',onehigh  branch if W1 higher                                
+ 0000000E 5020 F024               00000024      7          st    2,w3          else store second number                              
+ 00000012 07FE                                  8          bcr   b'1111',14    return to caller                                      
+ 00000014 5010 F024               00000024      9 onehigh  st    1,w3          save first number as max                              
+ 00000018 07FE                                 10          bcr   b'1111',14    return to caller                                      
+ 0000001A 0000                                                                                                                       
+ 0000001C 00000141                             11 w1       dc    f'321'        First number                                          
+ 00000020 0000007B                             12 w2       dc    f'123'        Second number                                         
+ 00000024                                      13 w3       ds    f             Maximum                                               
+ 00000000                                      14          end   max                                                                 
+1                               Ordinary Symbol and Literal Cross Reference                                     Page    4            
+-Symbol   Length   Value     Id    R Type Asm  Program   Defn References                     HLASM R6.0  2022/08/19 08.33            
+0max           1 00000000 00000001     J                    1    2U   14                                                             
+ onehigh       4 00000014 00000001     I                    9    6B                                                                  
+ w1            4 0000001C 00000001     F  F                11    3                                                                   
+ w2            4 00000020 00000001     F  F                12    4                                                                   
+ w3            4 00000024 00000001     F  F                13    7M    9M                                                            
+1                                                      Using Map                                                Page    5            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+   Stmt  -----Location----- Action ----------------Using----------------- Reg Max     Last Label and Using Text                      
+           Count      Id           Type          Value    Range     Id        Disp    Stmt                                           
+0     2  00000000  00000001 USING  ORDINARY    00000000 00001000 00000001  15 00024      9 max,15                                    
+1                                   General Purpose Register Cross Reference                                    Page    6            
+- Register  References (M=modified, B=branch, U=USING, D=DROP, N=index)                      HLASM R6.0  2022/08/19 08.33            
+0    0(0)    (no references identified)                                                                                              
+     1(1)       3M    5     9                                                                                                        
+     2(2)       4M    5     7                                                                                                        
+     3(3)    (no references identified)                                                                                              
+     4(4)    (no references identified)                                                                                              
+     5(5)    (no references identified)                                                                                              
+     6(6)    (no references identified)                                                                                              
+     7(7)    (no references identified)                                                                                              
+     8(8)    (no references identified)                                                                                              
+     9(9)    (no references identified)                                                                                              
+    10(A)    (no references identified)                                                                                              
+    11(B)    (no references identified)                                                                                              
+    12(C)    (no references identified)                                                                                              
+    13(D)    (no references identified)                                                                                              
+    14(E)       8B   10B                                                                                                             
+    15(F)       2U                                                                                                                   
+1                                  Diagnostic Cross Reference and Assembler Summary                             Page    7            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+0     No Statements Flagged in this Assembly                                                                                         
+ HIGH LEVEL ASSEMBLER, 5696-234, RELEASE 6.0, PTF UI79283                                                                            
+0SYSTEM: z/OS 02.04.00              JOBNAME: EARLEC9     STEPNAME: *OMVSEX    PROCSTEP: (NOPROC)                                     
+0Unicode Module:   ASMA047C   From Page     1148   To Page    17584           ECECP: International 1                                 
+ Data Sets Allocated for this Assembly                                                                                               
+  Con DDname   Data Set Name                                Volume  Member                                                           
+   P1 SYSIN    /u/earlec/asm/max.hlasm                                                                                               
+   L1 SYSLIB   TRAINING.ASMLAB.MACLIB                       N$US01                                                                   
+   L2          ASM.SASMMAC2                                 $$SR4H                                                                   
+   L3          CEE.SCEEMAC                                  $$SR4H                                                                   
+   L4          SYS1.MACLIB                                  $$SR4H                                                                   
+   L5          SYS1.MODGEN                                  $$SR4H                                                                   
+      SYSLIN   /u/earlec/asm/build/max.o                                                                                             
+      SYSPRINT /u/earlec/asm/build/max.list                                                                                          
+      SYSTERM  /dev/fd2                                                                                                              
+                                                                                                                                     
+ 1679976K allocated to Buffer Pool       Storage required     264K                                                                   
+      14 Primary Input Records Read            0 Library Records Read                  0 Work File Reads                             
+       0 ASMAOPT Records Read                131 Primary Print Records Written         0 Work File Writes                            
+       3 Object Records Written                0 ADATA Records Written                                                               
+0Assembly Start Time: 08.33.46 Stop Time: 08.33.46 Processor Time: 00.00.00.0004                                                     
+ Return Code 000                                                                                                                     

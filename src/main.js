@@ -1,8 +1,8 @@
 import { bindAssembleUI, assembleText } from "./assemble.js";
-import { ops, op_name, nop } from "./ops.js";
-import { nib, chunk, $ } from "./utils.js";
+import { $ } from "./utils.js";
 import actionReducer from "./actionReducer.js";
 import { mk_state } from "./state.js";
+import { run } from "./emulate.js";
 
 const state = mk_state();
 const action = actionReducer(state);
@@ -54,32 +54,3 @@ const chkBytes = (arr, bytes, offset = 0) =>
   refresh(state);
 })(state, action);
 
-function run(obj, env) {
-  env.mem[10] = 0xff;
-  env.pc = 0; // Ah, not PC but Location Counter!
-  while (env.pc < obj.length) {
-    env.pc = step(obj, env);
-  }
-}
-
-function step(obj, env) {
-  const { regs, mem } = env;
-  let { pc } = env;
-  const op = obj[pc++];
-  const o = ops[op];
-  if (o) {
-    const [name, bytes, f] = o;
-    const num = bytes - 1;
-    const opers = obj
-      .slice(pc, pc + num)
-      .map(nib)
-      .flat();
-    console.log(name, f === nop ? "-NOP-" : ".", opers);
-    env.instr_txt.push(name + " " + opers.join("."));
-    f(opers, regs, mem);
-    pc += num;
-  } else {
-    console.log("wat op?", pc, op.toString(16), "(", op, ")");
-  }
-  return pc;
-}
