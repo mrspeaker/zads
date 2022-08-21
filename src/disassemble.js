@@ -18,7 +18,7 @@ function line(psw, obj, showBytes) {
   const o = ops[op];
   const pc_loc = toHex(psw - 1) + ": ";
   if (o) {
-    const [name, bytes, f] = o;
+    const { op: name, len: bytes, f } = o;
     const num = bytes - 1;
     const opers = obj
       .slice(psw, psw + num)

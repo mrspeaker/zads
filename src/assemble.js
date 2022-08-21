@@ -12,7 +12,7 @@ const assembleLine = (line) => {
   const o = op_name[tok[0].toUpperCase()];
   if (o) {
     const opers = tok[1].split(",");
-    console.log("OP:", ops[o][0], opers);
+    console.log("OP:", ops[o].op, opers);
 
     return [o, ...opers];
   } else {

@@ -16,7 +16,7 @@ function step(obj, env, code_txt) {
   const op = obj[psw.pc++];
   const o = ops[op];
   if (o) {
-    const [name, bytes, f] = o;
+    const { op: name, len: bytes, f } = o;
     const num = bytes - 1;
     const opers = obj
       .slice(psw.pc, psw.pc + num)
