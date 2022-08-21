@@ -41,7 +41,7 @@ function render(state) {
       .value.split("\n")
       .map((r) =>
         r
-          .slice(3)
+          .slice("00: ".length)
           .split(",")
           .map((v) => parseInt(v, 16))
       )

@@ -16,6 +16,7 @@ function line(psw, obj, showBytes) {
   let txt = "";
   const op = obj[psw++];
   const o = ops[op];
+  const pc_loc = toHex(psw - 1) + ": ";
   if (o) {
     const [name, bytes, f] = o;
     const num = bytes - 1;
@@ -28,19 +29,16 @@ function line(psw, obj, showBytes) {
         nib2_to_byte(n1, n2)
       );
 
-      txt =
-        toHex(psw - 1) +
-        ":" +
-        [op, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
+      txt = pc_loc + [op, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
     } else {
-      txt = toHex(psw - 1) + ":" + name + " " + opers.join(".");
+      txt = pc_loc + name + " " + opers.join(".");
     }
     psw += num;
   } else {
     if (showBytes) {
-      txt = toHex(psw - 1) + ":" + toHex(op) + "," + toHex(obj[psw++]);
+      txt = pc_loc + toHex(op) + "," + toHex(obj[psw++]);
     } else {
-      txt = toHex(psw - 1) + ":??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
+      txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
     }
     console.log("wat op?", psw, toHex(op), "(", op, ")");
   }
