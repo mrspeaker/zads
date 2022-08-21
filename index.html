@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <style>
+  body,
+  input,
+  button,
+  textarea {
+    background-color: #201e1e;
+    color: #aca;
+    font-size: 8pt;
+    border: 1px solid #343;
+    padding: 2px;
+  }
+  body, html: {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
   textarea {
     height: 300px;
-    width: calc(33% - 10px);
+    width: calc(33% - 5px);
     text-overflow: clip;
+    background: #1a1a1a;
   }
 </style>
 <div>
-  <textarea id="src">
+  <textarea id="src" spellcheck="false">
 max      csect
          Using max,15
          l     1,w1          get First number
@@ -23,13 +39,13 @@ w2       dc    f'123'        Second number
 w3       ds    f             Maximum
          end   max</textarea
   >
-  <textarea id="obj"></textarea>
-  <textarea id="dis"></textarea>
+  <textarea id="obj" spellcheck="false"></textarea>
+  <textarea id="dis" spellcheck="false"></textarea>
 </div>
 <div>
-  <textarea id="emu"></textarea>
-  <textarea id="regs"></textarea>
-  <textarea id="mem"></textarea>
+  <textarea id="emu" spellcheck="false"></textarea>
+  <textarea id="regs" spellcheck="false"></textarea>
+  <textarea id="mem" spellcheck="false"></textarea>
 </div>
 <div>
   fmt:<span id="format">fmt</span>
