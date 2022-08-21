@@ -1,32 +1,34 @@
 import { ops, op_name, nop } from "./ops.js";
-import { nib  } from "./utils.js";
+import { nib, toHex } from "./utils.js";
 
 export function run(obj, env) {
-  env.mem[10] = 0xff;
-  env.pc = 0; // Ah, not PC but Location Counter!
-  while (env.pc < obj.length) {
-    env.pc = step(obj, env);
+  env.psw.pc = 0; // Ah, not PC but Location Counter!
+  env.psw.halt = false;
+  const code_txt = [];
+  while (!env.psw.halt && env.psw.pc < obj.length) {
+    step(obj, env, code_txt);
   }
+  env.code_txt = code_txt;
 }
 
-function step(obj, env) {
-  const { regs, mem } = env;
-  let { pc } = env;
-  const op = obj[pc++];
+function step(obj, env, code_txt) {
+  const { regs, mem, psw } = env;
+  const op = obj[psw.pc++];
   const o = ops[op];
   if (o) {
     const [name, bytes, f] = o;
     const num = bytes - 1;
     const opers = obj
-      .slice(pc, pc + num)
+      .slice(psw.pc, psw.pc + num)
       .map(nib)
       .flat();
-    console.log(name, f === nop ? "-NOP-" : ".", opers);
-      env.instr_txt.push((pc-1).toString(16) + ":" + name + " " + opers.join("."));
-    f(opers, regs, mem);
-    pc += num;
+    code_txt.push(toHex(psw.pc - 1) + ":" + name + " " + opers.join("."));
+    f(opers, regs, mem, psw);
+    psw.pc += num;
   } else {
-    console.log("wat op?", pc, op.toString(16), "(", op, ")");
+    code_txt.push(toHex(psw.pc - 1) + ": ??? 0x" + op.toString(16));
+
+    console.log("op?", psw.pc, toHex(op), "(", op, ")");
   }
-  return pc;
+  return psw.pc;
 }

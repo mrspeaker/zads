@@ -2,7 +2,7 @@
 <style>
   textarea {
     height: 300px;
-    width: 18%;
+    width: calc(33% - 10px);
     text-overflow: clip;
   }
 </style>
@@ -25,10 +25,19 @@ w3       ds    f             Maximum
   >
   <textarea id="obj"></textarea>
   <textarea id="dis"></textarea>
+</div>
+<div>
+  <textarea id="emu"></textarea>
   <textarea id="regs"></textarea>
   <textarea id="mem"></textarea>
 </div>
-<span id="format">fmt</span>
+<div>
+  fmt:<span id="format">fmt</span>
+  <span> cc:<input type="text" id="psw_cc"/></span>
+</div>
 <button id="btnAsm">asm</button>
+<button id="btnRun">run</button>
+<button id="btnObjBytes">obj bytes</button>
+<button id="btnUpdate">update obj</button>
 
 <script src="src/main.js" type="module"></script>

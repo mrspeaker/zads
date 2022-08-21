@@ -1,31 +1,48 @@
 import { ops, op_name, nop } from "./ops.js";
-import { nib  } from "./utils.js";
+import { nib, toHex, chunk, nib2_to_byte } from "./utils.js";
 
-export function disassemble(obj, env) {
-  env.pc = 0; // Ah, not PC but Location Counter!
-  while (env.pc < obj.length) {
-    env.pc = step(obj, env);
+export function disassemble(code, showBytes) {
+  let psw = 0;
+  const output = [];
+  while (psw < code.length) {
+    let [newPsw, txt] = line(psw, code, showBytes);
+    output.push(txt);
+    psw = newPsw;
   }
+  return output;
 }
 
-function step(obj, env) {
-  const { regs, mem } = env;
-  let { pc } = env;
-  const op = obj[pc++];
+function line(psw, obj, showBytes) {
+  let txt = "";
+  const op = obj[psw++];
   const o = ops[op];
   if (o) {
     const [name, bytes, f] = o;
     const num = bytes - 1;
     const opers = obj
-      .slice(pc, pc + num)
+      .slice(psw, psw + num)
       .map(nib)
       .flat();
-    console.log(name, f === nop ? "-NOP-" : ".", opers);
-      env.instr_txt.push((pc-1).toString(16) + ":" + name + " " + opers.join("."));
-    f(opers, regs, mem);
-    pc += num;
+    if (showBytes) {
+      const op_nibbles = chunk(opers, 2).map(([n1, n2]) =>
+        nib2_to_byte(n1, n2)
+      );
+
+      txt =
+        toHex(psw - 1) +
+        ":" +
+        [op, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
+    } else {
+      txt = toHex(psw - 1) + ":" + name + " " + opers.join(".");
+    }
+    psw += num;
   } else {
-    console.log("wat op?", pc, op.toString(16), "(", op, ")");
+    if (showBytes) {
+      txt = toHex(psw - 1) + ":" + toHex(op) + "," + toHex(obj[psw++]);
+    } else {
+      txt = toHex(psw - 1) + ":??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
+    }
+    console.log("wat op?", psw, toHex(op), "(", op, ")");
   }
-  return pc;
+  return [psw, txt];
 }
