@@ -50,7 +50,20 @@ export const ops = {
       }
     },
   },
-  0x50: { op: "ST", len: 4, f: nop, pdf: "7-121" },
+  0x50: {
+    op: "ST",
+    len: 4,
+    f: (opers, regs, mem, psw) => {
+      // TODO: store in mem
+    },
+    name: "store",
+    desc:
+      "The first operand is placed unchanged at the second- operand location.",
+    pdf: "7-211",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
+  },
   0x58: {
     op: "L",
     len: 4,
