@@ -1,15 +1,6 @@
-import { chunk, chkBytes, memcpy } from "./utils.js";
 import { run } from "./emulate.js";
-
-const codeFromObj = (obj) => {
-  const txt = obj.filter((r) => chkBytes(r, [0x2, 0xe3, 0xe7, 0xe3]));
-  return txt
-    .map((t) => {
-      const size = t[11];
-      return t.slice(16, 16 + size);
-    })
-    .flat();
-};
+import { assembleText } from "./assemble.js";
+import { memcpy } from "./utils.js";
 
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
@@ -17,23 +8,22 @@ const actionReducer = (s, render) => (type, value) => {
     case "PROG_LOADED":
       s.program = value;
       break;
-    case "LOAD_OBJ":
-      s.goff = value.obj[0] === 3 && value.obj[1] === 0xf0;
-      s.obj = chunk(value.obj, 80);
-      s.code = codeFromObj(s.obj);
-      break;
     case "UPDATE_OBJ":
-      s.code = value.code;
+      s.program.code = value.code;
       break;
     case "OBJ_BYTES":
       s.program.showObjBytes = !s.program.showObjBytes;
       break;
     case "RUN":
-      // TODO: clear mem each run
+      // TODO: clear mem each run?
       memcpy(s.program.code, s.machine.mem, 0);
       s.program.code_txt = run(s.program.code, s.machine);
       break;
-
+    case "ASSEMBLE_SRC":
+      // TODO: should do mk_prog_from_obj(obj,src)
+      // once assembler works!
+      s.program.obj = [[2, 227, 231, 227, ...assembleText(value)]];
+      break;
     default:
       console.log("Unhandled ", type);
   }
