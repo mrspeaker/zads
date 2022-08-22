@@ -14,6 +14,9 @@ const codeFromObj = (obj) => {
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
   switch (type) {
+    case "PROG_LOADED":
+      s.program = value;
+      break;
     case "LOAD_OBJ":
       s.goff = value.obj[0] === 3 && value.obj[1] === 0xf0;
       s.obj = chunk(value.obj, 80);
@@ -23,12 +26,12 @@ const actionReducer = (s, render) => (type, value) => {
       s.code = value.code;
       break;
     case "OBJ_BYTES":
-      s.showObjBytes = !s.showObjBytes;
+      s.program.showObjBytes = !s.program.showObjBytes;
       break;
     case "RUN":
       // TODO: clear mem each run
-      memcpy(s.code, s.env.mem, 0);
-      run(s.code, s.env);
+      memcpy(s.program.code, s.machine.mem, 0);
+      s.program.code_txt = run(s.program.code, s.machine);
       break;
 
     default:

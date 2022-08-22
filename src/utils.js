@@ -157,3 +157,8 @@ export const loadTxtObj = async (path) => {
   const buf = await obj.arrayBuffer();
   return new Uint8Array(buf);
 };
+
+export const loadAsm = (path) =>
+  fetch(path)
+    .then((r) => r.text())
+    .then((r) => r);

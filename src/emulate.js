@@ -11,7 +11,7 @@ export function run(obj, env) {
   while (!env.psw.halt && env.psw.pc < obj.length) {
     step(obj, env, code_txt);
   }
-  env.code_txt = code_txt;
+  return code_txt;
 }
 
 function step(obj, env, code_txt) {

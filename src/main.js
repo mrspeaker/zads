@@ -1,23 +1,20 @@
 import render from "./render.js";
 import actionReducer from "./actionReducer.js";
+import asyncHandler from "./asyncHandler.js";
 import { bindAssembleUI } from "./assemble.js";
 import { mk_state } from "./state.js";
 import { $, $click, eb2asc, loadTxtObj } from "./utils.js";
 
 const state = mk_state();
-const action = actionReducer(state, render);
+const action = asyncHandler(actionReducer(state, render));
 
 (async function main(state) {
-  const obj = await loadTxtObj("../obj/max.o");
-  action("LOAD_OBJ", { obj });
-
-  state.obj.forEach((o, i) => {
+  /*  state.obj.forEach((o, i) => {
     const [, a, b, c] = o;
     console.log(i, [a, b, c].map((c) => eb2asc(c)).join(""));
-  });
-
-  action("RUN");
+  });*/
   bindUI(state, action);
+  action("PROG_LOAD", "max");
 })(state, action);
 
 function bindUI(state, action) {
