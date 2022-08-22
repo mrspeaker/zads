@@ -3,7 +3,8 @@ export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
 export const nib3_to_byte = (nib1, nib2, nib3) =>
   (nib1 << 8) + (nib2 << 4) + nib3;
 export const nib2_to_byte = (nib1, nib2) => nib3_to_byte(0, nib1, nib2);
-export const fullword = (a, b, c, d) => (a << 24) + (b << 16) + (c << 8) + d;
+export const fullword = (a, b, c, d) =>
+  (a << 23) * 2 + (b << 16) + (c << 8) + d;
 
 export const chkBytes = (arr, bytes, offset = 0) =>
   bytes.every((b, i) => arr[offset + i] === b);

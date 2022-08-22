@@ -19,8 +19,8 @@ function render(state) {
   if (machine) {
     const { regs, mem, psw } = machine;
     $("#regs").value = regs
-      .map((v) => toHex(fullword(...v), 4))
-      .map((v, i) => (i < 10 ? " " : "") + i + ": 0000 " + v)
+      .map((v) => fullword(...v))
+      .map((v, i) => (i < 10 ? " " : "") + i + ": " + v) // toHex(v, 8))
       .join("\n");
     $("#mem").value = mem.map((m) => toHex(m));
     $("#psw_cc").value = psw.conditionCode;
