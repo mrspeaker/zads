@@ -12,7 +12,7 @@ const actionReducer = (s, render) => (type, value) => {
       s.program.code = value.code;
       break;
     case "OBJ_BYTES":
-      s.program.showObjBytes = !s.program.showObjBytes;
+      s.zads.showObjBytes = !s.zads.showObjBytes;
       break;
     case "RUN":
       // TODO: clear mem each run?

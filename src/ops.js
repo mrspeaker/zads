@@ -1,7 +1,6 @@
-import { nib3_to_byte, mem2reg } from "./utils.js";
+import { nib3_to_byte, mem2reg, fullword } from "./utils.js";
 
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
-const fullword = (a, b, c, d) => (a << 24) + (b << 16) + (c << 8) + d;
 const regval = (r) => fullword(...r);
 
 const base_displace = (x, b, d1, d2, d3) => {

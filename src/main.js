@@ -3,7 +3,7 @@ import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
 import { bindAssembleUI } from "./assemble.js";
 import { mk_state } from "./state.js";
-import { $, $click, eb2asc, loadTxtObj } from "./utils.js";
+import { $, $click } from "./utils.js";
 
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
