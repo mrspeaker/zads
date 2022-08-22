@@ -1,4 +1,4 @@
-import { ops, op_name, nop } from "./ops.js";
+import { ops } from "./ops.js";
 import { nib, toHex, chunk, nib2_to_byte } from "./utils.js";
 
 export function disassemble(code, showBytes) {
@@ -18,7 +18,7 @@ function line(psw, obj, showBytes) {
   const o = ops[op];
   const pc_loc = toHex(psw - 1) + ": ";
   if (o) {
-    const { op: name, len: bytes, f } = o;
+    const { op: name, len: bytes } = o;
     const num = bytes - 1;
     const opers = obj
       .slice(psw, psw + num)

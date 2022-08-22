@@ -1,4 +1,4 @@
-import { nib3_to_byte, toHex, mem2reg } from "./utils.js";
+import { nib3_to_byte, mem2reg } from "./utils.js";
 
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 const fullword = (a, b, c, d) => (a << 24) + (b << 16) + (c << 8) + d;
@@ -77,7 +77,8 @@ export const ops = {
       reg_to_mem(mem, ptr, regs[r1]);
     },
     name: "store",
-    desc: "The first operand is placed unchanged at the second- operand location.",
+    desc:
+      "The first operand is placed unchanged at the second- operand location.",
     pdf: "7-211",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -124,7 +125,7 @@ export const ops = {
 };
 
 export const op_name = Object.entries(ops).reduce((ac, [k, v]) => {
-  const { op: name, len: bytes, f } = v;
+  const { op: name } = v;
   ac[name] = parseInt(k, 10);
   return ac;
 }, {});

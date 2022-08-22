@@ -1,7 +1,6 @@
 import render from "./render.js";
 import actionReducer from "./actionReducer.js";
-import { run } from "./emulate.js";
-import { bindAssembleUI, assembleText } from "./assemble.js";
+import { bindAssembleUI } from "./assemble.js";
 import { mk_state } from "./state.js";
 import { $, $click, eb2asc, loadTxtObj } from "./utils.js";
 
@@ -13,7 +12,7 @@ const action = actionReducer(state, render);
   action("LOAD_OBJ", { obj });
 
   state.obj.forEach((o, i) => {
-    const [_, a, b, c] = o;
+    const [, a, b, c] = o;
     console.log(i, [a, b, c].map((c) => eb2asc(c)).join(""));
   });
 

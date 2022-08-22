@@ -1,11 +1,11 @@
-import { ops, op_name, nop } from "./ops.js";
+import { ops } from "./ops.js";
 import { nib, toHex } from "./utils.js";
 
 export function run(obj, env) {
   env.psw.pc = 0; // Ah, not PC but Location Counter!
-    // TODO: need to relocate prg.
-    env.regs[15][3] = 0x0;
-    
+  // TODO: need to relocate prg.
+  env.regs[15][3] = 0x0;
+
   env.psw.halt = false;
   const code_txt = [];
   while (!env.psw.halt && env.psw.pc < obj.length) {

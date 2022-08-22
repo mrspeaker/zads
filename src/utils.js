@@ -1,5 +1,5 @@
 export const nib = (byte) => [byte >> 4, byte % 16];
-export const byte_from = (nib1, nib2) => (nib1 << 4) + nib;
+export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
 export const nib3_to_byte = (nib1, nib2, nib3) =>
   (nib1 << 8) + (nib2 << 4) + nib3;
 
@@ -145,7 +145,7 @@ export const eb2asc = (c) => _e2a[c] ?? "?";
 const despace = (ch) => (ch === 0x40 ? " " : toHex(ch));
 
 export const formatObjRecord = (rec) => {
-  const [id, ta, tb, tc, ...theRest] = rec;
+  const [, ta, tb, tc, ...theRest] = rec;
   const type = [ta, tb, tc].map(eb2asc).join("");
   return type + ": " + theRest.map(despace).join(",");
 };
