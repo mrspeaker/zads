@@ -3,6 +3,19 @@ import { nib3_to_byte, toHex, mem2reg } from "./utils.js";
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 const fullword = (a, b, c, d) => (a << 24) + (b << 16) + (c << 8) + d;
 
+const reg_to_mem = (mem, offset, reg) => {
+    mem[offset] = reg[0];
+    mem[offset+1] = reg[1];
+    mem[offset+2] = reg[2];
+    mem[offset+3] = reg[3];    
+}
+const mem_to_reg = (reg, mem, offset) => {
+    reg[0] = mem[offset];
+    reg[1] = mem[offset+1];
+    reg[2] = mem[offset+2];
+    reg[3] = mem[offset+3];
+}
+
 export const nop = () => {};
 export const ops = {
   0x05: { op: "BALR", len: 2, f: nop },
@@ -57,10 +70,7 @@ export const ops = {
           const D = disp(d2a,d2b,d2c);
           // TODO: figure out x,b... convert to offset
           const ptr = 0 + 0 + D;
-          mem[ptr]=regs[r1][0];
-          mem[ptr+1]=regs[r1][1];
-          mem[ptr+2]=regs[r1][2];
-          mem[ptr+3]=regs[r1][3];
+          reg_to_mem(mem,ptr,regs[r1]);
     },
     name: "store",
     desc:
@@ -96,11 +106,15 @@ export const ops = {
     f: (ops, regs, mem) => {
       const [r1, r2, r3, d1, d2, d3] = ops;
       const d = nib3_to_byte(d1, d2, d3);
-      // Erm, nope... what?
+      // Erm, check this.
       let ptr = regs[r3][3] + d;
-      regs[r1][3] = mem[ptr++];
-      regs[r2][3] = mem[ptr++];
-      regs[r3][3] = mem[ptr++];
+        mem_to_reg(mem,ptr,regs[r1]);
+        ptr+=4;
+        mem_to_reg(mem,ptr,regs[r2]);
+        ptr+=4;
+        mem_to_reg(mem,ptr,regs[r3]);
+        ptr+=4;
+        
     },
   },
   0xd7: { op: "XC", len: 6, f: nop },
