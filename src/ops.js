@@ -46,15 +46,21 @@ export const ops = {
         const D = disp(d1, d2, d3);
         const ptr = (x ? regs[x][3] : 0) + (b ? regs[b][3] : 0) + D;
         // set psw location
-        psw.pc = ptr - 3;
+          psw.pc = ptr - 3; //(4bytes - 1)
       }
     },
   },
   0x50: {
     op: "ST",
     len: 4,
-    f: (opers, regs, mem, psw) => {
-      // TODO: store in mem
+      f: ([r1,x2,b2,d2a,d2b,d2c], regs, mem, psw) => {
+          const D = disp(d2a,d2b,d2c);
+          // TODO: figure out x,b... convert to offset
+          const ptr = 0 + 0 + D;
+          mem[ptr]=regs[r1][0];
+          mem[ptr+1]=regs[r1][1];
+          mem[ptr+2]=regs[r1][2];
+          mem[ptr+3]=regs[r1][3];
     },
     name: "store",
     desc:
