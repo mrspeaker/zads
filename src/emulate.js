@@ -3,8 +3,9 @@ import { nib, toHex } from "./utils.js";
 
 export function run(obj, env) {
   env.psw.pc = 0; // Ah, not PC but Location Counter!
-  console.log(env.regs);
-  env.regs[15][1] = 0x1;
+    // TODO: need to relocate prg.
+    env.regs[15][3] = 0x0;
+    
   env.psw.halt = false;
   const code_txt = [];
   while (!env.psw.halt && env.psw.pc < obj.length) {
