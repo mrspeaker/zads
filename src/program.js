@@ -1,4 +1,5 @@
-import { loadTxtObj, loadAsm, chunk, chkBytes } from "./utils.js";
+import { loadTxtObj, loadAsm, chunk } from "./utils.js";
+import { chkBytes } from "./bytes.js";
 import { mk_program } from "./state.js";
 
 const codeFromObj = (obj) => {

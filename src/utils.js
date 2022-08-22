@@ -1,11 +1,3 @@
-export const nib = (byte) => [byte >> 4, byte % 16];
-export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
-export const nib3_to_byte = (nib1, nib2, nib3) =>
-  (nib1 << 8) + (nib2 << 4) + nib3;
-
-export const nib2_to_byte = (nib1, nib2) => nib3_to_byte(0, nib1, nib2);
-export const fullword = (a, b, c, d) => (a << 24) + (b << 16) + (c << 8) + d;
-
 export const chunk = (arr, size) =>
   arr.reduce(
     (ac, el) => {
@@ -17,26 +9,12 @@ export const chunk = (arr, size) =>
     [[]]
   );
 
-export const chkBytes = (arr, bytes, offset = 0) =>
-  bytes.every((b, i) => arr[offset + i] === b);
-
 export const $ = (sel) => document.querySelector(sel);
 export const $click = (sel, f) => $(sel).addEventListener("click", f, false);
 
 const zeros = [...Array(16)].fill(0).join("");
 export const toHex = (v, pad = 2) =>
   ((pad ? zeros : "") + v.toString(16)).slice(-pad);
-
-export const memcpy = (bytes, mem, offset) => {
-  bytes.forEach((b, i) => (mem[i + offset] = b));
-};
-
-export const mem2reg = (mem, ptr, reg) => {
-  reg[0] = mem[ptr];
-  reg[1] = mem[ptr + 1];
-  reg[2] = mem[ptr + 2];
-  reg[3] = mem[ptr + 3];
-};
 
 const _e2a = {
   64: " ",

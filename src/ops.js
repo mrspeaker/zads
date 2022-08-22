@@ -1,27 +1,10 @@
-import { nib3_to_byte, mem2reg, fullword } from "./utils.js";
-
-const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
-const regval = (r) => fullword(...r);
-
-const base_displace = (x, b, d1, d2, d3) => {
-  const D = disp(d1, d2, d3);
-  const xx = regval(x);
-  const bb = regval(b);
-  return (xx ?? 0) + (bb ?? 0) + D;
-};
-
-const reg_to_mem = (mem, offset, reg) => {
-  mem[offset] = reg[0];
-  mem[offset + 1] = reg[1];
-  mem[offset + 2] = reg[2];
-  mem[offset + 3] = reg[3];
-};
-const mem_to_reg = (reg, mem, offset) => {
-  reg[0] = mem[offset];
-  reg[1] = mem[offset + 1];
-  reg[2] = mem[offset + 2];
-  reg[3] = mem[offset + 3];
-};
+import {
+  base_displace,
+  nib3_to_byte,
+  mem_to_reg,
+  reg_to_mem,
+  fullword,
+} from "./bytes.js";
 
 export const nop = () => {};
 export const ops = {
@@ -89,7 +72,7 @@ export const ops = {
     f: ([r, x, b, d1, d2, d3], regs, mem) => {
       // L R1,D2(X2,B2)   [RX]
       const ptr = base_displace(regs[x], regs[b], d1, d2, d3);
-      mem2reg(mem, ptr, regs[r]);
+      mem_to_reg(regs[r], mem, ptr);
     },
   },
   0x5a: {
@@ -97,7 +80,7 @@ export const ops = {
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      mem2reg(mem, ptr, regs[r1]);
+      mem_to_reg(mem, ptr, regs[r1]);
     },
   },
   0x90: { op: "STM", len: 4, f: nop },

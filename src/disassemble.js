@@ -1,5 +1,6 @@
 import { ops } from "./ops.js";
-import { nib, toHex, chunk, nib2_to_byte } from "./utils.js";
+import { toHex, chunk } from "./utils.js";
+import { nib, nib2_to_byte } from "./bytes.js";
 
 export function disassemble(code, showBytes) {
   let psw = 0;

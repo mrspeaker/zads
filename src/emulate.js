@@ -1,5 +1,6 @@
 import { ops } from "./ops.js";
-import { nib, toHex } from "./utils.js";
+import { toHex } from "./utils.js";
+import { nib } from "./bytes.js";
 
 export function run(obj, env) {
   env.psw.pc = 0; // Ah, not PC but Location Counter!

@@ -1,6 +1,6 @@
 import { run } from "./emulate.js";
 import { assembleText } from "./assemble.js";
-import { memcpy } from "./utils.js";
+import { memcpy } from "./bytes.js";
 
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);

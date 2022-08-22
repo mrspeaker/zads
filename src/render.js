@@ -1,6 +1,7 @@
 import { disassemble } from "./disassemble.js";
 
-import { $, toHex, fullword, formatObjRecord } from "./utils.js";
+import { $, toHex, formatObjRecord } from "./utils.js";
+import { fullword } from "./bytes.js";
 
 function render(state) {
   const { machine, program, zads } = state;
