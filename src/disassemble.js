@@ -41,7 +41,9 @@ function line(psw, obj, showBytes) {
     } else {
       txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
     }
-    console.log("wat op?", psw, toHex(op), "(", op, ")");
+    if (op > 1) {
+      console.log("wat op?", psw, toHex(op), "(", op, ")");
+    }
   }
   return [psw, txt];
 }
