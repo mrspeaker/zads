@@ -2,7 +2,7 @@ import {
   base_displace,
   nib3_to_byte,
   mem_to_reg,
-  reg_to_mem,
+  memcpy,
   fullword,
 } from "./bytes.js";
 
@@ -56,7 +56,7 @@ export const ops = {
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      reg_to_mem(mem, ptr, regs[r1]);
+      memcpy(regs[r1], mem, ptr);
     },
     name: "store",
     desc:
