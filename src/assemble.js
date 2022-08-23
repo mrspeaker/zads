@@ -1,5 +1,5 @@
 import { ops, op_name } from "./ops.js";
-import { $, $click } from "./utils.js";
+import { $, $click, toHex } from "./utils.js";
 
 export const bindAssembleUI = (onAssemble) => {
   $click("#btnAsm", () => {
@@ -28,23 +28,35 @@ const parseLine = (line) => {
   };
 };
 
-const assembleStatement = (stmt) => {
-  const { op, operands } = stmt;
+const assembleStatement = (env, stmt) => {
+  const { pc, stmts } = env;
+  const { op, operands, label } = stmt;
   const o = op_name[op.toUpperCase()];
+  const lbltxt = label ? `[${label}]` : " ";
   if (o) {
-    console.log("OP:", ops[o].op, operands);
-
-    return [o, ...operands];
+    console.log(toHex(env.pc, 4), ops[o].op, operands.join(","), lbltxt);
+    stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
+    env.pc += ops[o].len;
   } else {
-    console.log("Non-op:", op);
+    if (["DC"].includes(op.toUpperCase())) {
+      console.log(toHex(env.pc, 4), "dc", operands.join(","), lbltxt);
+      stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
+      // TODO.. if PC%4!==0... need ot add padding bytes
+      env.pc += 4; // TODO: needs to be DC len!
+    } else {
+      console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
+    }
   }
-  return -1;
+
+  return env;
 };
 
 export const assembleText = (txt) => {
-  return txt
+  const out = txt
     .split("\n")
     .filter((v) => !!v)
     .map(parseLine)
-    .map(assembleStatement);
+    .reduce(assembleStatement, { pc: 0, stmts: [] }).stmts;
+  console.log(out);
+  return out;
 };

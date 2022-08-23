@@ -22,7 +22,17 @@ const actionReducer = (s, render) => (type, value) => {
     case "ASSEMBLE_SRC":
       // TODO: should do mk_prog_from_obj(obj,src)
       // once assembler works!
-      s.program.obj = [[2, 227, 231, 227, ...assembleText(value)]];
+      s.program.obj = [
+        [
+          2,
+          227,
+          231,
+          227,
+          ...assembleText(value).map((s) => {
+            return s.bytes[0] ? s.bytes : [s.stmt.op, ...s.stmt.operands];
+          }),
+        ].flat(),
+      ];
       break;
     default:
       console.log("Unhandled ", type);
