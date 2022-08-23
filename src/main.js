@@ -18,9 +18,6 @@ const action = asyncHandler(actionReducer(state, render));
 })(state, action);
 
 function bindUI(state, action) {
-  bindAssembleUI((obj) => {
-    action("ASSEMBLE_OBJ", { obj });
-  });
   $click("#btnAsm", () => {
     const src = $("#src").value;
     action("ASSEMBLE_SRC", src);

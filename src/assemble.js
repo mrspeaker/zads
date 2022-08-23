@@ -7,20 +7,44 @@ export const bindAssembleUI = (onAssemble) => {
   });
 };
 
-const assembleLine = (line) => {
-  const tok = line.split(" ");
-  const o = op_name[tok[0].toUpperCase()];
-  if (o) {
-    const opers = tok[1].split(",");
-    console.log("OP:", ops[o].op, opers);
+const parseLine = (line) => {
+  const tok = line.split(" ").reduce((ac, el, i) => {
+    if (i === 0) {
+      ac.push(el);
+    } else {
+      if (el !== "") {
+        ac.push(el);
+      }
+    }
+    return ac;
+  }, []);
+  const [label, op, operands, ...comment] = tok;
 
-    return [o, ...opers];
+  return {
+    label,
+    op,
+    operands: operands?.split(","),
+    comment: comment?.join(" "),
+  };
+};
+
+const assembleStatement = (stmt) => {
+  const { op, operands } = stmt;
+  const o = op_name[op.toUpperCase()];
+  if (o) {
+    console.log("OP:", ops[o].op, operands);
+
+    return [o, ...operands];
   } else {
-    console.log("whats this?", o);
+    console.log("Non-op:", op);
   }
   return -1;
 };
 
 export const assembleText = (txt) => {
-  return txt.split("\n").map(assembleLine);
+  return txt
+    .split("\n")
+    .filter((v) => !!v)
+    .map(parseLine)
+    .map(assembleStatement);
 };
