@@ -32,6 +32,8 @@ export const regset = (r, num) => {
   r[3] = bytes[3];
 };
 
+export const disp_to_nibs = (d) => [(d & 0xf00) >> 8, (d & 0xf0) >> 4, d & 0xf];
+
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 export const base_displace = (x, b, d1, d2, d3) => {
   const D = disp(d1, d2, d3);

@@ -1,5 +1,6 @@
 import { ops, op_name } from "./ops.js";
-import { $, $click, toHex } from "./utils.js";
+import { $, $click, toHex, chunk } from "./utils.js";
+import { disp_to_nibs, byte_from } from "./bytes.js";
 
 export const bindAssembleUI = (onAssemble) => {
   $click("#btnAsm", () => {
@@ -35,7 +36,7 @@ const assembleStatement = (env, stmt) => {
     if (env.pc % 4 !== 0) {
       stmts.push({
         stmt: { label: "", op: "dc", comment: "", operands: ["1h"] },
-        bytes: [o, 0, 0],
+        bytes: [o],
         pc: env.pc,
       });
       env.pc += 2;
@@ -47,7 +48,7 @@ const assembleStatement = (env, stmt) => {
   }
   if (o) {
     console.log(toHex(env.pc, 4), ops[o].op, operands.join(","), lbltxt);
-    stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
+    stmts.push({ stmt, bytes: [o], pc: env.pc });
     env.pc += ops[o].len;
   } else {
     if (["DC", "DS"].includes(op.toUpperCase())) {
@@ -64,11 +65,15 @@ const assembleStatement = (env, stmt) => {
 
 const mapLabels = (stmts, labels) => {
   return stmts.map((s) => {
+    const opout = [];
     s.stmt.operands.forEach((o, i) => {
       if (labels[o]) {
-        s.bytes[i + 1] = labels[o];
+        opout[i + 1] = [0, 15, ...disp_to_nibs(labels[o])];
+      } else {
+        opout[i + 1] = [parseInt(o, 10)];
       }
     });
+    s.bytes.push(...chunk(opout.flat(), 2).map((b) => byte_from(...b)));
     return s;
   });
 };

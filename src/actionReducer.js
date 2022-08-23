@@ -28,9 +28,11 @@ const actionReducer = (s, render) => (type, value) => {
           227,
           231,
           227,
-          ...assembleText(value).map((s) => {
-            return s.bytes[0] ? s.bytes : [s.stmt.op, ...s.stmt.operands];
-          }),
+          ...assembleText(value)
+            .map((s) => {
+              return s.bytes[0] ? s.bytes : [s.stmt.op, ...s.stmt.operands];
+            })
+            .flat(),
         ].flat(),
       ];
       break;

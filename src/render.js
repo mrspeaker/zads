@@ -11,6 +11,7 @@ function render(state) {
 
   if (program) {
     const { goff, obj, src, code_txt, code } = program;
+    console.log("ob", obj);
     $("#format").innerText = goff ? "GOFF" : "OBJ";
     $("#src").value = src;
     $("#obj").value = obj.map(formatObjRecord).join("\n----------------\n");
