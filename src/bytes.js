@@ -3,12 +3,18 @@ export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
 export const nib3_to_byte = (nib1, nib2, nib3) =>
   (nib1 << 8) + (nib2 << 4) + nib3;
 export const nib2_to_byte = (nib1, nib2) => nib3_to_byte(0, nib1, nib2);
-export const fullword = (a, b, c, d) => {
+
+export const bytes_to_fw = (a, b, c, d) => {
   // Javascript shift ops are signed 32bit
   // ">>> 0" makes the result unsigned
   return ((a << 24) >>> 0) + (b << 16) + (c << 8) + d;
 };
-const num_to_fullword = num => [];
+export const fw_to_bytes = (num) => [
+  (num & 0xff000000) >>> 24,
+  (num & 0x00ff0000) >> 16,
+  (num & 0x0000ff00) >> 8,
+  (num & 0x000000ff) >> 0,
+];
 
 export const chkBytes = (arr, bytes, offset = 0) =>
   bytes.every((b, i) => arr[offset + i] === b);
@@ -17,16 +23,14 @@ export const memcpy = (bytes, mem, offset) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
 
-const regval = (r) => fullword(...r);
+const regval = (r) => bytes_to_fw(...r);
 export const regset = (r, num) => {
-    // TODO: de-fullword!
-    r[0] = 0;
-    r[1] = 0;
-    r[2] = num / 256 | 0;
-    r[3] = num % 256;
+  const bytes = fw_to_bytes(num);
+  r[0] = bytes[0];
+  r[1] = bytes[1];
+  r[2] = bytes[2];
+  r[3] = bytes[3];
 };
-
-
 
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 export const base_displace = (x, b, d1, d2, d3) => {

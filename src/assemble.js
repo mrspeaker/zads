@@ -25,7 +25,7 @@ const parseLine = (line) => {
 };
 
 const assembleStatement = (env, stmt) => {
-  const { pc, stmts } = env;
+  const { stmts } = env;
   const { op, operands, label } = stmt;
   const o = op_name[op.toUpperCase()];
   const lbltxt = label ? `[${label}]` : " ";

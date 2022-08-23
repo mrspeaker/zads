@@ -3,7 +3,7 @@ import {
   nib3_to_byte,
   mem_to_reg,
   memcpy,
-  fullword,
+  bytes_to_fw,
 } from "./bytes.js";
 
 export const nop = () => {};
@@ -27,8 +27,8 @@ export const ops = {
     op: "CR",
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
-      const a = fullword(...regs[r1]);
-      const b = fullword(...regs[r2]);
+      const a = bytes_to_fw(...regs[r1]);
+      const b = bytes_to_fw(...regs[r2]);
       if (a === b) {
         psw.conditionCode = 0;
       } else if (a < b) {
