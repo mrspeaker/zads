@@ -7,6 +7,8 @@ function render(state) {
   const { machine, program, zads } = state;
   const { showObjBytes } = zads;
 
+  $("#btnUpdate").disabled = !showObjBytes;
+
   if (program) {
     const { goff, obj, src, code_txt, code } = program;
     $("#format").innerText = goff ? "GOFF" : "OBJ";
