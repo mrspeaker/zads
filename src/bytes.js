@@ -8,6 +8,7 @@ export const fullword = (a, b, c, d) => {
   // ">>> 0" makes the result unsigned
   return ((a << 24) >>> 0) + (b << 16) + (c << 8) + d;
 };
+const num_to_fullword = num => [];
 
 export const chkBytes = (arr, bytes, offset = 0) =>
   bytes.every((b, i) => arr[offset + i] === b);
@@ -17,6 +18,15 @@ export const memcpy = (bytes, mem, offset) => {
 };
 
 const regval = (r) => fullword(...r);
+export const regset = (r, num) => {
+    // TODO: de-fullword!
+    r[0] = 0;
+    r[1] = 0;
+    r[2] = num / 256 | 0;
+    r[3] = num % 256;
+};
+
+
 
 const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 export const base_displace = (x, b, d1, d2, d3) => {

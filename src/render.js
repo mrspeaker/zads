@@ -26,6 +26,7 @@ function render(state) {
       .join("\n");
     $("#mem").value = mem.map((m) => toHex(m));
     $("#psw_cc").value = psw.conditionCode;
+      $("#psw_pc").value = toHex(psw.pc);
   }
 }
 

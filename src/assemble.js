@@ -9,17 +9,13 @@ export const bindAssembleUI = (onAssemble) => {
 
 const parseLine = (line) => {
   const tok = line.split(" ").reduce((ac, el, i) => {
-    if (i === 0) {
+    if (i === 0 || el !== "") {
       ac.push(el);
-    } else {
-      if (el !== "") {
-        ac.push(el);
-      }
     }
     return ac;
   }, []);
-  const [label, op, operands, ...comment] = tok;
 
+  const [label, op, operands, ...comment] = tok;
   return {
     label,
     op,

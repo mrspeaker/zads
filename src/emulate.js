@@ -1,11 +1,11 @@
 import { ops } from "./ops.js";
 import { toHex } from "./utils.js";
-import { nib } from "./bytes.js";
+import { nib, regset } from "./bytes.js";
 
 export function run(obj, env) {
   env.psw.pc = 0; // Ah, not PC but Location Counter!
   // TODO: need to relocate prg.
-  env.regs[15][3] = 0x0;
+  regset(env.regs[15], 0);
 
   env.psw.halt = false;
   const code_txt = [];

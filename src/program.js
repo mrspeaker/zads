@@ -21,15 +21,19 @@ const codeFromObj = (obj) => {
 };
 
 export const load_prog = async (name) => {
-  const obj = await loadTxtObj(`../obj/${name}.o`);
-  const src = await loadAsm(`../obj/${name}.asm`);
-  return { obj, src };
+  return Promise.all([
+    loadTxtObj(`../obj/${name}.o`),
+    loadAsm(`../obj/${name}.asm`),
+  ]).then(([obj, src]) => ({ obj, src }));
 };
 
 const loadTxtObj = async (path) => {
   const obj = await fetch(path)
-    .then((r) => r.blob())
-    .then((r) => r);
+    .then((r) => [r, r.blob()])
+    .then(([r, blob]) => {
+      if (!r.ok) throw new Error(r.status);
+      return blob;
+    });
   const buf = await obj.arrayBuffer();
   return new Uint8Array(buf);
 };
