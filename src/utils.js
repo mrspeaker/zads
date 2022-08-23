@@ -128,16 +128,3 @@ export const formatObjRecord = (rec) => {
   const type = [ta, tb, tc].map(eb2asc).join("");
   return type + ": " + theRest.map(despace).join(",");
 };
-
-export const loadTxtObj = async (path) => {
-  const obj = await fetch(path)
-    .then((r) => r.blob())
-    .then((r) => r);
-  const buf = await obj.arrayBuffer();
-  return new Uint8Array(buf);
-};
-
-export const loadAsm = (path) =>
-  fetch(path)
-    .then((r) => r.text())
-    .then((r) => r);
