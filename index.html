@@ -27,11 +27,12 @@
     }
     textarea {
       height: 300px;
-      width: calc(33% - 2px);
+      width: calc(33% - 3px);
       text-overflow: clip;
       background: #151515;
       border: 0;
-      border-bottom: 1px solid #444;
+      border-top: 1px solid #444;
+      border-right: 1px solid #444;
     }
     button {
       box-shadow: inset 0 0 5px #4ae;
@@ -50,10 +51,10 @@
 </head>
 <body>
   <div>
-    <button id="btnAsm">asm</button>
     <button id="btnRun">run</button>
     <button id="btnObjBytes">obj bytes</button>
     <button id="btnUpdate">update obj</button>
+    <button id="btnAsm">assemble</button>
     <div style="float:right">
       fmt:<span id="format">fmt</span>
       <span> cc:<input type="text" id="psw_cc"/></span>
@@ -61,7 +62,7 @@
     </div>
   </div>
 
-  <div>
+  <div style="margin-top:4px">
     <textarea id="src" spellcheck="false"></textarea>
     <textarea id="obj" spellcheck="false"></textarea>
     <textarea id="dis" spellcheck="false"></textarea>
