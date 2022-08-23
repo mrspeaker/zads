@@ -1,7 +1,6 @@
 import render from "./render.js";
 import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
-import { bindAssembleUI } from "./assemble.js";
 import { mk_state } from "./state.js";
 import { $, $click } from "./utils.js";
 
