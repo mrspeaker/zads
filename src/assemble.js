@@ -38,10 +38,18 @@ const assembleStatement = (env, stmt) => {
     stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
     env.pc += ops[o].len;
   } else {
-    if (["DC"].includes(op.toUpperCase())) {
-      console.log(toHex(env.pc, 4), "dc", operands.join(","), lbltxt);
+    if (["DC", "DS"].includes(op.toUpperCase())) {
+      // add padding bytes if not on fullword boundary
+      if (env.pc % 4 !== 0) {
+        stmts.push({
+          stmt: { label: "", op: "dc", comment: "", operands: ["1h"] },
+          bytes: [o, 0, 0],
+          pc: env.pc,
+        });
+        env.pc += 2;
+      }
       stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
-      // TODO.. if PC%4!==0... need ot add padding bytes
+      console.log(toHex(env.pc, 4), "dc", operands.join(","), lbltxt);
       env.pc += 4; // TODO: needs to be DC len!
     } else {
       console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
