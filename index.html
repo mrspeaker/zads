@@ -4,17 +4,17 @@
 </head>
 <body>
   <div class="controls">
-    <span>
+    <div class="buttons">
       <button id="btnRun">run</button>
       <button id="btnObjBytes">obj bytes</button>
       <button id="btnUpdate">update obj</button>
       <button id="btnAsm">assemble</button>
-    </span>
-    <span class="psw">
+    </div>
+    <div class="psw">
       <span id="format">fmt</span>
       <span> cc:<input type="text" id="psw_cc" /></span>
       <span> pc:<input type="text" id="psw_pc" /></span>
-    </span>
+    </div>
   </div>
 
   <div class="boxes">
@@ -25,6 +25,7 @@
     <textarea id="regs" spellcheck="false"></textarea>
     <textarea id="mem" spellcheck="false"></textarea>
   </div>
+  <div class="status"><button>step</button></div>
 
   <script src="src/main.js" type="module"></script>
 </body>
