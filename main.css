@@ -1,0 +1,32 @@
+html {
+  box-sizing: border-box;
+  font-family: monospace;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+textarea {
+  height: calc(50vh - 24px);
+  flex: 0 0 33.333333%;
+  border: 0;
+  border-top: 1px dotted;
+  border-right: 1px dotted;
+}
+
+.boxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+.controls {
+  display: flex;
+  align-items: space-between;
+}
+.controls > span {
+  flex: 1;
+}
+.controls .psw {
+  text-align: right;
+}
