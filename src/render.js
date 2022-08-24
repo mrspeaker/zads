@@ -28,7 +28,13 @@ function render(state) {
     $("#mem").value = mem.map((m) => toHex(m));
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
+    renderScreen(mem);
   }
+}
+
+function renderScreen(mem) {
+  const c = $("#screen").getContext("2d");
+  c.clearRect(0, 0, c.canvas.width, c.canvas.height);
 }
 
 export default render;

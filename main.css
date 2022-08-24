@@ -109,3 +109,9 @@ textarea {
   background-color: #333;
   color: #999;
 }
+#screen {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  background-color: #444;
+}
