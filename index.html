@@ -18,14 +18,31 @@
   </div>
 
   <div class="boxes">
-    <textarea id="src" spellcheck="false"></textarea>
-    <textarea id="obj" spellcheck="false"></textarea>
-    <textarea id="dis" spellcheck="false"></textarea>
-    <textarea id="emu" spellcheck="false"></textarea>
-    <textarea id="regs" spellcheck="false"></textarea>
+    <div>
+      <textarea id="src" spellcheck="false"></textarea>
+      <div class="boxbar">asm</div>
+    </div>
+    <div>
+      <textarea id="obj" spellcheck="false"></textarea>
+      <div class="boxbar">obj</div>
+    </div>
+    <div>
+      <textarea id="dis" spellcheck="false"></textarea>
+      <div class="boxbar">bytes</div>
+    </div>
+    <div>
+      <textarea id="emu" spellcheck="false"></textarea>
+      <div class="boxbar">step | run</div>
+    </div>
+
+    <div>
+      <textarea id="regs" spellcheck="false"></textarea>
+      <div class="boxbar">regs</div>
+    </div>
+
     <textarea id="mem" spellcheck="false"></textarea>
   </div>
-  <div class="status"><button>step</button></div>
+  <div class="status"><button>.</button></div>
 
   <script src="src/main.js" type="module"></script>
 </body>
