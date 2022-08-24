@@ -1,3 +1,17 @@
+:root {
+  --background-color: #fdfff4;;
+  --text-color: #000;
+  --status-bar: rgba(225, 226, 217, 0.7)
+} 
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #222;
+    --text-color: #7f938b;
+    --status-bar: #333;
+  }
+}
+
 html {
   box-sizing: border-box;
   font-family: monospace;
@@ -13,7 +27,8 @@ html {
 }
 
 body {
-  background-color: #fdfff4;
+  background-color: var(--background-color);
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -53,11 +68,11 @@ input {
 .boxes > * > textarea {
   width: 100%;
   height: 100%;
-  background-color: rgba(225, 226, 217, 0.2);
+  
 }
 .boxes > * > .boxbar {
   width: 100%;
-  background-color: rgba(225, 226, 217, 0.7);
+  background-color: var(--status-bar);
   color: #5d5f55;
   position: absolute;
   bottom: 0;
@@ -67,7 +82,8 @@ textarea {
   font-size: 8pt;
   border: 0;
   padding: 8px;
-  background-color: rgba(225, 226, 217, 0.2);
+  background-color:var(--background-color);
+  color: var(--text-color);
   resize: none;
 }
 
