@@ -68,6 +68,7 @@ textarea {
   border: 0;
   padding: 8px;
   background-color: rgba(225, 226, 217, 0.2);
+  resize: none;
 }
 
 .controls {
