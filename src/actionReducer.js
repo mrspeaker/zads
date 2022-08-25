@@ -26,7 +26,7 @@ const actionReducer = (s, render) => (type, value) => {
           ...assembleText(value)
             .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
             .map((s) => s.bytes),
-        ];
+        ].flat();
         s.program.obj = [
           2,
           227,
