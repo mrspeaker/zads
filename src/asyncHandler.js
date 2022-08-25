@@ -1,14 +1,12 @@
 import { load_prog, mk_program_from_obj } from "./program.js";
 
-const tryerr =
-  (f) =>
-  async (...args) => {
-    try {
-      return [null, await f(...args)];
-    } catch (err) {
-      return [err, []];
-    }
-  };
+const tryerr = (f) => async (...args) => {
+  try {
+    return [null, await f(...args)];
+  } catch (err) {
+    return [err, []];
+  }
+};
 
 const asyncHandler = (action) => async (type, value) => {
   switch (type) {

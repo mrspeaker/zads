@@ -1,5 +1,6 @@
 import { run } from "./emulate.js";
 import { assembleText } from "./assemble.js";
+import { mk_program_from_obj } from "./program.js";
 import { memcpy } from "./bytes.js";
 
 const actionReducer = (s, render) => (type, value) => {
@@ -20,21 +21,33 @@ const actionReducer = (s, render) => (type, value) => {
       s.program.code_txt = run(s.program.code, s.machine);
       break;
     case "ASSEMBLE_SRC":
-      // TODO: should do mk_prog_from_obj(obj,src)
-      // once assembler works!
-      s.program.obj = [
-        [
+      {
+        const bytes = [
+          ...assembleText(value)
+            .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
+            .map((s) => s.bytes),
+        ];
+        s.program.obj = [
           2,
           227,
           231,
           227,
-          ...assembleText(value)
-            .map((s) => {
-              return s.bytes[0] ? s.bytes : [s.stmt.op, ...s.stmt.operands];
-            })
-            .flat(),
-        ].flat(),
-      ];
+          0x40,
+          0x40,
+          0x40,
+          0x40,
+          0x40,
+          0x40,
+          0x40,
+          bytes.length,
+          0x40,
+          0x40,
+          0x40,
+          0x40,
+          ...bytes,
+        ].flat();
+        s.program = mk_program_from_obj(s.program.obj, value);
+      }
       break;
     default:
       console.log("Unhandled ", type);

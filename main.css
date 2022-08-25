@@ -114,4 +114,10 @@ textarea {
   right: 16px;
   bottom: 16px;
   background-color: #444;
+  width: 128px;
+  height: 128px;
+    image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }

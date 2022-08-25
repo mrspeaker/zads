@@ -11,10 +11,11 @@ function render(state) {
 
   if (program) {
     const { goff, obj, src, code_txt, code } = program;
-    console.log("ob", obj);
     $("#format").innerText = goff ? "GOFF" : "OBJ";
     $("#src").value = src;
-    $("#obj").value = obj.map(formatObjRecord).join("\n----------------\n");
+    $("#obj").value = showObjBytes
+      ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
+      : obj.map(formatObjRecord).join("\n----------------\n");
     $("#emu").value = code_txt?.join("\n");
     $("#dis").value = disassemble(code, showObjBytes).join("\n");
   }
@@ -34,7 +35,15 @@ function render(state) {
 
 function renderScreen(mem) {
   const c = $("#screen").getContext("2d");
+  const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
+  imgData.data.forEach((d, i) => {
+    imgData.data[i * 4] = mem[i];
+    imgData.data[i * 4 + 1] = mem[i];
+    imgData.data[i * 4 + 2] = mem[i];
+    imgData.data[i * 4 + 3] = 255;
+  });
   c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+  c.putImageData(imgData, 0, 0);
 }
 
 export default render;
