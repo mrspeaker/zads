@@ -39,4 +39,22 @@ function bindUI(state, action) {
   });
 
   $click("#btnRun", () => action("RUN"));
+  $("#mem").addEventListener(
+    "change",
+    (e) => {
+      const data = e.target.value
+        .trim()
+        .split(",")
+        .map((v, i) => {
+          const val = parseInt(v, 16);
+          if (isNaN(val)) {
+            console.warn("bad mem at ", i, ":", v);
+            return 0;
+          }
+          return val;
+        });
+      action("MEM_UPDATE", data);
+    },
+    false
+  );
 }

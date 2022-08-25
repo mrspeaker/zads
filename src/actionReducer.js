@@ -20,6 +20,11 @@ const actionReducer = (s, render) => (type, value) => {
       memcpy(s.program.code, s.machine.mem, 0);
       s.program.code_txt = run(s.program.code, s.machine);
       break;
+    case "MEM_UPDATE":
+      if (value.length === s.machine.mem.length) {
+        s.machine.mem = value;
+      }
+      break;
     case "ASSEMBLE_SRC":
       {
         const bytes = [
