@@ -10,6 +10,7 @@ export const chunk = (arr, size) =>
   );
 
 export const $ = (sel) => document.querySelector(sel);
+export const $$ = (sel) => document.querySelectorAll(sel);
 export const $click = (sel, f) => $(sel).addEventListener("click", f, false);
 
 const zeros = [...Array(16)].fill(0).join("");

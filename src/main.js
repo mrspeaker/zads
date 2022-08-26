@@ -2,7 +2,8 @@ import render from "./render.js";
 import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
 import { mk_state } from "./state.js";
-import { $, $click } from "./utils.js";
+import { $, $$, $click } from "./utils.js";
+import { makeTabable } from "./textarea.js";
 
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
@@ -17,6 +18,7 @@ const action = asyncHandler(actionReducer(state, render));
 })(state, action);
 
 function bindUI(state, action) {
+  [...$$("textarea")].map(makeTabable);
   $click("#btnAsm", () => {
     const src = $("#src").value;
     action("ASSEMBLE_SRC", src);
