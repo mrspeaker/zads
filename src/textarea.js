@@ -1,6 +1,7 @@
-export const makeTabable = (input) => {
+export const editor = (input, onSave) => {
   input.addEventListener("keydown", (e) => {
-    if (e.which === 9) {
+    const { which, metaKey } = e;
+    if (which === 9 /* tab */) {
       e.preventDefault();
       input.setRangeText(
         "    ",
@@ -8,6 +9,14 @@ export const makeTabable = (input) => {
         input.selectionStart,
         "end"
       );
+      return null;
     }
+    console.log(which, metaKey);
+    if (metaKey && which === 83 /* s */) {
+      console.log("what");
+      e.preventDefault();
+      return onSave(input.value);
+    }
+    return null;
   });
 };
