@@ -39,6 +39,25 @@ export const ops = {
     },
   },
   0x41: { op: "LA", len: 4, f: nop },
+  0x46: {
+    op: "BCT",
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      // DO th things.
+      if (--regs[r1] !== 0) {
+        // set psw location
+        psw.pc = ptr - 3; //(4bytes - 1)
+      }
+    },
+    name: "branch on count",
+    desc:
+      "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
+    pdf: "7-211",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
+  },
   0x47: {
     op: "BC",
     len: 4,
