@@ -3,7 +3,7 @@ import { toHex } from "./utils.js";
 import { nib, regset } from "./bytes.js";
 
 export function run(obj, env) {
-  env.psw.pc = 0; // Ah, not PC but Location Counter!
+  env.psw.pc = 0;
   // TODO: need to relocate prg.
   regset(env.regs[15], 0);
 

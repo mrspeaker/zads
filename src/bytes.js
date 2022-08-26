@@ -19,7 +19,7 @@ export const fw_to_bytes = (num) => [
 export const chkBytes = (arr, bytes, offset = 0) =>
   bytes.every((b, i) => arr[offset + i] === b);
 
-export const memcpy = (bytes, mem, offset) => {
+export const memcpy = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
 

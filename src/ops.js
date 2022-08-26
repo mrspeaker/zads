@@ -23,7 +23,18 @@ export const ops = {
   },
   0x0b: { op: "BSM", len: 2, f: nop },
   0x0d: { op: "BSR", len: 2, f: nop },
-  0x18: { op: "LR", len: 2, f: ([r1, r2], regs) => (regs[r1] = regs[r2]) },
+  0x18: {
+    op: "LR",
+    len: 2,
+    f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
+    name: "load",
+    desc:
+      "The second operand is placed unchanged at the first- operand location",
+    pdf: "7-150",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1,R2",
+  },
   0x19: {
     op: "CR",
     len: 2,
@@ -48,7 +59,8 @@ export const ops = {
       regset(regs[r1], ptr);
     },
     name: "load address",
-    desc: "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
+    desc:
+      "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
     pdf: "7-265",
     type: "RX-a",
     form: "OP R1,D2(X2,B2)",
@@ -68,7 +80,8 @@ export const ops = {
       }
     },
     name: "branch on count",
-    desc: "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
+    desc:
+      "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
     pdf: "7-2xx",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -94,7 +107,8 @@ export const ops = {
       memcpy(regs[r1], mem, ptr);
     },
     name: "store",
-    desc: "The first operand is placed unchanged at the second- operand location.",
+    desc:
+      "The first operand is placed unchanged at the second- operand location.",
     pdf: "7-211",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
