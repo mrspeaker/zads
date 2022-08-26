@@ -1,7 +1,9 @@
 :root {
   --background-color: #fdfff4;;
   --text-color: #000;
-  --status-bar: rgba(225, 226, 217, 0.7)
+  --status-bar: rgba(225, 226, 217, 0.7);
+  --highlight-warm: #eaa49c;
+  --highlight-cool: #b4e3d1;
 } 
 
 @media (prefers-color-scheme: dark) {
@@ -36,15 +38,16 @@ input,
 button,
 textarea {
   font-family: monospace;
+  caret-color: var(--highlight-warm);
 }
 
 button {
-  background-color: #b4e3d1;
+  background-color: var(--highlight-cool);
   border: 0;
   cursor: pointer;
 }
 .controls button:last-child {
-  background-color: #eaa49c;
+  background-color: var(--highlight-warm);
 }
 
 input {
