@@ -15,7 +15,7 @@ export const $click = (sel, f) => $(sel).addEventListener("click", f, false);
 
 const zeros = [...Array(16)].fill(0).join("");
 export const toHex = (v, pad = 2) =>
-  ((pad ? zeros : "") + v.toString(16)).slice(-pad);
+  ((pad ? zeros : "") + (v || "").toString(16)).slice(-pad);
 
 const _e2a = {
   64: " ",
@@ -121,6 +121,15 @@ const _e2a = {
   255: "*",
 };
 export const eb2asc = (c) => _e2a[c] ?? "?";
+
+export const eb2code = (ch) => {
+  const code = {
+    A: 0xc1,
+    C: 0xc3,
+    Z: 0xe9,
+  }[ch];
+  return code ?? 0;
+};
 
 const despace = (ch) => (ch === 0x40 ? " " : toHex(ch));
 

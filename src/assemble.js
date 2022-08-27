@@ -1,5 +1,5 @@
 import { ops, op_name } from "./ops.js";
-import { $, $click, toHex, chunk } from "./utils.js";
+import { $, $click, toHex, chunk, eb2code } from "./utils.js";
 import { disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 
 export const bindAssembleUI = (onAssemble) => {
@@ -8,7 +8,14 @@ export const bindAssembleUI = (onAssemble) => {
   });
 };
 
-const parseLine = (line) => {
+const mk_stmt = (label, op, operands, comment) => ({
+  label,
+  op,
+  operands,
+  comment,
+});
+
+const tokenize = (line) => {
   const tok = line.split(" ").reduce((ac, el, i) => {
     if (i === 0 || el !== "") {
       ac.push(el);
@@ -17,45 +24,61 @@ const parseLine = (line) => {
   }, []);
 
   const [label, op, operands, ...comment] = tok;
-  return {
-    label,
-    op,
-    operands: operands?.split(","),
-    comment: comment?.join(" "),
-  };
+  return mk_stmt(label, op, operands?.split(","), comment?.join(" "));
+};
+
+const addStmt = (env, stmt) => {
+  const op_code = op_name[stmt.op.toUpperCase()];
+  return env.stmts.push({
+    stmt,
+    bytes: {
+      op_code: [op_code],
+      operands: [],
+      bytes: [],
+    },
+    pc: env.pc,
+  });
+};
+
+const addData = (env, stmt) => {
+  return env.stmts.push({
+    stmt,
+    bytes: {
+      op_code: [],
+      operands: [],
+      bytes: [],
+    },
+    pc: env.pc,
+  });
+};
+
+const checkBoundaryPadding = (env) => {
+  if (env.pc % 4 !== 0) {
+    const padding = [0, 0];
+    addData(env, mk_stmt("", "DC", padding, ""));
+    env.pc += padding.length;
+  }
 };
 
 const assembleStatement = (env, stmt) => {
-  const { stmts, labels } = env;
+  const { labels } = env;
   const { op, operands, label } = stmt;
-  const o = op_name[op.toUpperCase()];
-  const lbltxt = label ? `[${label}]` : " ";
+  const isData = ["DC", "DS"].includes(op.toUpperCase());
+  const op_code = op_name[op.toUpperCase()];
 
-  if (["DC", "DS"].includes(op.toUpperCase())) {
-    // add padding bytes if not on fullword boundary
-    if (env.pc % 4 !== 0) {
-      stmts.push({
-        stmt: { label: "", op: "dc", comment: "", operands: [0, 0] },
-        bytes: [o],
-        pc: env.pc,
-      });
-      env.pc += 2;
-    }
-  }
-
-  if (label) {
-    labels[label] = env.pc;
-  }
-  if (o) {
-    stmts.push({ stmt, bytes: [o], pc: env.pc });
-    env.pc += ops[o].len;
+  if (op_code) {
+    addStmt(env, stmt);
+    label && (labels[label] = env.pc);
+    env.pc += ops[op_code].len;
+  } else if (isData) {
+    checkBoundaryPadding(env);
+    addData(env, stmt);
+    label && (labels[label] = env.pc);
+    env.pc += 4; // TODO: needs to be DC len!
   } else {
-    if (["DC", "DS"].includes(op.toUpperCase())) {
-      stmts.push({ stmt, bytes: [o, ...operands], pc: env.pc });
-      env.pc += 4; // TODO: needs to be DC len!
-    } else {
-      console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
-    }
+    const lbltxt = label ? `[${label}]` : " ";
+    label && (labels[label] = env.pc);
+    console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
   }
 
   return env;
@@ -72,44 +95,68 @@ const parseImmediate = (v) => {
         return [parseInt(num, 16)];
       case "f":
         return fw_to_bytes(parseInt(num, 10));
+      case "c":
+        console.log("immed:", a, b, num, eb2code(rest[0]));
+        return [eb2code(rest[0])];
       default:
         console.log("Other parse immediate:", a, num);
         return [parseInt(num, 10)];
+    }
+  } else {
+    switch (a) {
+      case "f":
+        return [];
     }
   }
 
   return [parseInt(v, 10)];
 };
 
-const mapLabels = (stmts, labels) => {
+const parseOperand = (o, labels) => {
   //TODO: should come from Using statement
   const CURRENT_BASE = 15;
+
+  // TODO: expand addresses better
+  if (labels[o]) {
+    return [0, CURRENT_BASE, ...disp_to_nibs(labels[o])];
+  } else {
+    return parseImmediate(o);
+  }
+};
+
+const parseOperands = (stmts, labels) => {
   return stmts.map((s) => {
-    const opout = [];
-    s.stmt.operands.forEach((o, i) => {
-      if (labels[o]) {
-        opout[i] = [0, CURRENT_BASE, ...disp_to_nibs(labels[o])];
-      } else {
-        opout[i] = parseImmediate(o);
-      }
+    s.stmt.operands.forEach((o) => {
+      s.bytes.operands.push(...parseOperand(o, labels));
     });
+    return s;
+  });
+};
+
+const expandData = (stmts) => {
+  return stmts.map((s) => {
     // TODO: nooope. some bytes are bytes. some are nibbles...
     if (s.stmt.op.toUpperCase() === "DC") {
-      s.bytes = opout.flat();
+      s.bytes.bytes = [...s.bytes.operands];
     } else {
-      s.bytes.push(...chunk(opout.flat(), 2).map((b) => byte_from(...b)));
+      s.bytes.bytes = [
+        ...s.bytes.op_code,
+        ...chunk(s.bytes.operands.flat(), 2).map((b) => byte_from(...b)),
+      ];
     }
     return s;
   });
 };
 
 export const assembleText = (txt) => {
-  const out = txt
+  const { stmts, labels } = txt
     .split("\n")
     .filter((v) => !!v)
-    .map(parseLine)
+    .map(tokenize)
     .reduce(assembleStatement, { pc: 0, stmts: [], labels: {} });
 
-  const mapped = mapLabels(out.stmts, out.labels);
-  return mapped;
+  const mapped = parseOperands(stmts, labels);
+  const expanded = expandData(mapped);
+  console.log(expanded);
+  return expanded;
 };

@@ -132,6 +132,21 @@ export const ops = {
     },
   },
   0x90: { op: "STM", len: 4, f: nop },
+  0x92: {
+    op: "MVI",
+    len: 4,
+    f: ([i2a, i2b, b1, d1a, d1b, d1c], regs, mem, psw) => {
+      console.log("MVI", i2a, i2b, b1, d1a, d1b, d1c);
+      //      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      //      memcpy(regs[r1], mem, ptr);
+    },
+    name: "move",
+    desc: "The second operand is placed at the first-operand location.",
+    pdf: "7-163",
+    type: "SI",
+    form: "OP D1(B1),I2",
+    form_int: "OPOP I2I2 B1 D1D1D1",
+  },
   0x98: {
     op: "LM",
     len: 4,
@@ -154,6 +169,7 @@ export const ops = {
   0xd7: { op: "XC", len: 6, f: nop },
 };
 
+// TODO: maybe return array for multi-byte ops
 export const op_name = Object.entries(ops).reduce((ac, [k, v]) => {
   const { op: name } = v;
   ac[name] = parseInt(k, 10);

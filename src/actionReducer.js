@@ -27,10 +27,10 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "ASSEMBLE_SRC":
       {
-        const bytes = [
+        const code_bytes = [
           ...assembleText(value)
             .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
-            .map((s) => s.bytes),
+            .map((s) => s.bytes.bytes),
         ].flat();
         s.program.obj = [
           2,
@@ -44,12 +44,12 @@ const actionReducer = (s, render) => (type, value) => {
           0x40,
           0x40,
           0x40,
-          bytes.length,
+          code_bytes.length,
           0x40,
           0x40,
           0x40,
           0x40,
-          ...bytes,
+          ...code_bytes,
         ].flat();
         s.program = mk_program_from_obj(s.program.obj, value);
       }
