@@ -65,18 +65,18 @@ const assembleStatement = (env, stmt) => {
   const { op, operands, label } = stmt;
   const label_lc = label.toLowerCase();
   const op_lc = op.toLowerCase();
+  const op_code = op_name[op.toUpperCase()];
   const isData = ["dc", "ds"].includes(op_lc);
   const isUsing = ["using"].includes(op_lc);
-  const op_code = op_name[op.toUpperCase()];
 
   if (op_code) {
     addStmt(env, stmt);
-    label && (labels[label_lc] = env.pc);
+    label && (labels[label_lc] = { pc: env.pc, len: ops[op_code].len });
     env.pc += ops[op_code].len;
   } else if (isData) {
     checkBoundaryPadding(env);
     addData(env, stmt);
-    label && (labels[label_lc] = env.pc);
+    label && (labels[label_lc] = { pc: env.pc, len: 4 });
     env.pc += 4; // TODO: needs to be DC len!
   } else if (isUsing) {
     const [addr, base] = operands;
@@ -86,7 +86,7 @@ const assembleStatement = (env, stmt) => {
     env.base_addr = addr_lc === "*" ? env.pc : labels[addr_lc];
   } else {
     const lbltxt = label ? `[${label}]` : " ";
-    label && (labels[label_lc] = env.pc);
+    label && (labels[label_lc] = { pc: env.pc, len: 4 });
     console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
   }
 
@@ -102,11 +102,12 @@ const parseImmediate = (v) => {
         return [parseInt(num, 2)];
       case "x":
         return [parseInt(num, 16)];
+      case "c":
+        return [eb2code(rest[0])];
+
       case "f":
         return fw_to_bytes(parseInt(num, 10));
-      case "c":
-        console.log("immed:", a, b, num, eb2code(rest[0]));
-        return [eb2code(rest[0])];
+
       default:
         console.log("Other parse immediate:", a, num);
         return [parseInt(num, 10)];
@@ -124,7 +125,7 @@ const parseImmediate = (v) => {
 const parseOperand = (o, labels, base, base_addr) => {
   // TODO: expand addresses better
   if (labels[o]) {
-    return [0, base, ...disp_to_nibs(labels[o])];
+    return [0, base, ...disp_to_nibs(labels[o].pc)];
   } else {
     return parseImmediate(o);
   }
@@ -166,6 +167,8 @@ export const assembleText = (txt) => {
       base: 15,
       base_addr: 0,
     });
+
+  labels["screen"] = { pc: 0x100, len: 0x100 };
 
   const mapped = parseOperands(stmts, labels, base, base_addr);
   const expanded = expandData(mapped);
