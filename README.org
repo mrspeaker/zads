@@ -1,0 +1,33 @@
+* zads
+
+**  instruction format notes
+
+An instruction is one, two, or three halfwords in length and must be located in storage on a halfword boundary. Each instruction is in one of 26 basic formats: E, I, RI, RIE, RIL, RIS, RR, RRE, RRF, RRR, RRS, RS, RSI, RSL, RSY, RX, RXE, RXF, RXY, S, SI, SIL, SIY, SS, SSE, and SSF, with two variations of RI, RIL, RS, RSY, and RXY, three of RRF, and five of RIE and SS.
+
+*** RI Format
+Denotes a register-and-immediate operation and an extended op-code field.
+
+| 0      | 8  | 12   | 16 | 31 |
+|--------+----+------+----+----|
+| Opcode | R1 | OpCd | I2 |    |
+| Opcode | M1 | OpCd | I2 |    |
+
+*** RR Format
+Denotes a register-and-register operation.
+
+  |      0 |  8 | 12 | 15 |
+  |--------+----+----+----|
+  | OpCode | R1 | R2 |    |
+  
+*** RX Format
+Denotes a register-and-indexed-storage operation.
+
+  0      8  12 16 20      31
+  OpCode R1 X2 B2 D2
+  
+*** SI Format
+  0      8     16 20     31
+  OpCode I2    B1 D1      
+  
+*** SS Format
+  ... several...  
