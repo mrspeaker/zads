@@ -19,7 +19,11 @@ export const ops = {
         // need to properly figure out exit
         psw.halt = true;
       }
+      // NOTE: when R2 is 0, op is performed without branching.
     },
+    type: "RR",
+    form: "OP M1,R1",
+    form_int: "OPOP M1 R1",
   },
   0x0b: { op: "BSM", len: 2, f: nop },
   0x0d: { op: "BSR", len: 2, f: nop },
@@ -29,7 +33,7 @@ export const ops = {
     f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
     name: "load",
     desc:
-      "The second operand is placed unchanged at the first- operand location",
+      "The second operand is placed unchanged at the first operand location",
     pdf: "7-150",
     type: "RR",
     form: "OP R1,R2",
@@ -49,6 +53,12 @@ export const ops = {
         psw.conditionCode = 2;
       }
     },
+    type: "RR",
+    desc:
+      "The first operand is compared with the second operand, and the result is indicated in the condition code.",
+    pdf: "7-56",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
   },
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
@@ -98,6 +108,12 @@ export const ops = {
         psw.pc = ptr - 3; //(4bytes - 1)
       }
     },
+    type: "RX",
+    pdf: "7-29",
+    desc:
+      "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, nor- mal instruction sequencing proceeds with the updated instruction address.",
+    form: "OP M1,D2(X2,B2)",
+    form_int: "OPOP M1 X2 B2 D2D2D2",
   },
   0x50: {
     op: "ST",
@@ -122,6 +138,12 @@ export const ops = {
       const ptr = base_displace(regs[x], regs[b], d1, d2, d3);
       mem_to_reg(regs[r], mem, ptr);
     },
+    pdf: "7-150",
+    type: "RX",
+    desc:
+      "The second operand is placed unchanged at the first- operand location",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
   },
   0x5a: {
     op: "A",
@@ -130,13 +152,20 @@ export const ops = {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
       mem_to_reg(mem, ptr, regs[r1]);
     },
+    name: "add",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    pdf: "7-20",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OP R1 X2 B2 D2D2D2",
   },
   0x90: { op: "STM", len: 4, f: nop },
   0x92: {
     op: "MVI",
     len: 4,
-    f: ([i2a, i2b, b1, d1a, d1b, d1c], regs, mem, psw) => {
-      console.log("MVI", i2a, i2b, b1, d1a, d1b, d1c);
+    f: ([d1a, d1b, d1c, i2], regs, mem, psw) => {
+      console.log("MVI", d1a, d1b, d1c, i2);
       //      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
       //      memcpy(regs[r1], mem, ptr);
     },

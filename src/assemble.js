@@ -29,6 +29,7 @@ const tokenize = (line) => {
 
 const addStmt = (env, stmt) => {
   const op_code = op_name[stmt.op.toUpperCase()];
+  const op = ops[op_code];
   return env.stmts.push({
     stmt,
     bytes: {
@@ -37,6 +38,7 @@ const addStmt = (env, stmt) => {
       bytes: [],
     },
     pc: env.pc,
+    type: op?.type ?? "??",
   });
 };
 
@@ -122,8 +124,9 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
-const parseOperand = (o, symbols, base, base_addr) => {
+const parseOperand = (o, symbols, base, type) => {
   // TODO: expand addresses better
+  console.log(type, o);
   if (symbols[o]) {
     return [0, base, ...disp_to_nibs(symbols[o].pc)];
   } else {
@@ -131,10 +134,14 @@ const parseOperand = (o, symbols, base, base_addr) => {
   }
 };
 
-const parseOperands = (stmts, symbols, env) => {
+const parseOperands = (stmts, symbols, base) => {
   return stmts.map((s) => {
-    s.stmt.operands.forEach((o) => {
-      s.bytes.operands.push(...parseOperand(o, symbols, env));
+    const { stmt, bytes, type } = s;
+    const op_type = (type ?? "??").split("");
+
+    stmt.operands.forEach((o, i) => {
+      const op_bytes = parseOperand(o, symbols, base, op_type[i]);
+      bytes.operands.push(op_bytes);
     });
     return s;
   });
