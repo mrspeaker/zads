@@ -61,7 +61,7 @@ const checkBoundaryPadding = (env) => {
 };
 
 const assembleStatement = (env, stmt) => {
-  const { labels } = env;
+  const { symbols } = env;
   const { op, operands, label } = stmt;
   const label_lc = label.toLowerCase();
   const op_lc = op.toLowerCase();
@@ -71,22 +71,22 @@ const assembleStatement = (env, stmt) => {
 
   if (op_code) {
     addStmt(env, stmt);
-    label && (labels[label_lc] = { pc: env.pc, len: ops[op_code].len });
+    label && (symbols[label_lc] = { pc: env.pc, len: ops[op_code].len });
     env.pc += ops[op_code].len;
   } else if (isData) {
     checkBoundaryPadding(env);
     addData(env, stmt);
-    label && (labels[label_lc] = { pc: env.pc, len: 4 });
+    label && (symbols[label_lc] = { pc: env.pc, len: 4 });
     env.pc += 4; // TODO: needs to be DC len!
   } else if (isUsing) {
     const [addr, base] = operands;
     const addr_lc = addr.trim().toLowerCase();
     env.base = parseInt(base, 10);
-    // TODO: only gets labels before current statement!
-    env.base_addr = addr_lc === "*" ? env.pc : labels[addr_lc];
+    // TODO: currently only finds symbols _before_ current statement!
+    env.base_addr = addr_lc === "*" ? env.pc : symbols[addr_lc];
   } else {
     const lbltxt = label ? `[${label}]` : " ";
-    label && (labels[label_lc] = { pc: env.pc, len: 4 });
+    label && (symbols[label_lc] = { pc: env.pc, len: 4 });
     console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
   }
 
@@ -122,19 +122,19 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
-const parseOperand = (o, labels, base, base_addr) => {
+const parseOperand = (o, symbols, base, base_addr) => {
   // TODO: expand addresses better
-  if (labels[o]) {
-    return [0, base, ...disp_to_nibs(labels[o].pc)];
+  if (symbols[o]) {
+    return [0, base, ...disp_to_nibs(symbols[o].pc)];
   } else {
     return parseImmediate(o);
   }
 };
 
-const parseOperands = (stmts, labels, env) => {
+const parseOperands = (stmts, symbols, env) => {
   return stmts.map((s) => {
     s.stmt.operands.forEach((o) => {
-      s.bytes.operands.push(...parseOperand(o, labels, env));
+      s.bytes.operands.push(...parseOperand(o, symbols, env));
     });
     return s;
   });
@@ -156,22 +156,21 @@ const expandData = (stmts) => {
 };
 
 export const assembleText = (txt) => {
-  const { stmts, labels, base, base_addr } = txt
+  const { stmts, symbols, base, base_addr } = txt
     .split("\n")
     .filter((v) => !!v)
     .map(tokenize)
     .reduce(assembleStatement, {
       pc: 0,
       stmts: [],
-      labels: {},
+      symbols: {},
       base: 15,
       base_addr: 0,
     });
 
-  labels["screen"] = { pc: 0x100, len: 0x100 };
+  symbols["screen"] = { pc: 0x100, len: 0x100 };
 
-  const mapped = parseOperands(stmts, labels, base, base_addr);
+  const mapped = parseOperands(stmts, symbols, base, base_addr);
   const expanded = expandData(mapped);
-  console.log(expanded);
   return expanded;
 };
