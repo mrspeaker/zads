@@ -124,13 +124,29 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
+const parseIndexed = (o, base, symbols) => {
+  if (!symbols[o]) {
+    console.warn("uh oh - real addr.", o, base);
+    return [0, base, 0, 0, 0];
+  }
+  return [0, base, ...disp_to_nibs(symbols[o].pc)];
+};
+
 const parseOperand = (o, symbols, base, type, idx, op) => {
-  // TODO: figure out operand format and parse
-  console.log(type, o, idx, op);
-  if (symbols[o]) {
-    return [0, base, ...disp_to_nibs(symbols[o].pc)];
-  } else {
-    return parseImmediate(o);
+  const otype = { RR: ["R", "R"], RX: ["R", "X"] }[type] || [];
+  const oidx = otype[idx];
+  if (type && (!otype || !oidx)) {
+    console.warn("what's this operand?", type, o, idx, op);
+  }
+  switch (oidx) {
+    case "R":
+      return parseImmediate(o);
+    case "X":
+      return parseIndexed(o, base, symbols);
+    default: {
+      const v = parseImmediate(o);
+      return v;
+    }
   }
 };
 
@@ -139,7 +155,7 @@ const parseOperands = (stmts, symbols, base) => {
     const { stmt, bytes, type } = s;
     stmt.operands.forEach((o, i) => {
       const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
-      bytes.operands.push(op_bytes);
+      bytes.operands.push(...op_bytes);
     });
     return s;
   });
@@ -173,6 +189,7 @@ export const assembleText = (txt) => {
       base_addr: 0,
     });
 
+  // Some memory for a addressable "graphics screen"
   symbols["screen"] = { pc: 0x100, len: 0x100 };
 
   const mapped = parseOperands(stmts, symbols, base, base_addr);
