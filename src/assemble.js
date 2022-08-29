@@ -124,9 +124,9 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
-const parseOperand = (o, symbols, base, type) => {
-  // TODO: expand addresses better
-  console.log(type, o);
+const parseOperand = (o, symbols, base, type, idx, op) => {
+  // TODO: figure out operand format and parse
+  console.log(type, o, idx, op);
   if (symbols[o]) {
     return [0, base, ...disp_to_nibs(symbols[o].pc)];
   } else {
@@ -137,10 +137,8 @@ const parseOperand = (o, symbols, base, type) => {
 const parseOperands = (stmts, symbols, base) => {
   return stmts.map((s) => {
     const { stmt, bytes, type } = s;
-    const op_type = (type ?? "??").split("");
-
     stmt.operands.forEach((o, i) => {
-      const op_bytes = parseOperand(o, symbols, base, op_type[i]);
+      const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
       bytes.operands.push(op_bytes);
     });
     return s;
