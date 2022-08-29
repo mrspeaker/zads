@@ -1,0 +1,276 @@
+1                                         High Level Assembler Option Summary                   (PTF UI79283)   Page    1            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+0  No Overriding ASMAOPT Parameters                                                                                                  
+   Overriding Parameters-  TERM,LIST(MAX),TERM,ASA,OBJECT                                                                            
+   No Process Statements                                                                                                             
+                                                                                                                                     
+                                                                                                                                     
+   Options for this Assembly                                                                                                         
+0                    NOADATA                                                                                                         
+                       ALIGN                                                                                                         
+ 3 PARM/OPTION         ASA                                                                                                           
+                       BATCH                                                                                                         
+                       CODEPAGE(047C)                                                                                                
+                     NOCOMPAT                                                                                                        
+                     NODATAMAP                                                                                                       
+                     NODBCS                                                                                                          
+                     NODECK                                                                                                          
+                       DXREF                                                                                                         
+                       ESD                                                                                                           
+                     NOEXIT                                                                                                          
+                       FAIL(NOMSG,NOMNOTE,MAXERRS(500))                                                                              
+                       FLAG(0,ALIGN,CONT,EXLITW,NOIMPLEN,NOLONGER,NOPAGE0,PUSH,RECORD,RENT,NOSIGNED,NOSUBSTR,NOTRUNC,USING0)         
+                     NOFOLD                                                                                                          
+                     NOGOFF                                                                                                          
+                       ILMA                                                                                                          
+                     NOINFO                                                                                                          
+                       LANGUAGE(EN)                                                                                                  
+                     NOLIBMAC                                                                                                        
+                       LINECOUNT(60)                                                                                                 
+ 3 PARM/OPTION         LIST(MAX)                                                                                                     
+                       MACHINE(,NOLIST)                                                                                              
+                       MXREF(SOURCE)                                                                                                 
+ 3 PARM/OPTION         OBJECT                                                                                                        
+                       OPTABLE(UNI,NOLIST)                                                                                           
+                     NOPCONTROL                                                                                                      
+                     NOPESTOP                                                                                                        
+                     NOPROFILE                                                                                                       
+                     NORA2                                                                                                           
+                     NORENT                                                                                                          
+                       RLD                                                                                                           
+                       RXREF                                                                                                         
+                       SECTALGN(8)                                                                                                   
+                       SIZE(MAX)                                                                                                     
+                     NOSUPRWARN                                                                                                      
+                       SYSPARM()                                                                                                     
+ 3 PARM/OPTION         TERM(WIDE)                                                                                                    
+                     NOTEST                                                                                                          
+                       THREAD                                                                                                        
+                     NOTRANSLATE                                                                                                     
+                       TYPECHECK(MAGNITUDE,REGISTER,SIGNED)                                                                          
+                       USING(NOLIMIT,MAP,WARN(15))                                                                                   
+                     NOWORKFILE                                                                                                      
+                       XREF(SHORT,UNREFS)                                                                                            
+                                                                                                                                     
+   Standard   DD Names- SYSLIN   SYSLIB   SYSIN    SYSPRINT SYSPUNCH SYSUT1   SYSTERM  SYSADATA ASMAOPT                              
+   Overriding DD Names- SYS00017 SYS00005 SYS00015 SYS00016                   SYS00014                                               
+1                                              External Symbol Dictionary                                       Page    2            
+-Symbol   Type   Id     Address  Length   Owner Id Flags Alias-of                            HLASM R6.0  2022/08/19 08.33            
+0ONE       SD 00000001 00000000 00000178             00                                                                              
+ $$PRTOUT  ER 00000002                                                                                                               
+1                                                                                                               Page    3            
+   Active Usings: None                                                                                                               
+0D-Loc    Object Code      Addr1    Addr2    Stmt  Source Statement                          HLASM R6.0  2022/08/19 08.33            
+000000000                00000000 00000012      1 Node     dsect                                                                     
+ 00000000                                       2 Left     ds    A                                                                   
+ 00000004                                       3 Right    ds    A                                                                   
+ 00000008                                       4 Name     ds    CL10                                                                
+                         00000012               5 NodeLen  equ   *-Node                                                              
+000000000                00000000 00000178      7 one      csect                                                                     
+ 00000000 90EC D00C               0000000C      8          stm   r14,r12,12(r13)    save caller's registers                          
+ 00000004 18CF                                  9          lr    r12,r15            set up the base register                         
+                     R:C 00000000              10          using one,r12          and tell assembler                                 
+000000006 9824 1000               00000000     12          lm    r2,r4,0(r1)        arr, maxnum, prime                               
+00000000A 4150 C078               00000078     14          la    r5,data                                                             
+                     R:5 00000000              15 N1       using Node,r5                                                             
+ 0000000E D703 5000 5000 00000000 00000000     16          xc    N1.Left,N1.Left                                                     
+ 00000014 D703 5004 5004 00000004 00000004     17          xc    N1.Right,N1.Right                                                   
+00000001A 4160 5012               00000012     19          la    r6,NodeLen(,r5)                                                     
+                     R:6 00000000              20 N2       using Node,r6                                                             
+ 0000001E D703 6000 6000 00000000 00000000     21          xc    N2.Left,N2.Left                                                     
+ 00000024 D703 6004 6004 00000004 00000004     22          xc    N2.Right,N2.Right                                                   
+ 0000002A 5050 6000               00000000     23          st    r5,N2.Left                                                          
+0                                              25          printout r5,r6                                                            
+ 0000002E                                      26+         CNOP  2,4                 ALIGNMENT                            01-PRINTOUT
+ 0000002E 90EF C038               00000038     27+         STM   14,15,*+10          SAVE REGS.                           01-PRINTOUT
+ 00000032 58F0 C040               00000040     28+         L     15,*+14             ADDR PRINTOUT ROUTINE                01-PRINTOUT
+ 00000036 05EF                                 29+         BALR  14,15               CALL ROUTINE                         01-PRINTOUT
+ 00000038 0000000000000000                     30+         DC    2F'0',V($$PRTOUT)   SAVE AREA, ADDR PRINTOUT             01-PRINTOUT
+ 00000044 0000002E00000019                     31+         DC    AL1(0),AL3(*-23),A(25)  PARAMETER FLAGS                  01-PRINTOUT
+ 0000004C 20070005                             32+         DC    AL1(32),AL1(7),S(r5)                                     01-PRINTOUT
+ 00000050 99F5404040404040                     33+         DC    CL8'r5'               8 Characters of print name         01-PRINTOUT
+ 00000058 A0070006                             34+         DC    AL1(160),AL1(7),S(r6)                                    01-PRINTOUT
+ 0000005C 99F6404040404040                     35+         DC    CL8'r6'               8 Characters of print name         01-PRINTOUT
+ 00000064 98EF E000               00000000     36+         LM    14,15,0(14)         RESTORE REGISTERS                    01-PRINTOUT
+000000068 58E0 D00C               0000000C     39 exit     l     r14,12(,r13)                                                        
+ 0000006C 982C D01C               0000001C     40          lm    r2,r12,28(r13)                                                      
+ 00000070 0B0E                                 41          bsm   0,r14                                                               
+0                                              43 *                                                                                  
+ 00000078                                      44          ltorg                                                                     
+000000078                                      46 data     ds    cl256                                                               
+0                                              48          asmdreg                                                                   
+                                               49+         PUSH  PRINT                                                    01-ASMDREG 
+                                              165+         POP   PRINT                                                    01-ASMDREG 
+ 00000000                                     166          end   one                                                                 
+1                                                 Relocation Dictionary                                         Page    4            
+-   Pos.Id   Rel.Id   Address  Type    Length  Action                                        HLASM R6.0  2022/08/19 08.33            
+0  00000001 00000001 00000045   A         3       +                                                                                  
+   00000001 00000002 00000040   V         4      ST                                                                                  
+1                               Ordinary Symbol and Literal Cross Reference                                     Page    5            
+-Symbol   Length   Value     Id    R Type Asm  Program   Defn References                     HLASM R6.0  2022/08/19 08.33            
+0$$PRTOUT      1 00000000 00000002     T                   30   30                                                                   
+ data        256 00000078 00000001     C  C                46   14                                                                   
+ Left          4 00000000 FFFFFFFF     A  A                 2   16M   16    21M   21    23M                                          
+ Node          1 00000000 FFFFFFFF     J                    1    5    15U   20U                                                      
+ NodeLen       1 00000012 FFFFFFFF A   U                    5   19                                                                   
+ N1       ***QUALIFIER*** 00000001     U                   15   16    16    17    17                                                 
+ N2       ***QUALIFIER*** 00000001     U                   20   21    21    22    22    23                                           
+ one           1 00000000 00000001     J                    7   10U  166                                                             
+ Right         4 00000004 FFFFFFFF     A  A                 3   17M   17    22M   22                                                 
+ R1            1 00000001 00000001 A   U                   58   12                                                                   
+ R12           1 0000000C 00000001 A   U                   69    8     9M   10U   40M                                                
+ R13           1 0000000D 00000001 A   U                   70    8    39    40                                                       
+ R14           1 0000000E 00000001 A   U                   71    8    39M   41B                                                      
+ R15           1 0000000F 00000001 A   U                   72    9                                                                   
+ R2            1 00000002 00000001 A   U                   59   12M   40M                                                            
+ R4            1 00000004 00000001 A   U                   61   12M                                                                  
+ R5            1 00000005 00000001 A   U                   62   14M   15U   19    23    32                                           
+ R6            1 00000006 00000001 A   U                   63   19M   20U   34                                                       
+1                                  Unreferenced Symbols Defined in CSECTs                                       Page    6            
+-  Defn  Symbol                                                                              HLASM R6.0  2022/08/19 08.33            
+0   149  AR0                                                                                                                         
+    150  AR1                                                                                                                         
+    159  AR10                                                                                                                        
+    160  AR11                                                                                                                        
+    161  AR12                                                                                                                        
+    162  AR13                                                                                                                        
+    163  AR14                                                                                                                        
+    164  AR15                                                                                                                        
+    151  AR2                                                                                                                         
+    152  AR3                                                                                                                         
+    153  AR4                                                                                                                         
+    154  AR5                                                                                                                         
+    155  AR6                                                                                                                         
+    156  AR7                                                                                                                         
+    157  AR8                                                                                                                         
+    158  AR9                                                                                                                         
+    130  CR0                                                                                                                         
+    131  CR1                                                                                                                         
+    140  CR10                                                                                                                        
+    141  CR11                                                                                                                        
+    142  CR12                                                                                                                        
+    143  CR13                                                                                                                        
+    144  CR14                                                                                                                        
+    145  CR15                                                                                                                        
+    132  CR2                                                                                                                         
+    133  CR3                                                                                                                         
+    134  CR4                                                                                                                         
+    135  CR5                                                                                                                         
+    136  CR6                                                                                                                         
+    137  CR7                                                                                                                         
+    138  CR8                                                                                                                         
+    139  CR9                                                                                                                         
+     39  exit                                                                                                                        
+     76  FR0                                                                                                                         
+     77  FR1                                                                                                                         
+     86  FR10                                                                                                                        
+     87  FR11                                                                                                                        
+     88  FR12                                                                                                                        
+     89  FR13                                                                                                                        
+     90  FR14                                                                                                                        
+     91  FR15                                                                                                                        
+     78  FR2                                                                                                                         
+     79  FR3                                                                                                                         
+     80  FR4                                                                                                                         
+     81  FR5                                                                                                                         
+     82  FR6                                                                                                                         
+     83  FR7                                                                                                                         
+     84  FR8                                                                                                                         
+     85  FR9                                                                                                                         
+     57  R0                                                                                                                          
+     67  R10                                                                                                                         
+     68  R11                                                                                                                         
+     60  R3                                                                                                                          
+     64  R7                                                                                                                          
+     65  R8                                                                                                                          
+1                                  Unreferenced Symbols Defined in CSECTs                                       Page    7            
+-  Defn  Symbol                                                                              HLASM R6.0  2022/08/19 08.33            
+0    66  R9                                                                                                                          
+     95  VR0                                                                                                                         
+     96  VR1                                                                                                                         
+    105  VR10                                                                                                                        
+    106  VR11                                                                                                                        
+    107  VR12                                                                                                                        
+    108  VR13                                                                                                                        
+    109  VR14                                                                                                                        
+    110  VR15                                                                                                                        
+    111  VR16                                                                                                                        
+    112  VR17                                                                                                                        
+    113  VR18                                                                                                                        
+    114  VR19                                                                                                                        
+     97  VR2                                                                                                                         
+    115  VR20                                                                                                                        
+    116  VR21                                                                                                                        
+    117  VR22                                                                                                                        
+    118  VR23                                                                                                                        
+    119  VR24                                                                                                                        
+    120  VR25                                                                                                                        
+    121  VR26                                                                                                                        
+    122  VR27                                                                                                                        
+    123  VR28                                                                                                                        
+    124  VR29                                                                                                                        
+     98  VR3                                                                                                                         
+    125  VR30                                                                                                                        
+    126  VR31                                                                                                                        
+     99  VR4                                                                                                                         
+    100  VR5                                                                                                                         
+    101  VR6                                                                                                                         
+    102  VR7                                                                                                                         
+    103  VR8                                                                                                                         
+    104  VR9                                                                                                                         
+1                                          Macro and Copy Code Source Summary                                   Page    8            
+- Con Source                                        Volume    Members                        HLASM R6.0  2022/08/19 08.33            
+0  L1 TRAINING.ASMLAB.MACLIB                        N$US01    $$GENIO  PRINTOUT                                                      
+   L2 ASM.SASMMAC2                                  $$SR4H    ASMDREG                                                                
+1                                                Dsect Cross Reference                                          Page    9            
+-Dsect     Length      Id       Defn                                                         HLASM R6.0  2022/08/19 08.33            
+0Node     00000012  FFFFFFFF       1                                                                                                 
+1                                                      Using Map                                                Page   10            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+   Stmt  -----Location----- Action ----------------Using----------------- Reg Max     Last Label and Using Text                      
+           Count      Id           Type          Value    Range     Id        Disp    Stmt                                           
+0    10  00000006  00000001 USING  ORDINARY    00000000 00001000 00000001  12 00078     28 one,r12                                   
+     15  0000000E  00000001 USING  LABELED     00000000 00001000 FFFFFFFF   5 00004     17 N1.Node,r5                                
+     20  0000001E  00000001 USING  LABELED     00000000 00001000 FFFFFFFF   6 00004     23 N2.Node,r6                                
+1                                   General Purpose Register Cross Reference                                    Page   11            
+- Register  References (M=modified, B=branch, U=USING, D=DROP, N=index)                      HLASM R6.0  2022/08/19 08.33            
+0    0(0)       8                                                                                                                    
+     1(1)       8    12                                                                                                              
+     2(2)       8    12M   40M                                                                                                       
+     3(3)       8    12M   40M                                                                                                       
+     4(4)       8    12M   40M                                                                                                       
+     5(5)       8    14M   15U   19    23    40M                                                                                     
+     6(6)       8    19M   20U   40M                                                                                                 
+     7(7)       8    40M                                                                                                             
+     8(8)       8    40M                                                                                                             
+     9(9)       8    40M                                                                                                             
+    10(A)       8    40M                                                                                                             
+    11(B)       8    40M                                                                                                             
+    12(C)       8     9M   10U   40M                                                                                                 
+    13(D)       8    39    40                                                                                                        
+    14(E)       8    27    29M   36M   36    39M   41B                                                                               
+    15(F)       8     9    27    28M   29B   36M                                                                                     
+1                                  Diagnostic Cross Reference and Assembler Summary                             Page   12            
+-                                                                                            HLASM R6.0  2022/08/19 08.33            
+0     No Statements Flagged in this Assembly                                                                                         
+ HIGH LEVEL ASSEMBLER, 5696-234, RELEASE 6.0, PTF UI79283                                                                            
+0SYSTEM: z/OS 02.04.00              JOBNAME: EARLEC6     STEPNAME: *OMVSEX    PROCSTEP: (NOPROC)                                     
+0Unicode Module:   ASMA047C   From Page     1148   To Page    17584           ECECP: International 1                                 
+ Data Sets Allocated for this Assembly                                                                                               
+  Con DDname   Data Set Name                                Volume  Member                                                           
+   P1 SYSIN    /u/earlec/asm/one.hlasm                                                                                               
+   L1 SYSLIB   TRAINING.ASMLAB.MACLIB                       N$US01                                                                   
+   L2          ASM.SASMMAC2                                 $$SR4H                                                                   
+   L3          CEE.SCEEMAC                                  $$SR4H                                                                   
+   L4          SYS1.MACLIB                                  $$SR4H                                                                   
+   L5          SYS1.MODGEN                                  $$SR4H                                                                   
+      SYSLIN   /u/earlec/asm/build/one.o                                                                                             
+      SYSPRINT /u/earlec/asm/build/one.list                                                                                          
+      SYSTERM  /dev/fd2                                                                                                              
+                                                                                                                                     
+ 1679976K allocated to Buffer Pool       Storage required     396K                                                                   
+      37 Primary Input Records Read         1126 Library Records Read                  0 Work File Reads                             
+       0 ASMAOPT Records Read                276 Primary Print Records Written         0 Work File Writes                            
+       6 Object Records Written                0 ADATA Records Written                                                               
+0Assembly Start Time: 08.33.46 Stop Time: 08.33.46 Processor Time: 00.00.00.0043                                                     
+ Return Code 000                                                                                                                     
