@@ -1,5 +1,5 @@
 import { run } from "./emulate.js";
-import { assembleText } from "./assemble.js";
+import { assemble } from "./assemble.js";
 import { mk_program_from_obj } from "./program.js";
 import { memcpy } from "./bytes.js";
 
@@ -28,7 +28,7 @@ const actionReducer = (s, render) => (type, value) => {
     case "ASSEMBLE_SRC":
       {
         const code_bytes = [
-          ...assembleText(value)
+          ...assemble(value)
             .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
             .map((s) => s.bytes.bytes),
         ].flat();

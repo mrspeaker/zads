@@ -3,35 +3,36 @@ import { chunk, eb2code } from "./utils.js";
 import { disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
+export const assemble = (asmTxt) => {
+  const { stmts, symbols, base, base_addr } = asmTxt
+    .split("\n")
+    .filter((v) => !!v)
+    .map(tokenize)
+    .map(remapExtendedMnemonics)
+    .reduce(assembleStatement, {
+      pc: 0,
+      stmts: [],
+      symbols: {},
+      base: 15, // default to base reg 15. Is that correct?
+      base_addr: 0,
+    });
+
+  // Some memory for a addressable "graphics screen"
+  symbols["screen"] = { pc: 0x100, len: 0x100 };
+
+  return stmts
+    .map((s) => parseOperands(s, symbols, base, base_addr))
+    .map(expandDataStatements);
+};
+
+// TODO: naming! stmt=label+op+opers and stmt=stmt+bytes+pc+type
+
 const mk_stmt = (label, op, operands, comment) => ({
   label,
   op,
   operands,
   comment,
 });
-
-const tokenizeOperands = (ops) => {
-  // comma, followed by NOT open paren, stuff, close paren.
-  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
-  return ops?.split(/,(?![^(]*\))/g);
-};
-
-const tokenize = (line) => {
-  const tok = line.split(" ").reduce((ac, el, i) => {
-    if (i === 0 || el !== "") {
-      ac.push(el);
-    }
-    return ac;
-  }, []);
-
-  const [label, op, operands, ...comment] = tok;
-  return mk_stmt(
-    label.trim(),
-    op,
-    tokenizeOperands(operands),
-    comment?.join(" ")
-  );
-};
 
 const addStmt = (env, stmt) => {
   const op_code = op_name[stmt.op.toUpperCase()];
@@ -60,11 +61,53 @@ const addData = (env, stmt) => {
   });
 };
 
-const checkBoundaryPadding = (env) => {
-  if (env.pc % 4 !== 0) {
-    const padding = [0, 0];
-    addData(env, mk_stmt("", "DC", padding, ""));
-    env.pc += padding.length;
+const tokenizeOperands = (ops) => {
+  // comma, followed by NOT open paren, stuff, close paren.
+  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
+  return ops?.split(/,(?![^(]*\))/g);
+};
+
+const tokenize = (line) => {
+  const tok = line.split(" ").reduce((ac, el, i) => {
+    if (i === 0 || el !== "") {
+      ac.push(el);
+    }
+    return ac;
+  }, []);
+
+  const [label, op, operands, ...comment] = tok;
+  return mk_stmt(
+    label.trim(),
+    op,
+    tokenizeOperands(operands),
+    comment?.join(" ")
+  );
+};
+
+const parseOperands = (s, symbols, base) => {
+  const { stmt, bytes, type } = s;
+  stmt.operands.forEach((o, i) => {
+    const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
+    bytes.operands.push(...op_bytes);
+  });
+  return s;
+};
+
+const parseOperand = (o, symbols, base, type, idx, op) => {
+  const otype = { RR: ["R", "R"], RX: ["R", "X"] }[type] || [];
+  const oidx = otype[idx];
+  if (type && (!otype || !oidx)) {
+    console.warn("what's this operand?", type, o, idx, op);
+  }
+  switch (oidx) {
+    case "R":
+      return parseImmediate(o);
+    case "X":
+      return parseIndexed(o, base, symbols);
+    default: {
+      const v = parseImmediate(o);
+      return v;
+    }
   }
 };
 
@@ -77,15 +120,22 @@ const remapExtendedMnemonics = (stmt) => {
   return stmt;
 };
 
+const checkBoundaryPadding = (env) => {
+  if (env.pc % 4 !== 0) {
+    const padding = [0, 0];
+    addData(env, mk_stmt("", "DC", padding, ""));
+    env.pc += padding.length;
+  }
+};
+
 const assembleStatement = (env, stmt) => {
   const { symbols } = env;
   const { op, operands, label } = stmt;
-  const label_lc = label.toLowerCase();
-  const op_lc = op.toLowerCase(); // make up your mind
-  const op_uc = op.toUpperCase();
+  const label_lc = label.toLowerCase(); // make up...
+  const op_uc = op.toUpperCase(); // ...your mind
   const op_code = op_name[op_uc];
-  const isData = ["dc", "ds"].includes(op_lc);
-  const isUsing = ["using"].includes(op_lc);
+  const isData = ["DC", "DS"].includes(op_uc);
+  const isUsing = ["USING"].includes(op_uc);
 
   if (op_code) {
     addStmt(env, stmt);
@@ -147,68 +197,15 @@ const parseIndexed = (o, base, symbols) => {
   return [0, base, ...disp_to_nibs(symbols[o].pc)];
 };
 
-const parseOperand = (o, symbols, base, type, idx, op) => {
-  const otype = { RR: ["R", "R"], RX: ["R", "X"] }[type] || [];
-  const oidx = otype[idx];
-  if (type && (!otype || !oidx)) {
-    console.warn("what's this operand?", type, o, idx, op);
+const expandDataStatements = (s) => {
+  // TODO: nooope. some bytes are bytes. some are nibbles...
+  if (s.stmt.op.toUpperCase() === "DC") {
+    s.bytes.bytes = [...s.bytes.operands];
+  } else {
+    s.bytes.bytes = [
+      ...s.bytes.op_code,
+      ...chunk(s.bytes.operands.flat(), 2).map((b) => byte_from(...b)),
+    ];
   }
-  switch (oidx) {
-    case "R":
-      return parseImmediate(o);
-    case "X":
-      return parseIndexed(o, base, symbols);
-    default: {
-      const v = parseImmediate(o);
-      return v;
-    }
-  }
-};
-
-const parseOperands = (stmts, symbols, base) => {
-  return stmts.map((s) => {
-    const { stmt, bytes, type } = s;
-    stmt.operands.forEach((o, i) => {
-      const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
-      bytes.operands.push(...op_bytes);
-    });
-    return s;
-  });
-};
-
-const expandData = (stmts) => {
-  return stmts.map((s) => {
-    // TODO: nooope. some bytes are bytes. some are nibbles...
-    if (s.stmt.op.toUpperCase() === "DC") {
-      s.bytes.bytes = [...s.bytes.operands];
-    } else {
-      s.bytes.bytes = [
-        ...s.bytes.op_code,
-        ...chunk(s.bytes.operands.flat(), 2).map((b) => byte_from(...b)),
-      ];
-    }
-    return s;
-  });
-};
-
-export const assembleText = (txt) => {
-  const { stmts, symbols, base, base_addr } = txt
-    .split("\n")
-    .filter((v) => !!v)
-    .map(tokenize)
-    .map(remapExtendedMnemonics)
-    .reduce(assembleStatement, {
-      pc: 0,
-      stmts: [],
-      symbols: {},
-      base: 15, // default to base reg 15. Is that correct?
-      base_addr: 0,
-    });
-
-  // Some memory for a addressable "graphics screen"
-  symbols["screen"] = { pc: 0x100, len: 0x100 };
-
-  const mapped = parseOperands(stmts, symbols, base, base_addr);
-  const expanded = expandData(mapped);
-  return expanded;
+  return s;
 };
