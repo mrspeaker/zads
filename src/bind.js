@@ -1,0 +1,20 @@
+export const bind = (bytes) =>
+  [
+    2,
+    227,
+    231,
+    227,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    bytes.length,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    ...bytes,
+  ].flat();
