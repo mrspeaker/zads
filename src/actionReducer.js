@@ -1,5 +1,6 @@
 import { run } from "./emulate.js";
 import { assemble } from "./assemble.js";
+import { bind } from "./bind.js";
 import { mk_program_from_obj } from "./program.js";
 import { memcpy } from "./bytes.js";
 
@@ -32,25 +33,7 @@ const actionReducer = (s, render) => (type, value) => {
             .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
             .map((s) => s.bytes.bytes),
         ].flat();
-        s.program.obj = [
-          2,
-          227,
-          231,
-          227,
-          0x40,
-          0x40,
-          0x40,
-          0x40,
-          0x40,
-          0x40,
-          0x40,
-          code_bytes.length,
-          0x40,
-          0x40,
-          0x40,
-          0x40,
-          ...code_bytes,
-        ].flat();
+        s.program.obj = bind(code_bytes);
         s.program = mk_program_from_obj(s.program.obj, value);
       }
       break;
