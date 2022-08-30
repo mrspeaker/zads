@@ -15,6 +15,12 @@ const mk_stmt = (label, op, operands, comment) => ({
   comment,
 });
 
+const tokenizeOperands = (ops) => {
+  // comma, followed by NOT open paren, stuff, close paren.
+  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
+  return ops?.split(/,(?![^(]*\))/g);
+};
+
 const tokenize = (line) => {
   const tok = line.split(" ").reduce((ac, el, i) => {
     if (i === 0 || el !== "") {
@@ -24,7 +30,12 @@ const tokenize = (line) => {
   }, []);
 
   const [label, op, operands, ...comment] = tok;
-  return mk_stmt(label.trim(), op, operands?.split(","), comment?.join(" "));
+  return mk_stmt(
+    label.trim(),
+    op,
+    tokenizeOperands(operands),
+    comment?.join(" ")
+  );
 };
 
 const addStmt = (env, stmt) => {
@@ -106,7 +117,6 @@ const parseImmediate = (v) => {
         return [parseInt(num, 16)];
       case "c":
         return [eb2code(rest[0])];
-
       case "f":
         return fw_to_bytes(parseInt(num, 10));
 
@@ -126,7 +136,7 @@ const parseImmediate = (v) => {
 
 const parseIndexed = (o, base, symbols) => {
   if (!symbols[o]) {
-    console.warn("uh oh - real addr.", o, base);
+    console.warn("TODO: parse base/disp addresses!", o);
     return [0, base, 0, 0, 0];
   }
   return [0, base, ...disp_to_nibs(symbols[o].pc)];
