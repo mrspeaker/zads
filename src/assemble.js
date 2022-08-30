@@ -1,12 +1,7 @@
 import { ops, op_name } from "./ops.js";
-import { $, $click, toHex, chunk, eb2code } from "./utils.js";
+import { chunk, eb2code } from "./utils.js";
 import { disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
-
-export const bindAssembleUI = (onAssemble) => {
-  $click("#btnAsm", () => {
-    onAssemble(assembleText($("#src").value));
-  });
-};
+import { ops_extended } from "./ops_extended.js";
 
 const mk_stmt = (label, op, operands, comment) => ({
   label,
@@ -73,31 +68,9 @@ const checkBoundaryPadding = (env) => {
   }
 };
 
-const ext_ops = {
-  NOP: { op: "BC", op_code: op_name.BC, operands: [0] },
-  B: { op: "BC", op_code: op_name.BC, operands: [15] },
-  // After compare
-  BH: { op: "BC", op_code: op_name.BC, operands: [2] },
-  BL: { op: "BC", op_code: op_name.BC, operands: [4] },
-  BNE: { op: "BC", op_code: op_name.BC, operands: [7] },
-  BE: { op: "BC", op_code: op_name.BC, operands: [8] },
-  BNL: { op: "BC", op_code: op_name.BC, operands: [11] },
-  BNH: { op: "BC", op_code: op_name.BC, operands: [13] },
-  // After arithmetic
-  BO: { op: "BC", op_code: op_name.BC, operands: [1] },
-  BP: { op: "BC", op_code: op_name.BC, operands: [2] },
-  BM: { op: "BC", op_code: op_name.BC, operands: [4] },
-  BNZ: { op: "BC", op_code: op_name.BC, operands: [7] },
-  BZ: { op: "BC", op_code: op_name.BC, operands: [8] },
-  BNM: { op: "BC", op_code: op_name.BC, operands: [11] },
-  BNP: { op: "BC", op_code: op_name.BC, operands: [13] },
-  BNO: { op: "BC", op_code: op_name.BC, operands: [14] },
-};
-
-const remapExtended = (stmt) => {
-  const ext = ext_ops[stmt.op.toUpperCase()];
+const remapExtendedMnemonics = (stmt) => {
+  const ext = ops_extended[stmt.op.toUpperCase()];
   if (ext) {
-    console.log("re", stmt);
     stmt.op = ext.op;
     stmt.operands = [...ext.operands, ...stmt.operands];
   }
@@ -223,12 +196,12 @@ export const assembleText = (txt) => {
     .split("\n")
     .filter((v) => !!v)
     .map(tokenize)
-    .map(remapExtended)
+    .map(remapExtendedMnemonics)
     .reduce(assembleStatement, {
       pc: 0,
       stmts: [],
       symbols: {},
-      base: 15,
+      base: 15, // default to base reg 15. Is that correct?
       base_addr: 0,
     });
 
