@@ -73,12 +73,44 @@ const checkBoundaryPadding = (env) => {
   }
 };
 
+const ext_ops = {
+  NOP: { op: "BC", op_code: op_name.BC, operands: [0] },
+  B: { op: "BC", op_code: op_name.BC, operands: [15] },
+  // After compare
+  BH: { op: "BC", op_code: op_name.BC, operands: [2] },
+  BL: { op: "BC", op_code: op_name.BC, operands: [4] },
+  BNE: { op: "BC", op_code: op_name.BC, operands: [7] },
+  BE: { op: "BC", op_code: op_name.BC, operands: [8] },
+  BNL: { op: "BC", op_code: op_name.BC, operands: [11] },
+  BNH: { op: "BC", op_code: op_name.BC, operands: [13] },
+  // After arithmetic
+  BO: { op: "BC", op_code: op_name.BC, operands: [1] },
+  BP: { op: "BC", op_code: op_name.BC, operands: [2] },
+  BM: { op: "BC", op_code: op_name.BC, operands: [4] },
+  BNZ: { op: "BC", op_code: op_name.BC, operands: [7] },
+  BZ: { op: "BC", op_code: op_name.BC, operands: [8] },
+  BNM: { op: "BC", op_code: op_name.BC, operands: [11] },
+  BNP: { op: "BC", op_code: op_name.BC, operands: [13] },
+  BNO: { op: "BC", op_code: op_name.BC, operands: [14] },
+};
+
+const remapExtended = (stmt) => {
+  const ext = ext_ops[stmt.op.toUpperCase()];
+  if (ext) {
+    console.log("re", stmt);
+    stmt.op = ext.op;
+    stmt.operands = [...ext.operands, ...stmt.operands];
+  }
+  return stmt;
+};
+
 const assembleStatement = (env, stmt) => {
   const { symbols } = env;
   const { op, operands, label } = stmt;
   const label_lc = label.toLowerCase();
-  const op_lc = op.toLowerCase();
-  const op_code = op_name[op.toUpperCase()];
+  const op_lc = op.toLowerCase(); // make up your mind
+  const op_uc = op.toUpperCase();
+  const op_code = op_name[op_uc];
   const isData = ["dc", "ds"].includes(op_lc);
   const isUsing = ["using"].includes(op_lc);
 
@@ -191,6 +223,7 @@ export const assembleText = (txt) => {
     .split("\n")
     .filter((v) => !!v)
     .map(tokenize)
+    .map(remapExtended)
     .reduce(assembleStatement, {
       pc: 0,
       stmts: [],
