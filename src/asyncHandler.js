@@ -24,8 +24,16 @@ const asyncHandler = (action) => async (type, value) => {
         action("STORAGE_LOADED", [
           {
             name: "load register",
-            asm: `         l     1,a1
+            asm: `         l     1,a1          load register
+         bcr   b'1111',14    return to caller
 a1       dc    f'42'`,
+          },
+          {
+            name: "loop de loop",
+            asm: `         l     1,a1
+loop     bct   1,loop
+         bcr   b'1111',14
+a1       dc    f'20'`,
           },
           {
             name: "max",
