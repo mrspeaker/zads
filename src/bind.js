@@ -8,4 +8,4 @@ export const bind = (bytes) =>
   ].flat();
 
 const header_0_3 = [2, 227, 231, 227]; // 2, TXT
-const fill = (from, to) => [...Array(to - from)].fill(0x40);
+const fill = (from, to) => [...Array(to - from + 1)].fill(0x40);
