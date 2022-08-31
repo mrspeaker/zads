@@ -2,7 +2,7 @@ import render from "./render.js";
 import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
 import { mk_state } from "./state.js";
-import { $, $click } from "./utils.js";
+import { $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 
 const state = mk_state();
@@ -10,6 +10,7 @@ const action = asyncHandler(actionReducer(state, render));
 
 (async function main(state) {
   bindUI(state, action);
+  action("STORAGE_LOAD");
   action("PROG_LOAD", "max");
 })(state, action);
 
@@ -17,6 +18,10 @@ function bindUI(state, action) {
   editor($("#src"), (text) => action("ASSEMBLE_SRC", text));
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
+
+  $on("#programs", "change", (e) => {
+    action("PROGRAM_SELECT", e.target.value);
+  });
 
   $click("#btnAsm", () => {
     const src = $("#src").value;

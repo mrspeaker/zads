@@ -4,7 +4,7 @@ import { $, toHex, formatObjRecord } from "./utils.js";
 import { bytes_to_fw } from "./bytes.js";
 
 function render(state) {
-  const { machine, program, zads } = state;
+  const { machine, program, zads, programs, selected } = state;
   const { showObjBytes } = zads;
 
   $("#btnUpdate").disabled = !showObjBytes;
@@ -31,6 +31,18 @@ function render(state) {
     $("#psw_pc").value = toHex(psw.pc);
     renderScreen(mem);
   }
+
+  const sel = $("#programs");
+  while (sel.length > 1) {
+    sel.remove(sel.length - 1);
+  }
+  Object.keys(programs).forEach((k) => {
+    const opt = document.createElement("option");
+    opt.text = k;
+    opt.value = k;
+    opt.selected = k === selected;
+    sel.add(opt);
+  });
 }
 
 function renderScreen(mem) {

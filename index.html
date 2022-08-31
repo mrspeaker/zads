@@ -20,7 +20,15 @@
   <div class="boxes">
     <div>
       <textarea id="src" spellcheck="false"></textarea>
-      <div class="boxbar">asm</div>
+      <div class="boxbar">
+        <select id="programs"
+          ><option value="-1">--sel--</option></select
+        >
+        <button>save</button>
+        <button>load</button>
+        <button>del</button>
+        <button id="btnNew">new</button>
+      </div>
     </div>
     <div>
       <textarea id="obj" spellcheck="false"></textarea>

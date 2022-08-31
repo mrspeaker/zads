@@ -7,6 +7,8 @@ export const mk_state = () => ({
   },
   machine: mk_machine(),
   program: null,
+  programs: {},
+  selected: null,
 });
 
 const mk_machine = () => ({

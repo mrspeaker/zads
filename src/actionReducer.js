@@ -3,12 +3,27 @@ import { assemble } from "./assemble.js";
 import { bind } from "./bind.js";
 import { mk_program_from_obj } from "./program.js";
 import { memcpy } from "./bytes.js";
+import { mk_program } from "./state.js";
 
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
   switch (type) {
     case "PROG_LOADED":
       s.program = value;
+      break;
+    case "STORAGE_LOADED":
+      value.forEach((p) => {
+        s.programs[p.name] = p.asm;
+      });
+      break;
+    case "PROGRAM_SELECT":
+      if (value !== "-1") {
+        s.program = mk_program();
+        s.program.src = s.programs[value];
+        s.selected = value;
+      } else {
+        s.selected = null;
+      }
       break;
     case "UPDATE_OBJ":
       s.program.code = value.code;
