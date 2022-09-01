@@ -51,6 +51,7 @@ const actionReducer = (s, render) => (type, value) => {
         delete s.programs[s.selected];
         const p = mk_program();
         s.program = p;
+        s.selected = null;
         save(s.programs);
       }
       break;
