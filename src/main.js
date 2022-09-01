@@ -38,7 +38,7 @@ function bindUI(state, action) {
     action("PROGRAM_SAVE", $("#src").value);
   });
   $click("#btnDeletePgm", () => {
-    if (confirm("Yeah?")) {
+    if (state.selected && confirm("Yeah?")) {
       action("PROGRAM_DELETE");
     }
   });
