@@ -34,6 +34,10 @@ function bindUI(state, action) {
     updateDis($("#dis"));
   });
 
+  $click("#btnSave", () => {
+    action("PROGRAM_SAVE", $("#src").value);
+  });
+
   const updateDis = (txt) => {
     const code = txt
       .split("\n")

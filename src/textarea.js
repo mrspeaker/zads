@@ -12,7 +12,6 @@ export const editor = (input, onSave) => {
       return null;
     }
     if (metaKey && which === 83 /* cmd-s */) {
-      console.log("what");
       e.preventDefault();
       return onSave(input.value);
     }

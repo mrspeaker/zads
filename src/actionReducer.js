@@ -5,6 +5,11 @@ import { mk_program_from_obj } from "./program.js";
 import { memcpy } from "./bytes.js";
 import { mk_program } from "./state.js";
 
+const save = async (progs) => {
+  if (!window.localStorage) return;
+  localStorage.setItem("programs", JSON.stringify(progs));
+};
+
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
   switch (type) {
@@ -12,9 +17,7 @@ const actionReducer = (s, render) => (type, value) => {
       s.program = value;
       break;
     case "STORAGE_LOADED":
-      value.forEach((p) => {
-        s.programs[p.name] = p.asm;
-      });
+      s.programs = value;
       break;
     case "PROGRAM_SELECT":
       if (value !== "-1") {
@@ -24,6 +27,23 @@ const actionReducer = (s, render) => (type, value) => {
       } else {
         s.selected = null;
       }
+      break;
+    case "PROGRAM_SAVE":
+      if (!s.selected) {
+        const name = prompt("save as?");
+        if (name) {
+          const p = mk_program();
+          p.src = value;
+          s.program = p;
+          s.programs[name] = p.src;
+          s.selected = name;
+        }
+      } else {
+        s.programs[s.selected] = value;
+        s.program.src = value;
+      }
+      // how to do this properly? (async)
+      save(s.programs);
       break;
     case "UPDATE_OBJ":
       s.program.code = value.code;

@@ -93,7 +93,6 @@ textarea {
 
 .controls {
   display: flex;
-  align-items: space-between;
   background-color: #333;
   color: #999;
 }
