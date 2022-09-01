@@ -34,8 +34,13 @@ function bindUI(state, action) {
     updateDis($("#dis"));
   });
 
-  $click("#btnSave", () => {
+  $click("#btnSavePgm", () => {
     action("PROGRAM_SAVE", $("#src").value);
+  });
+  $click("#btnDeletePgm", () => {
+    if (confirm("Yeah?")) {
+      action("PROGRAM_DELETE");
+    }
   });
 
   const updateDis = (txt) => {

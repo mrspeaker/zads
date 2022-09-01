@@ -45,6 +45,15 @@ const actionReducer = (s, render) => (type, value) => {
       // how to do this properly? (async)
       save(s.programs);
       break;
+
+    case "PROGRAM_DELETE":
+      if (s.selected) {
+        delete s.programs[s.selected];
+        const p = mk_program();
+        s.program = p;
+        save(s.programs);
+      }
+      break;
     case "UPDATE_OBJ":
       s.program.code = value.code;
       break;
