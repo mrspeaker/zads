@@ -9,6 +9,12 @@
   --status-bar: rgba(225, 226, 217, 0.7);
   --highlight-warm: #eaa49c;
   --highlight-cool: #b4e3d1;
+
+    --background-color: #222;
+    --text-color: #b4f3a1;
+    --text-color-unselected: #999;
+    --status-bar: #333;
+
 }
 
 
@@ -40,12 +46,14 @@ body {
   color: var(--text-color);
   margin: 0;
   font-family: vga, monospace;
+  font-size: 16pt;
 }
 
 input,
 button,
 select,
 textarea {
+  font-size:16pt;
   font-family: vga, monospace;
   caret-color: var(--highlight-warm);
   border-radius:2px;
@@ -95,14 +103,17 @@ input {
 }
 
 textarea {
-  font-size: 8pt;
   border: 0;
   padding: 8px;
   background-color:var(--background-color);
-  color: var(--text-color);
+  color: var(--text-color-unselected);
   resize: none;
   padding-bottom: 20px;
 }
+textarea:focus {
+  color: var(--text-color);
+}
+
 select {
   border: 0;
   background-color: var(--highlight-warm)
