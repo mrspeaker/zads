@@ -1,10 +1,17 @@
+@font-face {
+    font-family: "vga";
+    src: url("res/Web437_IBM_VGA_8x16.woff") format('woff');
+}
+
 :root {
   --background-color: #fdfff4;;
   --text-color: #000;
   --status-bar: rgba(225, 226, 217, 0.7);
   --highlight-warm: #eaa49c;
   --highlight-cool: #b4e3d1;
-} 
+}
+
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -32,21 +39,27 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   margin: 0;
+  font-family: vga, monospace;
 }
 
 input,
 button,
+select,
 textarea {
-  font-family: monospace;
+  font-family: vga, monospace;
   caret-color: var(--highlight-warm);
+  border-radius:2px;
+    box-shadow: inset -1px -1px 1px rgba(10,0,10,0.3),
+              inset 1px 1px 1px rgba(255,255,230,0.6);
+
 }
 
-button {
+button{ 
   background-color: var(--highlight-cool);
   border: 0;
   cursor: pointer;
 }
-.controls button:last-child {
+.Controls button:last-child {
   background-color: var(--highlight-warm);
 }
 
@@ -65,7 +78,7 @@ input {
 .boxes > * {
   height: calc(50vh - 18px);
   flex: 0 0 33.333333%;
-  border-right: 1px dotted rgba(0, 0, 0, 0.4);
+/*  border-right: 1px dashed rgba(0, 0, 0, 0.4);*/
   position: relative;
 }
 .boxes > * > textarea {
@@ -90,11 +103,15 @@ textarea {
   resize: none;
   padding-bottom: 20px;
 }
-
+select {
+  border: 0;
+  background-color: var(--highlight-warm)
+}
 .controls {
   display: flex;
   background-color: #333;
   color: #999;
+  padding: 1px 0;
 }
 .controls > div {
   flex: 1;
@@ -102,7 +119,8 @@ textarea {
 .controls .buttons {
   display: inline-flex;
 }
-.controls .buttons button {
+.controls .buttons button,
+.boxbar > * {
   margin-right: 1px;
 }
 .controls .psw {
