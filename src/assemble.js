@@ -150,24 +150,31 @@ const assembleStatement = (env, stmt) => {
   const isUsing = ["USING"].includes(op_uc);
 
   if (op_code) {
+    // ====== Regular op code =========
+
     addStmt(env, stmt);
     label && (symbols[label_lc] = { pc: env.pc, len: ops[op_code].len });
     env.pc += ops[op_code].len;
   } else if (isData) {
-    checkBoundaryPadding(env);
+    // ======= Data statement: eg `DC 18f'0'` ==========
 
+    checkBoundaryPadding(env);
     const mstmt = addData(env, stmt);
     const bytes = parseDataOperand(mstmt.stmt.operands[0]);
     mstmt.stmt.operands = bytes;
     label && (symbols[label_lc] = { pc: env.pc, len: bytes.length });
     env.pc += bytes.length;
   } else if (isUsing) {
+    // ========= USING statement ============
+
     const [addr, base] = operands;
     const addr_lc = addr.trim().toLowerCase();
     env.base = parseInt(base, 10);
     // TODO: currently only finds symbols _before_ current statement!
     env.base_addr = addr_lc === "*" ? env.pc : symbols[addr_lc];
   } else {
+    // ============= Label ============
+
     const lbltxt = label ? `[${label}]` : " ";
     label && (symbols[label_lc] = { pc: env.pc, len: 4 });
     console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
