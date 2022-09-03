@@ -50,7 +50,7 @@ const addStmt = (env, stmt) => {
 };
 
 const addData = (env, stmt) => {
-  return env.stmts.push({
+  const d = {
     stmt,
     bytes: {
       op_code: [],
@@ -58,7 +58,9 @@ const addData = (env, stmt) => {
       bytes: [],
     },
     pc: env.pc,
-  });
+  };
+  env.stmts.push(d);
+  return d;
 };
 
 const tokenizeOperands = (ops) => {
@@ -111,6 +113,16 @@ const parseOperand = (o, symbols, base, type, idx, op) => {
   }
 };
 
+const parseDataOperand = (d) => {
+  const numReps = parseInt(d, 10);
+  if (isNaN(numReps)) {
+    return parseImmediate(d);
+  }
+  // Expand repetitions
+  const value = d.slice((numReps + "").length);
+  return new Array(numReps).fill(parseImmediate(value)).flat();
+};
+
 const remapExtendedMnemonics = (stmt) => {
   const ext = ops_extended[stmt.op.toUpperCase()];
   if (ext) {
@@ -143,9 +155,12 @@ const assembleStatement = (env, stmt) => {
     env.pc += ops[op_code].len;
   } else if (isData) {
     checkBoundaryPadding(env);
-    addData(env, stmt);
-    label && (symbols[label_lc] = { pc: env.pc, len: 4 });
-    env.pc += 4; // TODO: needs to be DC len!
+
+    const mstmt = addData(env, stmt);
+    const bytes = parseDataOperand(mstmt.stmt.operands[0]);
+    mstmt.stmt.operands = bytes;
+    label && (symbols[label_lc] = { pc: env.pc, len: bytes.length });
+    env.pc += bytes.length;
   } else if (isUsing) {
     const [addr, base] = operands;
     const addr_lc = addr.trim().toLowerCase();
