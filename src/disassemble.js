@@ -39,6 +39,8 @@ function line(psw, obj, showBytes) {
     if (showBytes) {
       txt = pc_loc + toHex(op) + "," + toHex(obj[psw++]);
     } else {
+      // TODO: check symbol at pc_loc... if length, show that
+      // instead of every byte!
       txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
     }
     if (op > 1) {

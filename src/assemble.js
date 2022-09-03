@@ -132,6 +132,7 @@ const remapExtendedMnemonics = (stmt) => {
   return stmt;
 };
 
+// Ensure data is placed on halfword boundary
 const checkBoundaryPadding = (env) => {
   if (env.pc % 4 !== 0) {
     const padding = [0, 0];
