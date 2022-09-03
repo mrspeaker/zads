@@ -3,6 +3,7 @@
     src: url("res/Web437_IBM_VGA_8x16.woff") format('woff');
 }
 
+
 :root {
   --background-color: #fdfff4;;
   --text-color: #000;
@@ -46,14 +47,14 @@ body {
   color: var(--text-color);
   margin: 0;
   font-family: vga, monospace;
-  font-size: 16pt;
+  font-size: 1vw;
 }
 
 input,
 button,
 select,
 textarea {
-  font-size:16pt;
+  font-size:1.2vw;
   font-family: vga, monospace;
   caret-color: var(--highlight-warm);
   border-radius:2px;
