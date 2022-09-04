@@ -106,10 +106,10 @@ const tokenize = (line) => {
 const parseOperands = (s, symbols, base) => {
   const { stmt, bytes, type } = s;
   // Parse to bytes
-  const enc = stmt.operands.map((o, i) => {
-    const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
-    return op_bytes;
-  });
+  const enc = stmt.operands.map((o, i) =>
+    parseOperand(o, symbols, base, type, i, stmt.op)
+  );
+
   // Re-org operands depending on operation.
   if (["RR", "RX"].includes(type)) {
     if (enc.length > 2) {
