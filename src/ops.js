@@ -33,7 +33,7 @@ const addAndCC = (a, b) => {
   let cc = 0;
   if (c === 0) {
     cc = 0; // == 0
-  } else if (c > 0xf0000000) {
+  } else if (c < 0 || c > 0xf0000000) {
     cc = 1; // < 0
   } else {
     cc = 2; // > 0;
@@ -112,6 +112,25 @@ export const ops = {
     desc:
       "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
+  0x1b: {
+    mn: "SR",
+    code: [0x1b],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = regval(regs[r1]);
+      const b = regval(regs[r2]);
+      const { res, cc } = addAndCC(a, -b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
+    },
+    name: "subtract",
+    desc:
+      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
+    pdf: "7-219",
     type: "RR",
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
@@ -223,6 +242,26 @@ export const ops = {
     desc:
       "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OP R1 X2 B2 D2D2D2",
+  },
+  0x5b: {
+    mn: "S",
+    code: [0x5b],
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const a = regval(regs[r1]);
+      const b = memval_f(mem, ptr);
+      const { res, cc } = addAndCC(a, -b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
+    },
+    name: "subtract",
+    desc:
+      "The second operand is subtracted from the first oper- and, and the difference is placed at the first-operand location.",
+    pdf: "7-219",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",

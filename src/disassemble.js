@@ -48,7 +48,6 @@ function line(psw, obj, symbol, showBytes) {
     const op_code_txt = toHex(b1);
     if (showBytes) {
       const bb = obj[psw + 1];
-      console.log(psw.toString(16), bb);
       txt = pc_loc + op_code_txt + "," + toHex(bb);
       psw += 2;
     } else {
