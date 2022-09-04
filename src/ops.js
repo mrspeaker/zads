@@ -190,7 +190,7 @@ export const ops = {
     type: "RX",
     pdf: "7-29",
     desc:
-      "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, nor- mal instruction sequencing proceeds with the updated instruction address.",
+      "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
     form: "OP M1,D2(X2,B2)",
     form_int: "OPOP M1 X2 B2 D2D2D2",
   },
@@ -204,7 +204,7 @@ export const ops = {
     },
     name: "store",
     desc:
-      "The first operand is placed unchanged at the second- operand location.",
+      "The first operand is placed unchanged at the second operand location.",
     pdf: "7-211",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -222,7 +222,7 @@ export const ops = {
     pdf: "7-150",
     type: "RX",
     desc:
-      "The second operand is placed unchanged at the first- operand location",
+      "The second operand is placed unchanged at the first operand location",
     form: "OP R1,D2(X2,B2)",
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
@@ -260,7 +260,7 @@ export const ops = {
     },
     name: "subtract",
     desc:
-      "The second operand is subtracted from the first oper- and, and the difference is placed at the first-operand location.",
+      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
     type: "RX",
     form: "OP R1,D2(X2,B2)",

@@ -4,7 +4,7 @@ import asyncHandler from "./asyncHandler.js";
 import { mk_state } from "./state.js";
 import { $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
-
+import { get_help_text } from "./help.js";
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
 
@@ -18,6 +18,22 @@ function bindUI(state, action) {
   editor($("#src"), (text) => action("ASSEMBLE_SRC", text));
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
+
+  $on("#src", "selectionchange", (e) => {
+    const area = e.target;
+    const { selectionStart, selectionEnd, selectionDirection } = area;
+    const txt = e.target.value.substring(selectionStart, selectionEnd);
+    // TODO: move to reducer+render
+    area.title = "";
+    const help = get_help_text(txt);
+    if (!help) return;
+    const { desc, type, form, pdf } = help;
+    const link = pdf ? `<a href="#">${pdf}<a>` : "";
+    $("#help").innerHTML = `[${type}] ${form} ${link}`;
+    if (desc) {
+      area.title = help.desc;
+    }
+  });
 
   $on("#programs", "change", (e) => {
     action("PROGRAM_SELECT", e.target.value);

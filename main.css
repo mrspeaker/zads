@@ -50,6 +50,9 @@ body {
   font-size: 1vw;
 }
 
+a {
+  color: var(--highlight-warm);
+}
 input,
 button,
 select,
