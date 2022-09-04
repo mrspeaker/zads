@@ -30,7 +30,7 @@ export const memcpy = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
 
-const regval = (r) => bytes_to_fw(...r);
+export const regval = (r) => bytes_to_fw(...r);
 export const regset = (r, num) => {
   const bytes = fw_to_bytes(num);
   r[0] = bytes[0];

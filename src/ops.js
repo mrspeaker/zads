@@ -6,6 +6,7 @@ import {
   memcpy,
   bytes_to_fw,
   regset,
+  regval,
 } from "./bytes.js";
 
 export const nop = () => {};
@@ -61,6 +62,24 @@ export const ops = {
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
   },
+  0x1a: {
+    op: "AR",
+    len: 2,
+    f: ([r1, r2], regs) => {
+      const a = regval(regs[r1]);
+      const b = regval(regs[r2]);
+      // TODO: carry/overflow!
+      regset(regs[r1], a + b);
+    },
+    name: "add",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    pdf: "7-20",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1,R2",
+  },
+
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
     op: "LA",
