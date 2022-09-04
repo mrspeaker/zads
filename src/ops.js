@@ -1,5 +1,6 @@
 import {
   base_displace,
+  byte_from,
   nib3_to_byte,
   mem_to_reg,
   memcpy,
@@ -164,10 +165,11 @@ export const ops = {
   0x92: {
     op: "MVI",
     len: 4,
-    f: ([d1a, d1b, d1c, i2], regs, mem, psw) => {
-      console.log("MVI", d1a, d1b, d1c, i2);
-      //      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      //      memcpy(regs[r1], mem, ptr);
+    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+      const val = byte_from(i1, i2);
+      const ptr = base_displace(0, regs[r1], da, db, dc);
+      // TODO: +3? Where should it write?
+      mem[ptr + 3] = val;
     },
     name: "move",
     desc: "The second operand is placed at the first-operand location.",

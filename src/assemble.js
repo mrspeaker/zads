@@ -1,6 +1,12 @@
 import { ops, op_name } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
+import {
+  nib,
+  disp_to_nibs,
+  byte_from,
+  fw_to_bytes,
+  nibs_to_bytes,
+} from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -68,6 +74,7 @@ const addData = (env, stmt) => {
       bytes: [],
     },
     pc: env.pc,
+    type: "DC",
   };
   env.stmts.push(d);
   return d;
@@ -98,27 +105,53 @@ const tokenize = (line) => {
 
 const parseOperands = (s, symbols, base) => {
   const { stmt, bytes, type } = s;
-  stmt.operands.forEach((o, i) => {
+  // Parse to bytes
+  const enc = stmt.operands.map((o, i) => {
     const op_bytes = parseOperand(o, symbols, base, type, i, stmt.op);
-    bytes.operands.push(...op_bytes);
+    return op_bytes;
   });
+  // Re-org operands depending on operation.
+  if (["RR", "RX"].includes(type)) {
+    if (enc.length > 2) {
+      console.warn("nop, rong length", enc);
+    }
+    bytes.operands.push(...enc[0], ...enc[1]);
+  } else if (["SI"].includes(type)) {
+    // I2I2 B1 D1D1D1
+    bytes.operands.push(...enc[1], ...enc[0].slice(1));
+  } else if (!type || type === "DC") {
+    // Just dump the bytes
+    enc.forEach((bs) => bytes.operands.push(...bs));
+  } else {
+    console.log("not rr rx si...", type, enc);
+  }
   return s;
 };
 
+// Return (mostly?) nibbles
 const parseOperand = (o, symbols, base, type, idx, op) => {
-  const otype = { RR: ["R", "R"], RX: ["R", "X"] }[type] || [];
+  if (type === "DC") {
+    return parseImmediate(o);
+  }
+  const otype = { RR: ["R", "R"], RX: ["R", "X"], SI: ["S", "I"] }[type] || [];
   const oidx = otype[idx];
-  if (type && (!otype || !oidx)) {
-    console.warn("what's this operand?", type, o, idx, op);
+  if (type && type !== "DC" && (!otype || !oidx)) {
+    console.warn("What's this operand?", type, o, idx, op);
   }
   switch (oidx) {
     case "R":
+      // One number? Correct? Should not be over 15 anyway.
+      if (o > 15 || o < 0) console.warn("bad reg", o);
       return parseImmediate(o);
+    case "I":
+      return nib(parseImmediate(o));
     case "X":
-      return parseIndexed(o, base, symbols);
+    case "S": {
+      return parseBaseDisplace(o, base, symbols);
+    }
     default: {
-      const v = parseImmediate(o);
-      return v;
+      console.warn("unhandeld op?", oidx, otype, type);
+      return parseImmediate(o);
     }
   }
 };
@@ -222,16 +255,16 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
-const parseIndexed = (o, base, symbols) => {
+const parseBaseDisplace = (o, base, symbols) => {
+  const INDEX = 0;
   if (!symbols[o]) {
     console.warn("TODO: parse base/disp addresses!", o);
-    return [0, base, 0, 0, 0];
+    return [INDEX, base, 0, 0, 0];
   }
-  return [0, base, ...disp_to_nibs(symbols[o].pc)];
+  return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
 };
 
 const expandDataStatements = (s) => {
-  // TODO: nooope. some bytes are bytes. some are nibbles...
   if (s.stmt.op.toUpperCase() === "DC") {
     s.bytes.bytes = [...s.bytes.operands];
   } else {
