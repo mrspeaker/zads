@@ -11,9 +11,10 @@ import {
 
 export const nop = () => {};
 export const ops = {
-  0x05: { op: "BALR", len: 2, f: nop },
+  0x05: { op: "BALR", code: 0x05, len: 2, f: nop },
   0x07: {
     op: "BCR",
+    code: 0x07,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       if (r1 === 15 && r2 == 14) {
@@ -27,10 +28,11 @@ export const ops = {
     form: "OP M1,R1",
     form_int: "OPOP M1 R1",
   },
-  0x0b: { op: "BSM", len: 2, f: nop },
-  0x0d: { op: "BSR", len: 2, f: nop },
+  0x0b: { op: "BSM", code: 0x0b, len: 2, f: nop },
+  0x0d: { op: "BSR", code: 0x0d, len: 2, f: nop },
   0x18: {
     op: "LR",
+    code: 0x18,
     len: 2,
     f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
     name: "load",
@@ -39,10 +41,11 @@ export const ops = {
     pdf: "7-150",
     type: "RR",
     form: "OP R1,R2",
-    form_int: "OPOP R1,R2",
+    form_int: "OPOP R1 R2",
   },
   0x19: {
     op: "CR",
+    code: 0x19,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(...regs[r1]);
@@ -64,6 +67,7 @@ export const ops = {
   },
   0x1a: {
     op: "AR",
+    code: 0x1a,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = regval(regs[r1]);
@@ -78,12 +82,13 @@ export const ops = {
     pdf: "7-20",
     type: "RR",
     form: "OP R1,R2",
-    form_int: "OPOP R1,R2",
+    form_int: "OPOP R1 R2",
   },
 
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
     op: "LA",
+    code: 0x41,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
@@ -100,6 +105,7 @@ export const ops = {
 
   0x46: {
     op: "BCT",
+    code: 0x46,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
@@ -120,6 +126,7 @@ export const ops = {
   },
   0x47: {
     op: "BC",
+    code: 0x47,
     len: 4,
     f: ([m, x, b, da, db, dc], regs, mem, psw) => {
       const cc = [8, 4, 2, 1][psw.conditionCode];
@@ -138,6 +145,7 @@ export const ops = {
   },
   0x50: {
     op: "ST",
+    code: 0x50,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
@@ -153,6 +161,7 @@ export const ops = {
   },
   0x58: {
     op: "L",
+    code: 0x58,
     len: 4,
     f: ([r, x, b, d1, d2, d3], regs, mem) => {
       // L R1,D2(X2,B2)   [RX]
@@ -168,6 +177,7 @@ export const ops = {
   },
   0x5a: {
     op: "A",
+    code: 0x5a,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
@@ -181,9 +191,10 @@ export const ops = {
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",
   },
-  0x90: { op: "STM", len: 4, f: nop },
+  0x90: { op: "STM", code: 0x90, len: 4, f: nop },
   0x92: {
     op: "MVI",
+    code: 0x92,
     len: 4,
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
       const val = byte_from(i1, i2);
@@ -200,6 +211,7 @@ export const ops = {
   },
   0x98: {
     op: "LM",
+    code: 0x98,
     len: 4,
     f: (ops, regs, mem) => {
       // Erm, check this logic. Looks real bad.
@@ -217,7 +229,23 @@ export const ops = {
       ptr += 4;
     },
   },
-  0xd7: { op: "XC", len: 6, f: nop },
+  0xd7: { op: "XC", code: 0xd7, len: 6, f: nop },
+  0xa70a: {
+    op: "AHI",
+    code: 0xa70a,
+    len: 4,
+    f: ([r1, i2], regs) => {
+      //          memcpy(regs[r2], regs[r1]),
+      console.log("AHI", r1, i2);
+    },
+    name: "add halfword immediate",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
+    pdf: "7-22",
+    type: "RI",
+    form: "OP R1,I2",
+    form_int: "OPOP R1 OP I2I2I2",
+  },
 };
 
 // TODO: maybe return array for multi-byte ops

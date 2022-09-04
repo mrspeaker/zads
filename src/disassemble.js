@@ -21,7 +21,7 @@ export function disassemble(code, symbols, showBytes) {
 function line(psw, obj, symbol, showBytes) {
   let txt = "";
   const op = obj[psw++];
-  const o = ops[op];
+  const o = ops[op]; //get_op(obj, psw++);
   const pc_loc = toHex(psw - 1) + ": ";
   if (o) {
     const { op: name, len: bytes } = o;
