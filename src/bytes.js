@@ -29,6 +29,8 @@ export const chkBytes = (arr, bytes, offset = 0) =>
 export const memcpy = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
+export const memval_f = (mem, offset) =>
+  bytes_to_fw(mem[offset], mem[offset + 1], mem[offset + 2], mem[offset + 3]);
 
 export const regval = (r) => bytes_to_fw(...r);
 export const regset = (r, num) => {

@@ -8,14 +8,14 @@ export function run(obj, env) {
   regset(env.regs[15], 0);
 
   env.psw.halt = false;
-  const code_txt = [];
+  const exe_txt = [];
   while (!env.psw.halt && env.psw.pc < obj.length) {
-    step(obj, env, code_txt);
+    step(obj, env, exe_txt);
   }
-  return code_txt;
+  return exe_txt;
 }
 
-function step(obj, env, code_txt) {
+function step(obj, env, exe_txt) {
   const { regs, mem, psw } = env;
   const op = get_op(obj, psw.pc++);
   if (op) {
@@ -25,11 +25,12 @@ function step(obj, env, code_txt) {
       .slice(psw.pc, psw.pc + num)
       .map(nib)
       .flat();
-    code_txt.push(toHex(psw.pc - 1) + ":" + mn + " " + opers.join("."));
+
+    exe_txt.push(toHex(psw.pc - 1) + ":" + mn + " " + opers.join("."));
     f(opers, regs, mem, psw);
     psw.pc += num;
   } else {
-    code_txt.push(toHex(psw.pc - 1) + ": ??? " + op.code.join(""));
+    exe_txt.push(toHex(psw.pc - 1) + ": ??? " + op.code.join(""));
 
     console.log("op?", psw.pc, "(", op.code.join(""), ")");
   }

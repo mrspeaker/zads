@@ -4,6 +4,7 @@ import {
   nib3_to_byte,
   mem_to_reg,
   memcpy,
+  memval_f,
   bytes_to_fw,
   regset,
   regval,
@@ -24,6 +25,19 @@ export const get_op = (obj, psw) => {
 
 const ext_ops = {
   0xa7: true,
+};
+
+const addAndCC = (a, b) => {
+  const c = a + b;
+  let cc = 0;
+  if (c === 0) {
+    cc = 0;
+  } else if (c < 0) {
+    cc = 1;
+  } else {
+    cc = 2;
+  }
+  return { res: c, cc };
 };
 
 export const nop = () => {};
@@ -89,9 +103,9 @@ export const ops = {
     f: ([r1, r2], regs, mem, psw) => {
       const a = regval(regs[r1]);
       const b = regval(regs[r2]);
-      // TODO: carry/overflow!
-      psw.conditionCode = 0;
-      regset(regs[r1], a + b);
+      const { res, cc } = addAndCC(a, b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
     },
     name: "add",
     desc:
@@ -196,9 +210,13 @@ export const ops = {
     mn: "A",
     code: [0x5a],
     len: 4,
-    f: ([r1, x2, b2, da, db, dc], regs, mem) => {
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      mem_to_reg(mem, ptr, regs[r1]);
+      const a = regval(regs[r1]);
+      const b = memval_f(mem, ptr);
+      const { res, cc } = addAndCC(a, b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
     },
     name: "add",
     desc:
