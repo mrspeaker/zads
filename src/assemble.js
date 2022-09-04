@@ -20,9 +20,19 @@ export const assemble = (asmTxt) => {
   // Some memory for a addressable "graphics screen"
   symbols["screen"] = { pc: 0x100, len: 0x100 };
 
-  return stmts
+  const bytes = stmts
     .map((s) => parseOperands(s, symbols, base, base_addr))
     .map(expandDataStatements);
+
+  return {
+    stmts,
+    bytes,
+    symbols,
+    addressing: {
+      base,
+      base_addr,
+    },
+  };
 };
 
 // TODO: naming! stmt=label+op+opers and stmt=stmt+bytes+pc+type

@@ -73,13 +73,19 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "ASSEMBLE_SRC":
       {
+        const { stmts, bytes, symbols, addressing } = assemble(value);
+
         const code_bytes = [
-          ...assemble(value)
+          ...bytes
             .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
             .map((s) => s.bytes.bytes),
         ].flat();
         s.program.obj = bind(code_bytes);
         s.program = mk_program_from_obj(s.program.obj, value);
+        s.program.symbols = symbols;
+        s.program.addressing.base = addressing.base;
+        s.program.addressing.base_addr = addressing.base_addr;
+        s.program.stmts = stmts;
       }
       break;
     default:

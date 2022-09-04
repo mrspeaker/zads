@@ -28,4 +28,6 @@ export const mk_program = () => ({
   src: [],
   code: [],
   code_txt: [],
+  symbols: {},
+  addressing: { base: 15, base_addr: 0 },
 });

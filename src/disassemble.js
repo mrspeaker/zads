@@ -2,18 +2,23 @@ import { ops } from "./ops.js";
 import { toHex, chunk } from "./utils.js";
 import { nib, nib2_to_byte } from "./bytes.js";
 
-export function disassemble(code, showBytes) {
+export function disassemble(code, symbols, showBytes) {
   let psw = 0;
   const output = [];
+  const symloc = Object.entries(symbols).reduce((ac, [k, v]) => {
+    ac[v.pc] = { label: k, len: v.len, pc: v.pc };
+    return ac;
+  }, {});
   while (psw < code.length) {
-    let [newPsw, txt] = line(psw, code, showBytes);
+    const symbol = symloc[psw];
+    let [newPsw, txt] = line(psw, code, symbol, showBytes);
     output.push(txt);
     psw = newPsw;
   }
   return output;
 }
 
-function line(psw, obj, showBytes) {
+function line(psw, obj, symbol, showBytes) {
   let txt = "";
   const op = obj[psw++];
   const o = ops[op];
@@ -41,7 +46,18 @@ function line(psw, obj, showBytes) {
     } else {
       // TODO: check symbol at pc_loc... if length, show that
       // instead of every byte!
-      txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
+      if (symbol) {
+        console.log("sym!", symbol.len, symbol);
+        txt =
+          pc_loc +
+          "" +
+          symbol.label +
+          ":" +
+          obj.slice(psw - 1, psw + symbol.len - 1).map((v) => toHex(v) + "");
+        psw += symbol.len - 1;
+      } else {
+        txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
+      }
     }
     if (op > 1) {
       console.log("wat op?", psw, toHex(op), "(", op, ")");

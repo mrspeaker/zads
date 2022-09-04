@@ -10,14 +10,14 @@ function render(state) {
   $("#btnUpdate").disabled = !showObjBytes;
 
   if (program) {
-    const { goff, obj, src, code_txt, code } = program;
+    const { goff, obj, src, code_txt, code, symbols } = program;
     $("#format").innerText = goff ? "GOFF" : "OBJ";
     $("#src").value = src;
     $("#obj").value = showObjBytes
       ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
       : obj.map(formatObjRecord).join("\n----------------\n");
     $("#emu").value = code_txt?.join("\n");
-    $("#dis").value = disassemble(code, showObjBytes).join("\n");
+    $("#dis").value = disassemble(code, symbols, showObjBytes).join("\n");
   }
 
   if (machine) {
