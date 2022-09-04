@@ -65,10 +65,11 @@ export const ops = {
   0x1a: {
     op: "AR",
     len: 2,
-    f: ([r1, r2], regs) => {
+    f: ([r1, r2], regs, mem, psw) => {
       const a = regval(regs[r1]);
       const b = regval(regs[r2]);
       // TODO: carry/overflow!
+      psw.conditionCode = 0;
       regset(regs[r1], a + b);
     },
     name: "add",
@@ -84,7 +85,7 @@ export const ops = {
   0x41: {
     op: "LA",
     len: 4,
-    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+    f: ([r1, x2, b2, da, db, dc], regs) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
       regset(regs[r1], ptr);
     },
