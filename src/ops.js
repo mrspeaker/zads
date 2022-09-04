@@ -28,14 +28,15 @@ const ext_ops = {
 };
 
 const addAndCC = (a, b) => {
+  // TODO: handle overflow!
   const c = a + b;
   let cc = 0;
   if (c === 0) {
-    cc = 0;
-  } else if (c < 0) {
-    cc = 1;
+    cc = 0; // == 0
+  } else if (c > 0xf0000000) {
+    cc = 1; // < 0
   } else {
-    cc = 2;
+    cc = 2; // > 0;
   }
   return { res: c, cc };
 };
