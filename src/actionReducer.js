@@ -81,7 +81,7 @@ const actionReducer = (s, render) => (type, value) => {
 
         const code_bytes = [
           ...bytes
-            .filter((s) => !["DS"].includes(s.stmt.op.toUpperCase()))
+            .filter((s) => !["DS"].includes(s.stmt.mn.toUpperCase()))
             .map((s) => s.bytes.bytes),
         ].flat();
         s.program.obj = bind(code_bytes);

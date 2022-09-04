@@ -1,4 +1,4 @@
-import { ops } from "./ops.js";
+import { ops, get_op } from "./ops.js";
 import { toHex, chunk } from "./utils.js";
 import { nib, nib2_to_byte } from "./bytes.js";
 
@@ -20,8 +20,10 @@ export function disassemble(code, symbols, showBytes) {
 
 function line(psw, obj, symbol, showBytes) {
   let txt = "";
-  const op = obj[psw++];
-  const o = ops[op]; //get_op(obj, psw++);
+  //  const op = obj[psw++];
+  //    const o = ops[op]; //get_op(obj, psw++);
+  const o = get_op(obj, psw++);
+
   const pc_loc = toHex(psw - 1) + ": ";
   if (o) {
     const { op: name, len: bytes } = o;
@@ -35,14 +37,22 @@ function line(psw, obj, symbol, showBytes) {
         nib2_to_byte(n1, n2)
       );
 
-      txt = pc_loc + [op, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
+      txt =
+        pc_loc + [...o.code, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
     } else {
       txt = pc_loc + name + " " + opers.join(".");
     }
     psw += num;
   } else {
+    // Data (or error!)
+    const b1 = obj[psw];
+    if (b1 > 0) {
+      console.log("wat op?", psw, toHex(b1), "(", b1, ")");
+    }
+
+    const op_code_txt = toHex(b1);
     if (showBytes) {
-      txt = pc_loc + toHex(op) + "," + toHex(obj[psw++]);
+      txt = pc_loc + op_code_txt + "," + toHex(obj[psw++]);
     } else {
       // Group the data
       if (symbol) {
@@ -54,11 +64,8 @@ function line(psw, obj, symbol, showBytes) {
           obj.slice(psw - 1, psw + symbol.len - 1).map((v) => toHex(v) + "");
         psw += symbol.len - 1;
       } else {
-        txt = pc_loc + "??? 0x" + toHex(op) + " " + toHex(obj[psw++]);
+        txt = pc_loc + "??? 0x" + op_code_txt + " " + toHex(obj[psw++]);
       }
-    }
-    if (op > 1) {
-      console.log("wat op?", psw, toHex(op), "(", op, ")");
     }
   }
   return [psw, txt];

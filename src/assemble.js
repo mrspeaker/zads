@@ -1,12 +1,6 @@
 import { ops, op_name } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import {
-  nib,
-  disp_to_nibs,
-  byte_from,
-  fw_to_bytes,
-  nibs_to_bytes,
-} from "./bytes.js";
+import { nib, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -43,15 +37,15 @@ export const assemble = (asmTxt) => {
 
 // TODO: naming! stmt=label+op+opers and stmt=stmt+bytes+pc+type
 
-const mk_stmt = (label, op, operands, comment) => ({
+const mk_stmt = (label, mn, operands, comment) => ({
   label,
-  op,
+  mn,
   operands,
   comment,
 });
 
 const addStmt = (env, stmt) => {
-  const op_code = op_name[stmt.op.toUpperCase()];
+  const op_code = op_name[stmt.mn.toUpperCase()];
   const op = ops[op_code];
   return env.stmts.push({
     stmt,
@@ -94,10 +88,10 @@ const tokenize = (line) => {
     return ac;
   }, []);
 
-  const [label, op, operands, ...comment] = tok;
+  const [label, mn, operands, ...comment] = tok;
   return mk_stmt(
     label.trim(),
-    op,
+    mn,
     tokenizeOperands(operands),
     comment?.join(" ")
   );
@@ -107,7 +101,7 @@ const parseOperands = (s, symbols, base) => {
   const { stmt, bytes, type } = s;
   // Parse to bytes
   const enc = stmt.operands.map((o, i) =>
-    parseOperand(o, symbols, base, type, i, stmt.op)
+    parseOperand(o, symbols, base, type, i, stmt.mn)
   );
 
   // Re-org operands depending on operation.
@@ -129,14 +123,14 @@ const parseOperands = (s, symbols, base) => {
 };
 
 // Return (mostly?) nibbles
-const parseOperand = (o, symbols, base, type, idx, op) => {
+const parseOperand = (o, symbols, base, type, idx, mn) => {
   if (type === "DC") {
     return parseImmediate(o);
   }
   const otype = { RR: ["R", "R"], RX: ["R", "X"], SI: ["S", "I"] }[type] || [];
   const oidx = otype[idx];
   if (type && type !== "DC" && (!otype || !oidx)) {
-    console.warn("What's this operand?", type, o, idx, op);
+    console.warn("What's this operand?", type, o, idx, mn);
   }
   switch (oidx) {
     case "R":
@@ -150,7 +144,7 @@ const parseOperand = (o, symbols, base, type, idx, op) => {
       return parseBaseDisplace(o, base, symbols);
     }
     default: {
-      console.warn("unhandeld op?", oidx, otype, type);
+      console.warn("unhandeld mn?", oidx, otype, type);
       return parseImmediate(o);
     }
   }
@@ -167,9 +161,9 @@ const parseDataOperand = (d) => {
 };
 
 const remapExtendedMnemonics = (stmt) => {
-  const ext = ops_extended[stmt.op.toUpperCase()];
+  const ext = ops_extended[stmt.mn.toUpperCase()];
   if (ext) {
-    stmt.op = ext.op;
+    stmt.mn = ext.mn;
     stmt.operands = [...ext.operands, ...stmt.operands];
   }
   return stmt;
@@ -186,12 +180,13 @@ const checkBoundaryPadding = (env) => {
 
 const assembleStatement = (env, stmt) => {
   const { symbols } = env;
-  const { op, operands, label } = stmt;
+  const { mn, operands, label } = stmt;
   const label_lc = label.toLowerCase(); // make up...
-  const op_uc = op.toUpperCase(); // ...your mind
-  const op_code = op_name[op_uc];
-  const isData = ["DC", "DS"].includes(op_uc);
-  const isUsing = ["USING"].includes(op_uc);
+  const mn_uc = mn.toUpperCase(); // ...your mind
+
+  const op_code = op_name[mn_uc];
+  const isData = ["DC", "DS"].includes(mn_uc);
+  const isUsing = ["USING"].includes(mn_uc);
 
   if (op_code) {
     // ====== Regular op code =========
@@ -221,7 +216,7 @@ const assembleStatement = (env, stmt) => {
 
     const lbltxt = label ? `[${label}]` : " ";
     label && (symbols[label_lc] = { pc: env.pc, len: 4 });
-    console.log("miss:", op, (operands ?? [" "]).join(","), lbltxt);
+    console.log("miss:", mn, (operands ?? [" "]).join(","), lbltxt);
   }
 
   return env;
@@ -265,7 +260,7 @@ const parseBaseDisplace = (o, base, symbols) => {
 };
 
 const expandDataStatements = (s) => {
-  if (s.stmt.op.toUpperCase() === "DC") {
+  if (s.stmt.mn.toUpperCase() === "DC") {
     s.bytes.bytes = [...s.bytes.operands];
   } else {
     s.bytes.bytes = [
