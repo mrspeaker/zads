@@ -2,7 +2,7 @@ import { run } from "./emulate.js";
 import { assemble } from "./assemble.js";
 import { bind } from "./bind.js";
 import { mk_program_from_obj } from "./program.js";
-import { memcpy } from "./bytes.js";
+import { memcpy, regset } from "./bytes.js";
 import { mk_program } from "./state.js";
 
 const save = async (progs) => {
@@ -70,6 +70,10 @@ const actionReducer = (s, render) => (type, value) => {
       if (value.length === s.machine.mem.length) {
         s.machine.mem = value;
       }
+      break;
+    case "MEM_RESET":
+      s.machine.mem = s.machine.mem.fill(0);
+      s.machine.regs.forEach((r) => regset(r, 0));
       break;
     case "ASSEMBLE_SRC":
       {

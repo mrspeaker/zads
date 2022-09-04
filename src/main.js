@@ -43,6 +43,8 @@ function bindUI(state, action) {
     }
   });
 
+  $click("#btnResetMem", () => action("MEM_RESET"));
+
   const updateDis = (txt) => {
     const code = txt
       .split("\n")
