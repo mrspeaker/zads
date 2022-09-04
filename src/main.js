@@ -31,7 +31,7 @@ function bindUI(state, action) {
   $click("#btnObjBytes", () => action("OBJ_BYTES"));
 
   $click("#btnUpdate", () => {
-    updateDis($("#dis"));
+    updateDis($("#dis").value);
   });
 
   $click("#btnSavePgm", () => {
