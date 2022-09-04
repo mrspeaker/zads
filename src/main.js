@@ -24,15 +24,13 @@ function bindUI(state, action) {
     const { selectionStart, selectionEnd, selectionDirection } = area;
     const txt = e.target.value.substring(selectionStart, selectionEnd);
     // TODO: move to reducer+render
-    area.title = "";
     const help = get_help_text(txt);
     if (!help) return;
-    const { desc, type, form, pdf } = help;
+    const { mn, desc, type, form, pdf } = help;
     const link = pdf ? `<a href="#">${pdf}<a>` : "";
-    $("#help").innerHTML = `[${type}] ${form} ${link}`;
-    if (desc) {
-      area.title = help.desc;
-    }
+    $(
+      "#help"
+    ).innerHTML = `<span>&nbsp;<span title="${desc}" style="color:var(--highlight-warm)">${mn}</span> [${type}] ${form} ${link}</span>`;
   });
 
   $on("#programs", "change", (e) => {
