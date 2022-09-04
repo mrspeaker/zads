@@ -265,9 +265,12 @@ export const ops = {
   },
 };
 
-// TODO: maybe return array for multi-byte ops
-export const op_name = Object.entries(ops).reduce((ac, [k, v]) => {
-  const { op: name } = v;
-  ac[name] = parseInt(k, 10);
+export const op_by_mn = Object.values(ops).reduce((ac, op) => {
+  const { op: mn, code } = op;
+  // Convert multi-byte ops to decimal (single bytes too)
+  ac[mn] = code.reduce(
+    (ac, el, i) => ac + (el << (8 * (code.length - 1 - i))),
+    0
+  );
   return ac;
 }, {});

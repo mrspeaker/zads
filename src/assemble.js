@@ -1,4 +1,4 @@
-import { ops, op_name } from "./ops.js";
+import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
 import { nib, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
@@ -45,7 +45,7 @@ const mk_stmt = (label, mn, operands, comment) => ({
 });
 
 const addStmt = (env, stmt) => {
-  const op_code = op_name[stmt.mn.toUpperCase()];
+  const op_code = op_by_mn[stmt.mn.toUpperCase()];
   const op = ops[op_code];
   return env.stmts.push({
     stmt,
@@ -184,7 +184,7 @@ const assembleStatement = (env, stmt) => {
   const label_lc = label.toLowerCase(); // make up...
   const mn_uc = mn.toUpperCase(); // ...your mind
 
-  const op_code = op_name[mn_uc];
+  const op_code = op_by_mn[mn_uc];
   const isData = ["DC", "DS"].includes(mn_uc);
   const isUsing = ["USING"].includes(mn_uc);
 
