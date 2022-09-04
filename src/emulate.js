@@ -1,4 +1,4 @@
-import { ops } from "./ops.js";
+import { get_op } from "./ops.js";
 import { toHex } from "./utils.js";
 import { nib, regset } from "./bytes.js";
 
@@ -17,22 +17,21 @@ export function run(obj, env) {
 
 function step(obj, env, code_txt) {
   const { regs, mem, psw } = env;
-  const op = obj[psw.pc++];
-  const o = ops[op];
-  if (o) {
-    const { op: name, len: bytes, f } = o;
-    const num = bytes - 1;
+  const op = get_op(obj, psw.pc++);
+  if (op) {
+    const { mn, len, f } = op;
+    const num = len - 1;
     const opers = obj
       .slice(psw.pc, psw.pc + num)
       .map(nib)
       .flat();
-    code_txt.push(toHex(psw.pc - 1) + ":" + name + " " + opers.join("."));
+    code_txt.push(toHex(psw.pc - 1) + ":" + mn + " " + opers.join("."));
     f(opers, regs, mem, psw);
     psw.pc += num;
   } else {
-    code_txt.push(toHex(psw.pc - 1) + ": ??? 0x" + op.toString(16));
+    code_txt.push(toHex(psw.pc - 1) + ": ??? " + op.code.join(""));
 
-    console.log("op?", psw.pc, toHex(op), "(", op, ")");
+    console.log("op?", psw.pc, "(", op.code.join(""), ")");
   }
   return psw.pc;
 }

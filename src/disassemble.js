@@ -20,14 +20,11 @@ export function disassemble(code, symbols, showBytes) {
 
 function line(psw, obj, symbol, showBytes) {
   let txt = "";
-  //  const op = obj[psw++];
-  //    const o = ops[op]; //get_op(obj, psw++);
-  const o = get_op(obj, psw++);
-
+  const op = get_op(obj, psw++);
   const pc_loc = toHex(psw - 1) + ": ";
-  if (o) {
-    const { op: name, len: bytes } = o;
-    const num = bytes - 1;
+  if (op) {
+    const { mn, len } = op;
+    const num = len - 1;
     const opers = obj
       .slice(psw, psw + num)
       .map(nib)
@@ -38,9 +35,9 @@ function line(psw, obj, symbol, showBytes) {
       );
 
       txt =
-        pc_loc + [...o.code, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
+        pc_loc + [...op.code, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
     } else {
-      txt = pc_loc + name + " " + opers.join(".");
+      txt = pc_loc + mn + " " + opers.join(".");
     }
     psw += num;
   } else {

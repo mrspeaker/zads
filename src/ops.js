@@ -28,9 +28,9 @@ const ext_ops = {
 
 export const nop = () => {};
 export const ops = {
-  0x05: { op: "BALR", code: [0x05], len: 2, f: nop },
+  0x05: { mn: "BALR", code: [0x05], len: 2, f: nop },
   0x07: {
-    op: "BCR",
+    mn: "BCR",
     code: [0x07],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
@@ -45,10 +45,10 @@ export const ops = {
     form: "OP M1,R1",
     form_int: "OPOP M1 R1",
   },
-  0x0b: { op: "BSM", code: [0x0b], len: 2, f: nop },
-  0x0d: { op: "BSR", code: [0x0d], len: 2, f: nop },
+  0x0b: { mn: "BSM", code: [0x0b], len: 2, f: nop },
+  0x0d: { mn: "BSR", code: [0x0d], len: 2, f: nop },
   0x18: {
-    op: "LR",
+    mn: "LR",
     code: [0x18],
     len: 2,
     f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
@@ -61,7 +61,7 @@ export const ops = {
     form_int: "OPOP R1 R2",
   },
   0x19: {
-    op: "CR",
+    mn: "CR",
     code: [0x19],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
@@ -83,7 +83,7 @@ export const ops = {
     form_int: "OPOP R1 R2",
   },
   0x1a: {
-    op: "AR",
+    mn: "AR",
     code: [0x1a],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
@@ -104,7 +104,7 @@ export const ops = {
 
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
-    op: "LA",
+    mn: "LA",
     code: [0x41],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs) => {
@@ -121,7 +121,7 @@ export const ops = {
   },
 
   0x46: {
-    op: "BCT",
+    mn: "BCT",
     code: [0x46],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
@@ -142,7 +142,7 @@ export const ops = {
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
   0x47: {
-    op: "BC",
+    mn: "BC",
     code: [0x47],
     len: 4,
     f: ([m, x, b, da, db, dc], regs, mem, psw) => {
@@ -161,7 +161,7 @@ export const ops = {
     form_int: "OPOP M1 X2 B2 D2D2D2",
   },
   0x50: {
-    op: "ST",
+    mn: "ST",
     code: [0x50],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
@@ -177,7 +177,7 @@ export const ops = {
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
   0x58: {
-    op: "L",
+    mn: "L",
     code: [0x58],
     len: 4,
     f: ([r, x, b, d1, d2, d3], regs, mem) => {
@@ -193,7 +193,7 @@ export const ops = {
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
   0x5a: {
-    op: "A",
+    mn: "A",
     code: [0x5a],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
@@ -208,9 +208,9 @@ export const ops = {
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",
   },
-  0x90: { op: "STM", code: [0x90], len: 4, f: nop },
+  0x90: { mn: "STM", code: [0x90], len: 4, f: nop },
   0x92: {
-    op: "MVI",
+    mn: "MVI",
     code: [0x92],
     len: 4,
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
@@ -227,7 +227,7 @@ export const ops = {
     form_int: "OPOP I2I2 B1 D1D1D1",
   },
   0x98: {
-    op: "LM",
+    mn: "LM",
     code: [0x98],
     len: 4,
     f: (ops, regs, mem) => {
@@ -246,9 +246,9 @@ export const ops = {
       ptr += 4;
     },
   },
-  0xd7: { op: "XC", code: [0xd7], len: 6, f: nop },
+  0xd7: { mn: "XC", code: [0xd7], len: 6, f: nop },
   0xa70a: {
-    op: "AHI",
+    mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
     f: ([r1, i2], regs) => {
@@ -266,7 +266,7 @@ export const ops = {
 };
 
 export const op_by_mn = Object.values(ops).reduce((ac, op) => {
-  const { op: mn, code } = op;
+  const { mn, code } = op;
   // Convert multi-byte ops to decimal (single bytes too)
   ac[mn] = code.reduce(
     (ac, el, i) => ac + (el << (8 * (code.length - 1 - i))),
