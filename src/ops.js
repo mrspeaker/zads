@@ -321,6 +321,24 @@ export const ops = {
     form: "OP R1,I2",
     form_int: "OPOP R1 OP I2I2I2",
   },
+  0xd2: {
+    mn: "MVC",
+    code: [0xd2],
+    len: 12,
+    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+      const val = byte_from(i1, i2);
+      const ptr = base_displace(0, regs[r1], da, db, dc);
+      // TODO: +3? Where should it write?
+      //mem[ptr + 3] = val;
+    },
+    name: "move",
+    desc:
+      "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
+    pdf: "7-163",
+    type: "SS",
+    form: "OP D1(L1,B1),D2(B2)",
+    form_int: "OPOP L1L1 B1 D1D1D1 B2 D2D2D2",
+  },
 };
 
 export const op_by_mn = Object.values(ops).reduce((ac, op) => {

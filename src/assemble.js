@@ -106,19 +106,29 @@ const parseOperands = (s, symbols, base) => {
   );
 
   // Re-org operands depending on operation.
-  if (["RR", "RX"].includes(type)) {
-    if (enc.length > 2) {
-      console.warn("nop, rong length", enc);
-    }
-    bytes.operands.push(...enc[0], ...enc[1]);
-  } else if (["SI"].includes(type)) {
-    // I2I2 B1 D1D1D1
-    bytes.operands.push(...enc[1], ...enc[0].slice(1));
-  } else if (!type || type === "DC") {
-    // Just dump the bytes
-    enc.forEach((bs) => bytes.operands.push(...bs));
-  } else {
-    console.log("not rr rx si...", type, enc);
+  switch (type) {
+    case "RR":
+    case "RX":
+      if (enc.length > 2) {
+        console.warn("nop, rong length", enc);
+      }
+      bytes.operands.push(...enc[0], ...enc[1]);
+      break;
+    case "SI":
+      // I2I2 B1 D1D1D1
+      bytes.operands.push(...enc[1], ...enc[0].slice(1));
+      break;
+    case "SS":
+      // L1L1 B1 D1D1D1 B2 D2D2D2
+      console.log("eg MVC. TODO!");
+      break;
+    case "DC":
+    case undefined:
+      // Just dump the bytes
+      enc.forEach((bs) => bytes.operands.push(...bs));
+      break;
+    default:
+      console.log("not rr rx si...", type, enc);
   }
   return s;
 };
@@ -128,7 +138,12 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
   if (type === "DC") {
     return parseImmediate(o);
   }
-  const otype = { RR: ["R", "R"], RX: ["R", "X"], SI: ["S", "I"] }[type] || [];
+  // THIS is not good right? Try SS and see if it can
+  // work in this "break into bits" style.
+  const otype =
+    { RR: ["R", "R"], RX: ["R", "X"], SI: ["S", "I"], SS: ["I", "X", "X"] }[
+      type
+    ] || [];
   const oidx = otype[idx];
   if (type && type !== "DC" && (!otype || !oidx)) {
     console.warn("What's this operand?", type, o, idx, mn);
