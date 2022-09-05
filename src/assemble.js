@@ -7,6 +7,7 @@ export const assemble = (asmTxt) => {
   const { stmts, symbols, base, base_addr } = asmTxt
     .split("\n")
     .filter((v) => !!v)
+    .filter((v) => v[0] !== "*")
     .map(tokenize)
     .map(remapExtendedMnemonics)
     .reduce(assembleStatement, {
