@@ -6,7 +6,7 @@ import { ops_extended } from "./ops_extended.js";
 export const assemble = (asmTxt) => {
   const { stmts, symbols, base, base_addr } = asmTxt
     .split("\n")
-    .filter((v) => !!v && v[0] !== "*")
+    .filter((v) => !!v.trim() && v[0] !== "*")
     .map(tokenize)
     .reduce(expandMacros, [])
     .map(remapExtendedMnemonics)
@@ -189,11 +189,13 @@ const expandMacros = (ac, stmt) => {
   // TODO: expand any macros!
   switch (stmt.mn.toLowerCase()) {
     case "asmdreg":
-      console.log("ASMDREG");
-      const dcs = [...Array(16)]
-        .fill(0)
-        .map((_, i) => mk_stmt_toks(`R${i}`, "DC", [`x'${i}'`], ""));
-      ac.push(...dcs);
+      {
+        console.log("ASMDREG");
+        const dcs = [...Array(16)]
+          .fill(0)
+          .map((_, i) => mk_stmt_toks(`R${i}`, "DC", [`f'${i}'`], ""));
+        ac.push(...dcs);
+      }
       break;
     default:
       ac.push(stmt);
