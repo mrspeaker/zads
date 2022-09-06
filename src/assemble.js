@@ -114,6 +114,12 @@ const parseOperands = (s, symbols, base) => {
       }
       bytes.operands.push(...enc[0], ...enc[1]);
       break;
+    case "RI":
+      // TODO: NOPE! 0x0a is only for AHI!
+      // AND... enc[1] is two nibbles... not 4.
+      // (err in RI for paressOperand)
+      bytes.operands.push(...enc[0], 0x0a, 0, 0, ...enc[1]);
+      break;
     case "SI":
       // I2I2 B1 D1D1D1
       bytes.operands.push(...enc[1], ...enc[0].slice(1));
@@ -138,12 +144,17 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
   if (type === "DC") {
     return parseImmediate(o);
   }
+  if (mn === "ahi") console.log("a hi", o, type, mn);
   // THIS is not good right? Try SS and see if it can
   // work in this "break into bits" style.
   const otype =
-    { RR: ["R", "R"], RX: ["R", "X"], SI: ["S", "I"], SS: ["I", "X", "X"] }[
-      type
-    ] || [];
+    {
+      RR: ["R", "R"],
+      RX: ["R", "X"],
+      SI: ["S", "I"],
+      SS: ["I", "X", "X"],
+      RI: ["R", "I"],
+    }[type] || [];
   const oidx = otype[idx];
   if (type && type !== "DC" && (!otype || !oidx)) {
     console.warn("What's this operand?", type, o, idx, mn);

@@ -14,10 +14,10 @@ export const get_op = (obj, psw) => {
   const b1 = obj[psw];
   let op = ops[b1];
   if (!op) {
-    if (ext_ops[op]) {
-      // read extra byte.
-      const b2 = obj[psw + 2];
-      op = ops[b1 << (256 + b2)];
+    if (ext_ops[b1]) {
+      // read extra nibble
+      const b2 = obj[psw + 1] & 0x0f;
+      op = ops[(b1 << 8) + b2];
     }
   }
   return op;
@@ -309,9 +309,15 @@ export const ops = {
     mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
-    f: ([r1, i2], regs) => {
+    f: ([r1, op, ia, ib, ic, id], regs, mem, psw) => {
       //          memcpy(regs[r2], regs[r1]),
-      console.log("AHI", r1, i2);
+      // TODO: only using 2 nibbles for I value. (should be 4)
+      console.log("AHI", r1, byte_from(ic, id));
+      const a = regval(regs[r1]);
+      const b = byte_from(ic, id);
+      const { res, cc } = addAndCC(a, b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
     },
     name: "add halfword immediate",
     desc:
@@ -319,7 +325,7 @@ export const ops = {
     pdf: "7-22",
     type: "RI",
     form: "OP R1,I2",
-    form_int: "OPOP R1 OP I2I2I2",
+    form_int: "OPOP R1 OP I2I2I2I2",
   },
   0xd2: {
     mn: "MVC",
