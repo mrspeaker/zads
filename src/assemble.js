@@ -6,9 +6,9 @@ import { ops_extended } from "./ops_extended.js";
 export const assemble = (asmTxt) => {
   const { stmts, symbols, base, base_addr } = asmTxt
     .split("\n")
-    .filter((v) => !!v)
-    .filter((v) => v[0] !== "*")
+    .filter((v) => !!v && v[0] !== "*")
     .map(tokenize)
+    .reduce(expandMacros, [])
     .map(remapExtendedMnemonics)
     .reduce(assembleStatement, {
       pc: 0,
@@ -38,7 +38,7 @@ export const assemble = (asmTxt) => {
 
 // TODO: naming! stmt=label+op+opers and stmt=stmt+bytes+pc+type
 
-const mk_stmt = (label, mn, operands, comment) => ({
+const mk_stmt_toks = (label, mn, operands, comment) => ({
   label,
   mn,
   operands,
@@ -90,7 +90,7 @@ const tokenize = (line) => {
   }, []);
 
   const [label, mn, operands, ...comment] = tok;
-  return mk_stmt(
+  return mk_stmt_toks(
     label.trim(),
     mn,
     tokenizeOperands(operands),
@@ -185,11 +185,27 @@ const remapExtendedMnemonics = (stmt) => {
   return stmt;
 };
 
+const expandMacros = (ac, stmt) => {
+  // TODO: expand any macros!
+  switch (stmt.mn.toLowerCase()) {
+    case "asmdreg":
+      console.log("ASMDREG");
+      const dcs = [...Array(16)]
+        .fill(0)
+        .map((_, i) => mk_stmt_toks(`R${i}`, "DC", [`x'${i}'`], ""));
+      ac.push(...dcs);
+      break;
+    default:
+      ac.push(stmt);
+  }
+  return ac;
+};
+
 // Ensure data is placed on halfword boundary
 const checkBoundaryPadding = (env) => {
   if (env.pc % 4 !== 0) {
     const padding = [0, 0];
-    addData(env, mk_stmt("", "DC", padding, ""));
+    addData(env, mk_stmt_toks("", "DC", padding, ""));
     env.pc += padding.length;
   }
 };
