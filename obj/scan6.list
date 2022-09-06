@@ -1,0 +1,297 @@
+1                                         High Level Assembler Option Summary                   (PTF UI79283)   Page    1            
+-                                                                                            HLASM R6.0  2022/09/06 13.13            
+0  No Overriding ASMAOPT Parameters                                                                                                  
+   Overriding Parameters-  TERM,LIST(MAX),TERM,ASA,OBJECT                                                                            
+   No Process Statements                                                                                                             
+                                                                                                                                     
+                                                                                                                                     
+   Options for this Assembly                                                                                                         
+0                    NOADATA                                                                                                         
+                       ALIGN                                                                                                         
+ 3 PARM/OPTION         ASA                                                                                                           
+                       BATCH                                                                                                         
+                       CODEPAGE(047C)                                                                                                
+                     NOCOMPAT                                                                                                        
+                     NODATAMAP                                                                                                       
+                     NODBCS                                                                                                          
+                     NODECK                                                                                                          
+                       DXREF                                                                                                         
+                       ESD                                                                                                           
+                     NOEXIT                                                                                                          
+                       FAIL(NOMSG,NOMNOTE,MAXERRS(500))                                                                              
+                       FLAG(0,ALIGN,CONT,EXLITW,NOIMPLEN,NOLONGER,NOPAGE0,PUSH,RECORD,RENT,NOSIGNED,NOSUBSTR,NOTRUNC,USING0)         
+                     NOFOLD                                                                                                          
+                     NOGOFF                                                                                                          
+                       ILMA                                                                                                          
+                     NOINFO                                                                                                          
+                       LANGUAGE(EN)                                                                                                  
+                     NOLIBMAC                                                                                                        
+                       LINECOUNT(60)                                                                                                 
+ 3 PARM/OPTION         LIST(MAX)                                                                                                     
+                       MACHINE(,NOLIST)                                                                                              
+                       MXREF(SOURCE)                                                                                                 
+ 3 PARM/OPTION         OBJECT                                                                                                        
+                       OPTABLE(UNI,NOLIST)                                                                                           
+                     NOPCONTROL                                                                                                      
+                     NOPESTOP                                                                                                        
+                     NOPROFILE                                                                                                       
+                     NORA2                                                                                                           
+                     NORENT                                                                                                          
+                       RLD                                                                                                           
+                       RXREF                                                                                                         
+                       SECTALGN(8)                                                                                                   
+                       SIZE(MAX)                                                                                                     
+                     NOSUPRWARN                                                                                                      
+                       SYSPARM()                                                                                                     
+ 3 PARM/OPTION         TERM(WIDE)                                                                                                    
+                     NOTEST                                                                                                          
+                       THREAD                                                                                                        
+                     NOTRANSLATE                                                                                                     
+                       TYPECHECK(MAGNITUDE,REGISTER,SIGNED)                                                                          
+                       USING(NOLIMIT,MAP,WARN(15))                                                                                   
+                     NOWORKFILE                                                                                                      
+                       XREF(SHORT,UNREFS)                                                                                            
+                                                                                                                                     
+   Standard   DD Names- SYSLIN   SYSLIB   SYSIN    SYSPRINT SYSPUNCH SYSUT1   SYSTERM  SYSADATA ASMAOPT                              
+   Overriding DD Names- SYS00017 SYS00005 SYS00015 SYS00016                   SYS00014                                               
+1                                              External Symbol Dictionary                                       Page    2            
+-Symbol   Type   Id     Address  Length   Owner Id Flags Alias-of                            HLASM R6.0  2022/09/06 13.13            
+0SCAN6     SD 00000001 00000000 00000060             00                                                                              
+1                                                                                                               Page    3            
+   Active Usings: None                                                                                                               
+0  Loc    Object Code      Addr1    Addr2    Stmt  Source Statement                          HLASM R6.0  2022/09/06 13.13            
+0                                               1 * Scan routine for Eratosthenes Sieve to find prime numbers                        
+                                                2 *                                                                                  
+                                                3 * Array is some storage that is (array size) long with the first                   
+                                                4 * byte (offset 0) representing number 5 in the zone nibble and 7                   
+                                                5 * in the sign nibble                                                               
+                                                6 *                                                                                  
+                                                7 * This routine has to go through the array and find the next zero                  
+                                                8 * nibble and return the value that nibble represents back to the                   
+                                                9 * caller in r1                                                                     
+                                               10 *                                                                                  
+                                               11 * For example, the array might be 10 bytes long and the first time                 
+                                               12 * this is called the index would be one                                            
+                                               13 *                                                                                  
+                                               14 * Array would look like this at entry                                              
+                                               15 *    00000000000000000000     size would be 61                                     
+                                               16 *    0 1 2 3 4 5 6 7 8 9      input index 3 representing last prime                
+                                               17 *                                                                                  
+                                               18 * so you need to scan the array starting at the index value until                  
+                                               19 * you find a zero - in this case that would be the first nibble you                
+                                               20 * examine and 5 would be returned                                                  
+                                               21 *                                                                                  
+                                               22 * Next entry the array would look like this                                        
+                                               23 *    0000000F00F000000F00     size would be 61                                     
+                                               24 *    0 1 2 3 4 5 6 7 8 9      input index 5 representing last prime                
+                                               25 * and this time you would return a value of 7                                      
+                                               26 *                                                                                  
+                                               27 * Logic flow                                                                       
+                                               28 *                                                                                  
+                                               29 * .  Usual housekeeping                                                            
+                                               30 *                                                                                  
+                                               31 * .  Scan routine                                                                  
+                                               32 *      parameters  (all 4 byte values)                                             
+                                               33 *      no 1  -> array            ( the -> implies it is a pointer)                 
+                                               34 *      no 2  Maximum value in array - example above this would be 61               
+                                               35 *      no 3  last prime found                                                      
+                                               36 *                                                                                  
+                                               37 * .  Normal exit                                                                   
+                                               38 *      r1 set to the value corresponding to the first zero nibble -                
+                                               39 *         this will be the next prime                                              
+                                               40 *                                                                                  
+ 00000000                00000000 00000060     41 scan6    csect                                                                     
+ 00000000 90EC D00C               0000000C     42          stm   r14,r12,12(r13)    save caller's registers                          
+ 00000004 18CF                                 43          lr    r12,r15            set up the base register                         
+                     R:C 00000000              44          using scan6,r12           and tell assembler                              
+000000006 9824 1000               00000000     46          lm    r2,r4,0(r1)        arr, maxnum, cur_idx                             
+00000000A A74A 0002                            48 loop     ahi   r4,2               next cur (skip evens)                            
+ 0000000E 1874                                 49          lr    r7,r4              divide idx by 6                                  
+ 00000010 5C60 C058               00000058     50          m     r6,=f'1'           ...remainder in R6                               
+ 00000014 5D60 C05C               0000005C     51          d     r6,=f'6'                                                            
+000000018 EC66 C02E 05FE          0000002E     53 minus1   cibne r6,5,plus1         6x-1? (remainder 5)                              
+ 0000001E 4157 2000               00000000     54          la    r5,0(r7,r2)        get the byte                                     
+ 00000022 91F0 5000      00000000              55          tm    0(r5),x'F0'        check low nibble                                 
+1                                                                                                               Page    4            
+   Active Usings: scan6,R12                                                                                                          
+0  Loc    Object Code      Addr1    Addr2    Stmt  Source Statement                          HLASM R6.0  2022/09/06 13.13            
+000000026 47E0 C04C               0000004C     56          bno   yepprime                                                            
+ 0000002A 47F0 C00A               0000000A     57          b     loop                                                                
+00000002E EC66 C00A 01FE          0000000A     59 plus1    cibne r6,1,loop          6x+1? (remainder 1)                              
+ 00000034 4157 2000               00000000     60          la    r5,0(r7,r2)        get the byte                                     
+ 00000038 A75A FFFF                            61          ahi   r5,-1              ...base+quot is 1 too far                        
+ 0000003C 910F 5000      00000000              62          tm    0(r5),x'0F'        check hi nibble                                  
+ 00000040 47E0 C04C               0000004C     63          bno   yepprime                                                            
+ 00000044 A74A 0002                            64          ahi   r4,2               add 2 to get to next index                       
+ 00000048 47F0 C00A               0000000A     65          b     loop               (eg, skip '9' go to '11)                         
+00000004C 1814                                 67 yepprime lr    r1,r4                                                               
+00000004E 58E0 D00C               0000000C     69 exit     l     r14,12(,r13)                                                        
+ 00000052 982C D01C               0000001C     70          lm    r2,r12,28(r13)                                                      
+ 00000056 0B0E                                 71          bsm   0,r14                                                               
+000000058                                      73          ltorg                                                                     
+ 00000058 00000001                             74                =f'1'                                                               
+ 0000005C 00000006                             75                =f'6'                                                               
+0                                              77          asmdreg                                                                   
+                                               78+         PUSH  PRINT                                                    01-ASMDREG 
+                                              194+         POP   PRINT                                                    01-ASMDREG 
+ 00000000                                     195          end   scan6                                                               
+1                               Ordinary Symbol and Literal Cross Reference                                     Page    5            
+-Symbol   Length   Value     Id    R Type Asm  Program   Defn References                     HLASM R6.0  2022/09/06 13.13            
+0loop          4 0000000A 00000001     I                   48   57B   59B   65B                                                      
+ plus1         6 0000002E 00000001     I                   59   53B                                                                  
+ R1            1 00000001 00000001 A   U                   87   46    67M                                                            
+ R12           1 0000000C 00000001 A   U                   98   42    43M   44U   70M                                                
+ R13           1 0000000D 00000001 A   U                   99   42    69    70                                                       
+ R14           1 0000000E 00000001 A   U                  100   42    69M   71B                                                      
+ R15           1 0000000F 00000001 A   U                  101   43                                                                   
+ R2            1 00000002 00000001 A   U                   88   46M   54    60    70M                                                
+ R4            1 00000004 00000001 A   U                   90   46M   48M   49    64M   67                                           
+ R5            1 00000005 00000001 A   U                   91   54M   55    60M   61M   62                                           
+ R6            1 00000006 00000001 A   U                   92   50M   51M   53    59                                                 
+ R7            1 00000007 00000001 A   U                   93   49M   54    60                                                       
+ scan6         1 00000000 00000001     J                   41   44U  195                                                             
+ yepprime      2 0000004C 00000001     I                   67   56B   63B                                                            
+ =f'1'         4 00000058 00000001     F                   74   50                                                                   
+ =f'6'         4 0000005C 00000001     F                   75   51                                                                   
+1                                  Unreferenced Symbols Defined in CSECTs                                       Page    6            
+-  Defn  Symbol                                                                              HLASM R6.0  2022/09/06 13.13            
+0   178  AR0                                                                                                                         
+    179  AR1                                                                                                                         
+    188  AR10                                                                                                                        
+    189  AR11                                                                                                                        
+    190  AR12                                                                                                                        
+    191  AR13                                                                                                                        
+    192  AR14                                                                                                                        
+    193  AR15                                                                                                                        
+    180  AR2                                                                                                                         
+    181  AR3                                                                                                                         
+    182  AR4                                                                                                                         
+    183  AR5                                                                                                                         
+    184  AR6                                                                                                                         
+    185  AR7                                                                                                                         
+    186  AR8                                                                                                                         
+    187  AR9                                                                                                                         
+    159  CR0                                                                                                                         
+    160  CR1                                                                                                                         
+    169  CR10                                                                                                                        
+    170  CR11                                                                                                                        
+    171  CR12                                                                                                                        
+    172  CR13                                                                                                                        
+    173  CR14                                                                                                                        
+    174  CR15                                                                                                                        
+    161  CR2                                                                                                                         
+    162  CR3                                                                                                                         
+    163  CR4                                                                                                                         
+    164  CR5                                                                                                                         
+    165  CR6                                                                                                                         
+    166  CR7                                                                                                                         
+    167  CR8                                                                                                                         
+    168  CR9                                                                                                                         
+     69  exit                                                                                                                        
+    105  FR0                                                                                                                         
+    106  FR1                                                                                                                         
+    115  FR10                                                                                                                        
+    116  FR11                                                                                                                        
+    117  FR12                                                                                                                        
+    118  FR13                                                                                                                        
+    119  FR14                                                                                                                        
+    120  FR15                                                                                                                        
+    107  FR2                                                                                                                         
+    108  FR3                                                                                                                         
+    109  FR4                                                                                                                         
+    110  FR5                                                                                                                         
+    111  FR6                                                                                                                         
+    112  FR7                                                                                                                         
+    113  FR8                                                                                                                         
+    114  FR9                                                                                                                         
+     53  minus1                                                                                                                      
+     86  R0                                                                                                                          
+     96  R10                                                                                                                         
+     97  R11                                                                                                                         
+     89  R3                                                                                                                          
+     94  R8                                                                                                                          
+1                                  Unreferenced Symbols Defined in CSECTs                                       Page    7            
+-  Defn  Symbol                                                                              HLASM R6.0  2022/09/06 13.13            
+0    95  R9                                                                                                                          
+    124  VR0                                                                                                                         
+    125  VR1                                                                                                                         
+    134  VR10                                                                                                                        
+    135  VR11                                                                                                                        
+    136  VR12                                                                                                                        
+    137  VR13                                                                                                                        
+    138  VR14                                                                                                                        
+    139  VR15                                                                                                                        
+    140  VR16                                                                                                                        
+    141  VR17                                                                                                                        
+    142  VR18                                                                                                                        
+    143  VR19                                                                                                                        
+    126  VR2                                                                                                                         
+    144  VR20                                                                                                                        
+    145  VR21                                                                                                                        
+    146  VR22                                                                                                                        
+    147  VR23                                                                                                                        
+    148  VR24                                                                                                                        
+    149  VR25                                                                                                                        
+    150  VR26                                                                                                                        
+    151  VR27                                                                                                                        
+    152  VR28                                                                                                                        
+    153  VR29                                                                                                                        
+    127  VR3                                                                                                                         
+    154  VR30                                                                                                                        
+    155  VR31                                                                                                                        
+    128  VR4                                                                                                                         
+    129  VR5                                                                                                                         
+    130  VR6                                                                                                                         
+    131  VR7                                                                                                                         
+    132  VR8                                                                                                                         
+    133  VR9                                                                                                                         
+1                                          Macro and Copy Code Source Summary                                   Page    8            
+- Con Source                                        Volume    Members                        HLASM R6.0  2022/09/06 13.13            
+0  L2 ASM.SASMMAC2                                  $$SR4H    ASMDREG                                                                
+1                                                      Using Map                                                Page    9            
+-                                                                                            HLASM R6.0  2022/09/06 13.13            
+   Stmt  -----Location----- Action ----------------Using----------------- Reg Max     Last Label and Using Text                      
+           Count      Id           Type          Value    Range     Id        Disp    Stmt                                           
+0    44  00000006  00000001 USING  ORDINARY    00000000 00001000 00000001  12 0005C     65 scan6,r12                                 
+1                                   General Purpose Register Cross Reference                                    Page   10            
+- Register  References (M=modified, B=branch, U=USING, D=DROP, N=index)                      HLASM R6.0  2022/09/06 13.13            
+0    0(0)      42                                                                                                                    
+     1(1)      42    46    67M                                                                                                       
+     2(2)      42    46M   54    60    70M                                                                                           
+     3(3)      42    46M   70M                                                                                                       
+     4(4)      42    46M   48M   49    64M   67    70M                                                                               
+     5(5)      42    54M   55    60M   61M   62    70M                                                                               
+     6(6)      42    50M   51M   53    59    70M                                                                                     
+     7(7)      42    49M   50M   51M   54N   60N   70M                                                                               
+     8(8)      42    70M                                                                                                             
+     9(9)      42    70M                                                                                                             
+    10(A)      42    70M                                                                                                             
+    11(B)      42    70M                                                                                                             
+    12(C)      42    43M   44U   70M                                                                                                 
+    13(D)      42    69    70                                                                                                        
+    14(E)      42    69M   71B                                                                                                       
+    15(F)      42    43                                                                                                              
+1                                  Diagnostic Cross Reference and Assembler Summary                             Page   11            
+-                                                                                            HLASM R6.0  2022/09/06 13.13            
+0     No Statements Flagged in this Assembly                                                                                         
+ HIGH LEVEL ASSEMBLER, 5696-234, RELEASE 6.0, PTF UI79283                                                                            
+0SYSTEM: z/OS 02.04.00              JOBNAME: EARLEC6     STEPNAME: *OMVSEX    PROCSTEP: (NOPROC)                                     
+0Unicode Module:   ASMA047C   From Page     1148   To Page    17584           ECECP: International 1                                 
+ Data Sets Allocated for this Assembly                                                                                               
+  Con DDname   Data Set Name                                Volume  Member                                                           
+   P1 SYSIN    /u/earlec/asm/scan6.hlasm                                                                                             
+   L1 SYSLIB   TRAINING.ASMLAB.MACLIB                       N$US01                                                                   
+   L2          ASM.SASMMAC2                                 $$SR4H                                                                   
+   L3          CEE.SCEEMAC                                  $$SR4H                                                                   
+   L4          SYS1.MACLIB                                  $$SR4H                                                                   
+   L5          SYS1.MODGEN                                  $$SR4H                                                                   
+      SYSLIN   /u/earlec/asm/build/scan6.o                                                                                           
+      SYSPRINT /u/earlec/asm/build/scan6.list                                                                                        
+      SYSTERM  /dev/fd2                                                                                                              
+                                                                                                                                     
+ 1676508K allocated to Buffer Pool       Storage required     264K                                                                   
+      76 Primary Input Records Read          217 Library Records Read                  0 Work File Reads                             
+       0 ASMAOPT Records Read                297 Primary Print Records Written         0 Work File Writes                            
+       4 Object Records Written                0 ADATA Records Written                                                               
+0Assembly Start Time: 13.13.17 Stop Time: 13.13.17 Processor Time: 00.00.00.0016                                                     
+ Return Code 000                                                                                                                     
