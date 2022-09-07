@@ -336,8 +336,8 @@ const parseBaseDisplace = (o, base, symbols) => {
     const mbase = parseInt(base, 10) ?? 0;
     const mdisp = parseInt(disp, 10) ?? 0;
     return [mindex, mbase, ...to_nibs(mdisp, 3)];
-  } else if (symbols[o]) {
-    return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
+  } else if (symbols[o.toLowerCase()]) {
+    return [INDEX, base, ...disp_to_nibs(symbols[o.toLowerCase()].pc)];
   } else {
     console.warn("Missing symbol:", o);
   }
