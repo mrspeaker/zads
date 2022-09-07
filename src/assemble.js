@@ -304,9 +304,9 @@ const parseBaseDisplace = (o, base, symbols) => {
   if (matches.length === 4) {
     //base disp
     const [, disp, index, base] = matches;
-    // TODO: figure out base/disp!
-    // needs regs + current pc
-    return [index ?? 0, base, 0, 0, disp];
+    const mindex = !!index ? index : 0;
+    const mbase = !!base ? base : 0;
+    return [mindex, mbase, 0, 0, disp];
   } else if (symbols[o]) {
     return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
   } else {
