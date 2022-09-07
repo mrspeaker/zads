@@ -69,8 +69,7 @@ export const ops = {
     len: 2,
     f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
     name: "load",
-    desc:
-      "The second operand is placed unchanged at the first operand location",
+    desc: "The second operand is placed unchanged at the first operand location",
     pdf: "7-150",
     type: "RR",
     form: "OP R1,R2",
@@ -92,8 +91,7 @@ export const ops = {
       }
     },
     type: "RR",
-    desc:
-      "The first operand is compared with the second operand, and the result is indicated in the condition code.",
+    desc: "The first operand is compared with the second operand, and the result is indicated in the condition code.",
     pdf: "7-56",
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
@@ -110,8 +108,7 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add",
-    desc:
-      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
     type: "RR",
     form: "OP R1,R2",
@@ -129,8 +126,7 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "subtract",
-    desc:
-      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
+    desc: "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
     type: "RR",
     form: "OP R1,R2",
@@ -147,10 +143,9 @@ export const ops = {
       regset(regs[r1], ptr);
     },
     name: "load address",
-    desc:
-      "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
+    desc: "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
     pdf: "7-265",
-    type: "RX-a",
+    type: "RX", //RX-a",
     form: "OP R1,D2(X2,B2)",
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
@@ -169,8 +164,7 @@ export const ops = {
       }
     },
     name: "branch on count",
-    desc:
-      "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
+    desc: "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
     pdf: "7-2xx",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -190,8 +184,7 @@ export const ops = {
     },
     type: "RX",
     pdf: "7-29",
-    desc:
-      "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
+    desc: "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
     form: "OP M1,D2(X2,B2)",
     form_int: "OPOP M1 X2 B2 D2D2D2",
   },
@@ -204,8 +197,7 @@ export const ops = {
       memcpy(regs[r1], mem, ptr);
     },
     name: "store",
-    desc:
-      "The first operand is placed unchanged at the second operand location.",
+    desc: "The first operand is placed unchanged at the second operand location.",
     pdf: "7-211",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -222,8 +214,7 @@ export const ops = {
     },
     pdf: "7-150",
     type: "RX",
-    desc:
-      "The second operand is placed unchanged at the first operand location",
+    desc: "The second operand is placed unchanged at the first operand location",
     form: "OP R1,D2(X2,B2)",
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
@@ -240,8 +231,7 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add",
-    desc:
-      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -260,8 +250,7 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "subtract",
-    desc:
-      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
+    desc: "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -321,8 +310,7 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add halfword immediate",
-    desc:
-      "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
+    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
     pdf: "7-22",
     type: "RI",
     form: "OP R1,I2",
@@ -339,8 +327,7 @@ export const ops = {
       //mem[ptr + 3] = val;
     },
     name: "move",
-    desc:
-      "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
+    desc: "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
     pdf: "7-163",
     type: "SS",
     form: "OP D1(L1,B1),D2(B2)",

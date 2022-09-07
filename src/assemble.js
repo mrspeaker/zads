@@ -304,14 +304,14 @@ const parseBaseDisplace = (o, base, symbols) => {
   if (matches.length === 4) {
     //base disp
     const [, disp, index, base] = matches;
-    const mindex = !!index ? index : 0;
-    const mbase = !!base ? base : 0;
-    return [mindex, mbase, 0, 0, disp];
+    const mindex = parseInt(index, 10) ?? 0;
+    const mbase = parseInt(base, 10) ?? 0;
+    const mdisp = parseInt(disp, 10) ?? 0;
+    return [mindex, mbase, ...to_nibs(mdisp, 3)];
   } else if (symbols[o]) {
     return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
   } else {
-    // Missing symbol.
-    console.warn("msising sybmol", o);
+    console.warn("Missing symbol:", o);
   }
   return [INDEX, base, 0, 0, 0];
   //  return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
