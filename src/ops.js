@@ -132,6 +132,51 @@ export const ops = {
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
   },
+  0x1c: {
+    mn: "MR",
+    code: [0x1c],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = bytes_to_fw(...regs[r1]);
+      const b = bytes_to_fw(...regs[r2]);
+      /*if (a === b) {
+        psw.conditionCode = 0;
+      } else if (a < b) {
+        psw.conditionCode = 1;
+      } else {
+        psw.conditionCode = 2;
+        }*/
+      regset(regs[r1], a * b);
+    },
+    type: "RR",
+    desc: "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.",
+    pdf: "7-304",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
+  0x1d: {
+    mn: "DR",
+    code: [0x1d],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = bytes_to_fw(...regs[r1]);
+      const b = bytes_to_fw(...regs[r2]);
+      /*if (a === b) {
+        psw.conditionCode = 0;
+      } else if (a < b) {
+        psw.conditionCode = 1;
+      } else {
+        psw.conditionCode = 2;
+        }*/
+      // TODO: not even close. check even reg etc.
+      regset(regs[r1], Math.floor(a / b));
+    },
+    type: "RR",
+    desc: "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
+    pdf: "7-251",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
 
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
@@ -252,6 +297,44 @@ export const ops = {
     name: "subtract",
     desc: "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OP R1 X2 B2 D2D2D2",
+  },
+  0x5c: {
+    mn: "M",
+    code: [0x5c],
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const a = regval(regs[r1]);
+      const b = memval_f(mem, ptr);
+      //const { res, cc } = addAndCC(a, -b);
+      regset(regs[r1], a * b);
+      //psw.conditionCode = cc;
+    },
+    name: "multiply",
+    desc: "first operand (the multiplicand) is multiplied by the 32-bit second operand (the multiplier), and the 64-bit product is placed at the first operand location.",
+    pdf: "7-304",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OP R1 X2 B2 D2D2D2",
+  },
+  0x5d: {
+    mn: "D",
+    code: [0x5d],
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const a = regval(regs[r1]);
+      const b = memval_f(mem, ptr);
+      //const { res, cc } = addAndCC(a, -b);
+      regset(regs[r1], Math.floor(a / b));
+      //psw.conditionCode = cc;
+    },
+    name: "divide",
+    desc: "The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
+    pdf: "7-251",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",
