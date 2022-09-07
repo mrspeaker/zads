@@ -154,6 +154,7 @@ export const ops = {
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
   },
+
   0x1d: {
     mn: "DR",
     code: [0x1d],
@@ -340,6 +341,28 @@ export const ops = {
     form_int: "OP R1 X2 B2 D2D2D2",
   },
   0x90: { mn: "STM", code: [0x90], len: 4, f: nop },
+  0x91: {
+    mn: "TM",
+    code: [0x91],
+    len: 4,
+    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+      const val = byte_from(i1, i2);
+      const ptr = base_displace(0, regs[r1], da, db, dc);
+      //TODO: test under mask. CC:
+      // 0 Selected bits all zeros; or mask bits all zeros
+      // 1 Selected bits mixed zeros and ones (TM and TMY only)
+      // 1 Selected bits mixed zeros and ones, and leftmost is zero (TMHH, TMHL, TMLH, TMLL)
+      // 2 -- (TM and TMY only)
+      // 2 Selected bits mixed zeros and ones, and leftmostis one (TMHH, TMHL, TMLH, TMLL)
+      // 3 Selected bits all ones
+    },
+    name: "test under mask",
+    desc: "A mask is used to select bits of the first operand, and the result is indicated in the condition code.",
+    pdf: "7-400",
+    type: "SI",
+    form: "OP D1(B1),I2",
+    form_int: "OPOP I2I2 B1 D1D1D1",
+  },
   0x92: {
     mn: "MVI",
     code: [0x92],
