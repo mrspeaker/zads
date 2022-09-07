@@ -5,6 +5,7 @@ import { mk_state } from "./state.js";
 import { $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
+
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
 
