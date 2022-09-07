@@ -58,8 +58,8 @@ const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 export const base_displace = (x, b, d1, d2, d3) => {
   const D = disp(d1, d2, d3);
   const xx = x === 0 ? 0 : regval(x);
-  const bb = regval(b);
-  return (xx ?? 0) + (bb ?? 0) + D;
+  const bb = b === 0 ? 0 : regval(b);
+  return xx + bb + D;
 };
 
 export const reg_to_mem = (mem, offset, reg) => {
