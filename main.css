@@ -47,7 +47,7 @@ body {
   color: var(--text-color);
   margin: 0;
   font-family: vga, monospace;
-  font-size: 1vw;
+  font-size: 1.2rem;
 }
 
 a {
@@ -57,7 +57,7 @@ input,
 button,
 select,
 textarea {
-  font-size:1.2vw;
+    font-size:1.2rem;
   font-family: vga, monospace;
   caret-color: var(--highlight-warm);
   border-radius:2px;
