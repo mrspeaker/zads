@@ -4,16 +4,21 @@ import { nib, to_nibs, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
-  const { stmts, symbols, base, base_addr } = asmTxt
+  const parsedAndExpanded = asmTxt
     .split("\n")
     .filter((v) => !!v.trim() && v[0] !== "*")
     .map(tokenize)
-    .reduce(expandMacros, [])
+    .reduce(expandMacros, []);
+
+  const equateExpanded = remapEquates(parsedAndExpanded);
+
+  const { stmts, symbols, base, base_addr } = equateExpanded
     .map(remapExtendedMnemonics)
     .reduce(assembleStatement, {
       pc: 0,
       stmts: [],
       symbols: {},
+      equates: {},
       base: 15, // default to base reg 15. Is that correct?
       base_addr: 0,
     });
@@ -196,6 +201,29 @@ const remapExtendedMnemonics = (stmt) => {
   return stmt;
 };
 
+const remapEquates = (stmts) => {
+  const eqs = stmts.reduce((ac, el) => {
+    const { label, mn, operands } = el;
+    if (mn.toLowerCase() === "equ") {
+      ac[label.toLowerCase()] = parseImmediate(operands[0])[0];
+    }
+    return ac;
+  }, {});
+  return stmts.reduce((ac, el) => {
+    if (el.mn.toLowerCase() === "equ") return ac;
+    ac.push(el);
+    if (el.operands) {
+      el.operands = el.operands.map((v) => {
+        if (eqs[v.toLowerCase()] !== undefined) {
+          return eqs[v.toLowerCase()];
+        }
+        return v;
+      });
+    }
+    return ac;
+  }, []);
+};
+
 const expandMacros = (ac, stmt) => {
   // TODO: expand any macros!
   switch (stmt.mn.toLowerCase()) {
@@ -204,7 +232,7 @@ const expandMacros = (ac, stmt) => {
         console.log("ASMDREG");
         const dcs = [...Array(16)]
           .fill(0)
-          .map((_, i) => mk_stmt_toks(`R${i}`, "DC", [`f'${i}'`], ""));
+          .map((_, i) => mk_stmt_toks(`R${i}`, "equ", [i], ""));
         ac.push(...dcs);
       }
       break;
