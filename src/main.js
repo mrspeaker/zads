@@ -12,7 +12,7 @@ const action = asyncHandler(actionReducer(state, render));
 (async function main(state) {
   bindUI(state, action);
   action("STORAGE_LOAD");
-  action("PROG_LOAD", "scan6");
+  action("PROG_LOAD", "mark6");
 })(state, action);
 
 function bindUI(state, action) {
