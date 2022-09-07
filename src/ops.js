@@ -5,6 +5,7 @@ import {
   mem_to_reg,
   memcpy,
   memval_f,
+  from_nibs,
   bytes_to_fw,
   regset,
   regval,
@@ -294,7 +295,6 @@ export const ops = {
       const d = nib3_to_byte(d1, d2, d3);
 
       // TODO: wrap r1 to r2
-
       let ptr = regs[r3][3] + d;
       mem_to_reg(mem, ptr, regs[r1]);
       ptr += 4;
@@ -303,18 +303,19 @@ export const ops = {
       mem_to_reg(mem, ptr, regs[r3]);
       ptr += 4;
     },
+    pdf: "7-159",
+    type: "RS",
+    form: "OP R1,R3,D2(B2)",
+    form_int: "OPOP R1 R3 B2 D2D2D2",
   },
   0xd7: { mn: "XC", code: [0xd7], len: 6, f: nop },
   0xa70a: {
     mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
-    f: ([r1, op, ia, ib, ic, id], regs, mem, psw) => {
-      //          memcpy(regs[r2], regs[r1]),
-      // TODO: only using 2 nibbles for I value. (should be 4)
-      console.log("AHI", r1, byte_from(ic, id));
+    f: ([r1, , ia, ib, ic, id], regs, mem, psw) => {
       const a = regval(regs[r1]);
-      const b = byte_from(ic, id);
+      const b = from_nibs([ia, ib, ic, id]);
       const { res, cc } = addAndCC(a, b);
       regset(regs[r1], res);
       psw.conditionCode = cc;

@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { nib, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
+import { nib, to_nibs, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -115,10 +115,11 @@ const parseOperands = (s, symbols, base) => {
       bytes.operands.push(...enc[0], ...enc[1]);
       break;
     case "RI":
-      // TODO: NOPE! 0x0a is only for AHI!
-      // AND... enc[1] is two nibbles... not 4.
-      // (err in RI for paressOperand)
-      bytes.operands.push(...enc[0], 0x0a, 0, 0, ...enc[1]);
+      {
+        // extract extra opcode byte
+        const extra = ops[bytes.op_code[0]].code[1];
+        bytes.operands.push(...enc[0], extra, ...enc[1]);
+      }
       break;
     case "SI":
       // I2I2 B1 D1D1D1
@@ -144,9 +145,6 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
   if (type === "DC") {
     return parseImmediate(o);
   }
-  if (mn === "ahi") console.log("a hi", o, type, mn);
-  // THIS is not good right? Try SS and see if it can
-  // work in this "break into bits" style.
   const otype =
     {
       RR: ["R", "R"],
@@ -164,8 +162,10 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
       // One number? Correct? Should not be over 15 anyway.
       if (o > 15 || o < 0) console.warn("bad reg", o);
       return parseImmediate(o);
-    case "I":
-      return nib(parseImmediate(o));
+    case "I": {
+      const nibs = type === "RI" ? 4 : 2;
+      return to_nibs(parseImmediate(o), nibs);
+    }
     case "X":
     case "S": {
       return parseBaseDisplace(o, base, symbols);

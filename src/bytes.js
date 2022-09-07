@@ -1,5 +1,16 @@
 import { chunk } from "./utils.js";
 
+export const to_nibs = (num, nibs) =>
+  [...Array(nibs)].fill(0).map((_, i) => {
+    const idx = nibs - i - 1;
+    return (num & (Math.pow(0x10, idx + 1) - 1)) >> (idx * 4);
+  });
+
+export const from_nibs = (nibs) => {
+  const len = nibs.length - 1;
+  return nibs.reduce((total, nib, i) => total + (nib << ((len - i) * 4)), 0);
+};
+
 export const nib = (byte) => [byte >> 4, byte % 16];
 export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
 export const nib3_to_byte = (nib1, nib2, nib3) =>
