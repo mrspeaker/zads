@@ -326,6 +326,16 @@ const parseImmediate = (v) => {
 const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;
 
+  if (o[0] === "=") {
+    const value = parseImmediate(o.slice(1));
+    console.log("need to add", o, "to symbols", value, symbols);
+    // const mstmt = adddata(env, stmt);
+    // const bytes = parsedataoperand(mstmt.stmt.operands[0]);
+    // mstmt.stmt.operands = bytes;
+    // label && (symbols[label_lc] = { pc: env.pc, len: bytes.length });
+    // env.pc += bytes.length;
+  }
+
   const bdregex = /([0-9]+)\(([0-9]*),([0-9]+)\)/g;
   const matches = [...o.matchAll(bdregex)].flat();
 
