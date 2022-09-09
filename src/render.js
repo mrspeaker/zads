@@ -2,7 +2,7 @@ import { disassemble } from "./disassemble.js";
 import { vic_regs, pal_to_rgb } from "./vic.js";
 
 import { $, toHex, formatObjRecord } from "./utils.js";
-import { bytes_to_fw } from "./bytes.js";
+import { memval_f, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
   const { machine, program, zads, programs, selected } = state;
@@ -47,17 +47,19 @@ function render(state) {
 }
 
 function renderScreen(mem, vic) {
-  const { screen, sprites } = vic;
-  const { regs } = screen;
+  const { regs } = vic;
 
   // Copy regs
   let offset = 100;
   [...Array(regs.length)].fill(0).map((_, i) => {
-    regs[i] = mem[i + offset++];
+    regs[i] = mem[i + offset];
   });
-  [...Array(sprites.length)].fill(0).map((_, i) => {
-    sprites[i] = mem[i + offset++];
-  });
+
+  const mval = (reg_name) => {
+    const v = memval_f(regs, reg_name);
+    console.log(memval_f(regs, reg_name));
+    return v;
+  };
 
   const c = $("#screen").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
@@ -67,12 +69,12 @@ function renderScreen(mem, vic) {
     imgData.data[i * 4 + 2] = mem[i];
     imgData.data[i * 4 + 3] = 255;
   });
-  c.fillStyle = pal_to_rgb(regs[vic_regs.BG_COL]);
+
+  c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   c.putImageData(imgData, 0, 0);
-  console.log(regs, pal_to_rgb(regs[vic_regs.FG_COL]));
-  c.fillStyle = pal_to_rgb(3);
-  c.fillRect(sprites[0], sprites[1], 3, 3);
+  c.fillStyle = pal_to_rgb(mval(vic_regs.FG_COL));
+  c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 3, 3);
 }
 
 export default render;

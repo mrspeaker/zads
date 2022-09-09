@@ -2,7 +2,9 @@ import { mk_mem } from "./state.js";
 
 export const vic_regs = {
   BG_COL: 0,
-  FG_COL: 1,
+  FG_COL: 4,
+  SPR1_X: 8,
+  SPR1_Y: 12,
 };
 
 export function mk_vic(scr_cols = 320, scr_rows = 240) {
@@ -11,9 +13,8 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
       rows: scr_rows,
       cols: scr_cols,
       mem: mk_mem(scr_cols * scr_rows),
-      regs: [0, 1],
     },
-    sprites: [0, 0],
+    regs: mk_mem(4 * 4),
   };
 }
 
