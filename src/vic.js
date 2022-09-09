@@ -13,6 +13,7 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
       mem: mk_mem(scr_cols * scr_rows),
       regs: [0, 1],
     },
+    sprites: [0, 0],
   };
 }
 

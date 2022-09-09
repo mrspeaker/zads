@@ -47,9 +47,16 @@ function render(state) {
 }
 
 function renderScreen(mem, vic) {
+  const { screen, sprites } = vic;
+  const { regs } = screen;
+
   // Copy regs
-  [...Array(vic.screen.regs.length)].fill(0).map((_, i) => {
-    vic.screen.regs[i] = mem[i + 100];
+  let offset = 100;
+  [...Array(regs.length)].fill(0).map((_, i) => {
+    regs[i] = mem[i + offset++];
+  });
+  [...Array(sprites.length)].fill(0).map((_, i) => {
+    sprites[i] = mem[i + offset++];
   });
 
   const c = $("#screen").getContext("2d");
@@ -60,9 +67,12 @@ function renderScreen(mem, vic) {
     imgData.data[i * 4 + 2] = mem[i];
     imgData.data[i * 4 + 3] = 255;
   });
-  c.fillStyle = pal_to_rgb(vic.screen.regs[vic_regs.BG_COL]);
+  c.fillStyle = pal_to_rgb(regs[vic_regs.BG_COL]);
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   c.putImageData(imgData, 0, 0);
+  console.log(regs, pal_to_rgb(regs[vic_regs.FG_COL]));
+  c.fillStyle = pal_to_rgb(3);
+  c.fillRect(sprites[0], sprites[1], 3, 3);
 }
 
 export default render;
