@@ -99,7 +99,7 @@ const addData = (env, stmt) => {
 const tokenizeOperands = (ops) => {
   // comma, followed by NOT open paren, stuff, close paren.
   // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
-  return ops?.split(/,(?![^(]*\))/g);
+  return ops?.split(/,(?![^(]*\))/g) ?? [];
 };
 
 const tokenize = (line) => {
@@ -248,7 +248,7 @@ const expandMacros = (ac, stmt) => {
         console.log("ASMDREG");
         const dcs = [...Array(16)]
           .fill(0)
-          .map((_, i) => mk_stmt_toks(`R${i}`, "equ", [i], ""));
+          .map((_, i) => mk_stmt_toks(`R${i}`, "equ", [i + ""], ""));
         ac.push(...dcs);
       }
       break;
