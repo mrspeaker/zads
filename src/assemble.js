@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { nib, to_nibs, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
+import { to_nibs, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -163,6 +163,7 @@ const parseOperands = (s, symbols, base) => {
 
 // Return (mostly?) nibbles
 const parseOperand = (o, symbols, base, type, idx, mn) => {
+  console.log("hoop", mn, o);
   if (type === "DC") {
     return parseImmediate(o);
   }
@@ -221,7 +222,7 @@ const remapEquates = (stmts) => {
   const eqs = stmts.reduce((ac, el) => {
     const { label, mn, operands } = el;
     if (mn.toLowerCase() === "equ") {
-      ac[label.toLowerCase()] = parseImmediate(operands[0])[0];
+      ac[label.toLowerCase()] = parseImmediate(operands[0])[0] + "";
     }
     return ac;
   }, {});
@@ -230,10 +231,18 @@ const remapEquates = (stmts) => {
     ac.push(el);
     if (el.operands) {
       el.operands = el.operands.map((v) => {
-        if (eqs[v.toLowerCase()] !== undefined) {
-          return eqs[v.toLowerCase()];
-        }
-        return v;
+        // Split up base/display parens
+        const [first, ...rest] = v.split(/[,()]/g);
+
+        const firstEq = eqs[first.toLowerCase()];
+        const head = firstEq !== undefined ? firstEq : first;
+
+        const parens = rest.slice(0, -1).map((v) => {
+          const equate = eqs[v.toLocaleLowerCase()];
+          return v && equate !== undefined ? equate : v;
+        });
+        // Rebuild them.
+        return head + (parens.length ? "(" + parens.join(",") + ")" : "");
       });
     }
     return ac;
@@ -365,10 +374,37 @@ const parseImmediate = (v) => {
   return [parseInt(v, 10)];
 };
 
+// SYmbol definition:
+/*
+  The symbol must not consist of more than 63 alphanumeric characters.
+  The first character must be an alphabetic character.
+  An alphabetic character is a letter from A through Z,
+  or from a through z, or $, _, #, or @.
+  The other characters in the symbol can be alphabetic characters,
+  digits, or a combination of the two.
+
+  The assembler does not distinguish between upper-case and lower-case letters used in symbols.
+*/
+
 const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;
-  const bdregex = /([0-9]+)\(([0-9]*),([0-9]+)\)/g;
+  const bdregex = /([\d\w]+)\(([\d\w]*),([\d\w]+)\)/g;
   const matches = [...o.matchAll(bdregex)].flat();
+
+  /*
+    can be:
+      blah
+      blah(15)  // is index/length
+      blah(r15)? // probably.
+
+      0(,15)
+      100(,15)
+      0(0,15)
+      0(15)
+      0(,R15)
+      0(R2,R15)
+  */
+  console.log(o);
 
   if (matches.length === 4) {
     //base disp
@@ -383,7 +419,6 @@ const parseBaseDisplace = (o, base, symbols) => {
     console.warn("Missing symbol:", o);
   }
   return [INDEX, base, 0, 0, 0];
-  //  return [INDEX, base, ...disp_to_nibs(symbols[o].pc)];
 };
 
 const expandDataStatements = (s) => {
