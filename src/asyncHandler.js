@@ -22,18 +22,20 @@ const asyncHandler = (action) => async (type, value) => {
       break;
     case "STORAGE_LOAD":
       {
+        if (!window.localStorage) return;
         let programs = defaultPrograms;
-        if (window.localStorage) {
-          const progs = window.localStorage.getItem("programs");
-          if (progs) {
-            try {
-              programs = JSON.parse(progs);
-            } catch (e) {
-              console.error("Error loading", e, progs);
-            }
+        const progs = window.localStorage.getItem("programs");
+        if (progs) {
+          try {
+            programs = JSON.parse(progs);
+          } catch (e) {
+            console.error("Error loading", e, progs);
           }
         }
         action("STORAGE_LOADED", programs);
+
+        let settings = {};
+        // TODO: store settings. current.
       }
       break;
 

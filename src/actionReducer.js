@@ -10,6 +10,10 @@ const save = async (progs) => {
   if (!window.localStorage) return;
   localStorage.setItem("programs", JSON.stringify(progs));
 };
+const saveSettings = async (settings) => {
+  if (!window.localStorage) return;
+  localStorage.setItem("settings", JSON.stringify(settings));
+};
 
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
@@ -28,6 +32,7 @@ const actionReducer = (s, render) => (type, value) => {
       } else {
         s.selected = null;
       }
+      saveSettings({ selected: s.selected });
       break;
     case "PROGRAM_SAVE":
       if (!s.selected) {
