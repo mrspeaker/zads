@@ -1,9 +1,10 @@
-import { run } from "./emulate.js";
+import { step } from "./emulate.js";
 import { assemble } from "./assemble.js";
 import { bind } from "./bind.js";
 import { mk_program_from_obj } from "./program.js";
 import { memcpy, regset } from "./bytes.js";
 import { mk_program } from "./state.js";
+import { chunk } from "./utils.js";
 
 const save = async (progs) => {
   if (!window.localStorage) return;
@@ -61,10 +62,23 @@ const actionReducer = (s, render) => (type, value) => {
     case "OBJ_BYTES":
       s.zads.showObjBytes = !s.zads.showObjBytes;
       break;
+    case "STOP":
+      s.machine.psw.halt = true;
+      break;
     case "RUN":
-      // TODO: clear mem each run?
       memcpy(s.program.code, s.machine.mem, 0);
-      s.program.code_txt = run(s.program.code, s.machine);
+      s.machine.psw.pc = 0;
+      s.machine.psw.halt = false;
+      // TODO: need to relocate prg.
+      regset(s.machine.regs[15], 0);
+      s.program.code_txt = [];
+      //s.program.code_txt = run(s.program.code, s.machine);
+      break;
+    case "STEP":
+      {
+        const code_txt = step(s.program.code, s.machine);
+        s.program.code_txt = [code_txt, ...s.program.code_txt.slice(0, 25)];
+      }
       break;
     case "MEM_UPDATE":
       if (value.length === s.machine.mem.length) {
@@ -84,7 +98,12 @@ const actionReducer = (s, render) => (type, value) => {
             .filter((s) => !["DS"].includes(s.stmt.mn.toUpperCase()))
             .map((s) => s.bytes.bytes),
         ].flat();
-        s.program.obj = bind(code_bytes);
+
+        /// break into segments
+        const ch = chunk(code_bytes, 64).map(bind);
+        s.program.obj = ch.reduce((ac, el) => {
+          return [...ac, ...el];
+        }, []);
         s.program = mk_program_from_obj(s.program.obj, value);
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;

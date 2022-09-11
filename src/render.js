@@ -55,11 +55,7 @@ function renderScreen(mem, vic) {
     regs[i] = mem[i + offset];
   });
 
-  const mval = (reg_name) => {
-    const v = memval_f(regs, reg_name);
-    console.log(memval_f(regs, reg_name));
-    return v;
-  };
+  const mval = (reg_name) => memval_f(regs, reg_name);
 
   const c = $("#screen").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
@@ -74,7 +70,7 @@ function renderScreen(mem, vic) {
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   c.putImageData(imgData, 0, 0);
   c.fillStyle = pal_to_rgb(mval(vic_regs.FG_COL));
-  c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 3, 3);
+  c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
 }
 
 export default render;

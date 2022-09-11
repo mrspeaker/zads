@@ -21,12 +21,10 @@ export const assemble = (asmTxt) => {
     .reduce(expandLiterals, { lits: [], stmts: [] });
 
   // TODO: need to inject literals somewhere - with corresponding PC,
-  // _before_ assembling the statement.
+  // _before_ assebmbling the statement.
   console.log("Literals:", expanded.lits);
 
   const equateExpanded = remapEquates(expanded.stmts);
-
-  console.log("Is here:", equateExpanded);
 
   const { stmts, symbols, base, base_addr } = equateExpanded
     .map(remapExtendedMnemonics)
@@ -163,7 +161,6 @@ const parseOperands = (s, symbols, base) => {
 
 // Return (mostly?) nibbles
 const parseOperand = (o, symbols, base, type, idx, mn) => {
-  console.log("hoop", mn, o);
   if (type === "DC") {
     return parseImmediate(o);
   }
@@ -390,21 +387,6 @@ const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;
   const bdregex = /([\d\w]+)\(([\d\w]*),([\d\w]+)\)/g;
   const matches = [...o.matchAll(bdregex)].flat();
-
-  /*
-    can be:
-      blah
-      blah(15)  // is index/length
-      blah(r15)? // probably.
-
-      0(,15)
-      100(,15)
-      0(0,15)
-      0(15)
-      0(,R15)
-      0(R2,R15)
-  */
-  console.log(o);
 
   if (matches.length === 4) {
     //base disp

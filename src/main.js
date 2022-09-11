@@ -13,6 +13,12 @@ const action = asyncHandler(actionReducer(state, render));
   bindUI(state, action);
   action("STORAGE_LOAD");
   action("PROG_LOAD", "mark6");
+
+  setInterval(() => {
+    if (!state.machine.psw.halt) {
+      action("STEP");
+    }
+  }, 16);
 })(state, action);
 
 function bindUI(state, action) {
@@ -90,4 +96,8 @@ function bindUI(state, action) {
 
   $click("#btnRun", () => action("RUN"));
   $("#mem").addEventListener("change", (e) => updateMem(e.target.value), false);
+
+  $click("#btnRun1", () => action("RUN"));
+  $click("#btnStop", () => action("STOP"));
+  $click("#btnStep", () => action("STEP"));
 }

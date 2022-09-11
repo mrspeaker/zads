@@ -15,7 +15,7 @@ export function run(obj, env) {
   return exe_txt;
 }
 
-function step(obj, env) {
+export function step(obj, env) {
   const { regs, mem, psw } = env;
   const op = get_op(obj, psw.pc++);
   if (!op) {

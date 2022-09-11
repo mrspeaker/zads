@@ -19,7 +19,7 @@ const mk_machine = () => ({
   psw: {
     conditionCode: 3,
     pc: 0,
-    halt: false,
+    halt: true,
   },
   cpuState: "operating", // stopped, operating, load, check-stop
   vic: mk_vic(320, 240),
