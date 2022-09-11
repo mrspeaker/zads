@@ -31,6 +31,7 @@ function render(state) {
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
     renderScreen(mem, vic);
+    renderMemViz(mem);
   }
 
   const sel = $("#programs");
@@ -58,6 +59,21 @@ function renderScreen(mem, vic) {
   const mval = (reg_name) => memval_f(regs, reg_name);
 
   const c = $("#screen").getContext("2d");
+  c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
+  c.fillRect(0, 0, c.canvas.width, c.canvas.height);
+
+  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR1_COL));
+  c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
+  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR2_COL));
+  c.fillRect(mval(vic_regs.SPR2_X), mval(vic_regs.SPR2_Y), 2, 2);
+  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR3_COL));
+  c.fillRect(mval(vic_regs.SPR3_X), mval(vic_regs.SPR3_Y), 2, 2);
+  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR4_COL));
+  c.fillRect(mval(vic_regs.SPR4_X), mval(vic_regs.SPR4_Y), 2, 2);
+}
+
+function renderMemViz(mem) {
+  const c = $("#memviz").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
   imgData.data.forEach((d, i) => {
     imgData.data[i * 4] = mem[i];
@@ -65,12 +81,7 @@ function renderScreen(mem, vic) {
     imgData.data[i * 4 + 2] = mem[i];
     imgData.data[i * 4 + 3] = 255;
   });
-
-  c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
-  c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   c.putImageData(imgData, 0, 0);
-  c.fillStyle = pal_to_rgb(mval(vic_regs.FG_COL));
-  c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
 }
 
 export default render;

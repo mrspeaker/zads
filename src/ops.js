@@ -386,8 +386,7 @@ export const ops = {
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
       const val = byte_from(i1, i2);
       const ptr = base_displace(0, regs[r1], da, db, dc);
-      // TODO: +3? Where should it write?
-      mem[ptr + 3] = val;
+      mem[ptr] = val;
     },
     name: "move",
     desc: "The second operand is placed at the first-operand location.",
@@ -419,7 +418,47 @@ export const ops = {
     form: "OP R1,R3,D2(B2)",
     form_int: "OPOP R1 R3 B2 D2D2D2",
   },
+  0xc20d: {
+    mn: "CFI",
+    code: [0xc20d],
+    len: 6,
+    f: ([...args], regs, mem, psw) => {
+      /*      const a = regval(regs[r1]);
+      const b = from_nibs([ia, ib, ic, id]);
+      const { res, cc } = addAndCC(a, b);
+      regset(regs[r1], res);
+      psw.conditionCode = cc;
+      */
+      console.log("CFI args:", args);
+    },
+    name: "compare immediate",
+    desc:
+      "The first operand is compared with the second operand, and the result is indicated in the condition code.",
+    pdf: "7-22",
+    type: "RI", //RIL
+    form: "OP R1,I2",
+    form_int: "OPOP R1 OP I2I2I2I2I2I2I2I2",
+  },
+
   0xd7: { mn: "XC", code: [0xd7], len: 6, f: nop },
+  0xd2: {
+    mn: "MVC",
+    code: [0xd2],
+    len: 12,
+    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+      const val = byte_from(i1, i2);
+      const ptr = base_displace(0, regs[r1], da, db, dc);
+      // TODO: +3? Where should it write?
+      //mem[ptr + 3] = val;
+    },
+    name: "move",
+    desc:
+      "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
+    pdf: "7-163",
+    type: "SS",
+    form: "OP D1(L1,B1),D2(B2)",
+    form_int: "OPOP L1L1 B1 D1D1D1 B2 D2D2D2",
+  },
   0xa70a: {
     mn: "AHI",
     code: [0xa7, 0x0a],
@@ -438,24 +477,6 @@ export const ops = {
     type: "RI",
     form: "OP R1,I2",
     form_int: "OPOP R1 OP I2I2I2I2",
-  },
-  0xd2: {
-    mn: "MVC",
-    code: [0xd2],
-    len: 12,
-    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
-      const val = byte_from(i1, i2);
-      const ptr = base_displace(0, regs[r1], da, db, dc);
-      // TODO: +3? Where should it write?
-      //mem[ptr + 3] = val;
-    },
-    name: "move",
-    desc:
-      "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
-    pdf: "7-163",
-    type: "SS",
-    form: "OP D1(L1,B1),D2(B2)",
-    form_int: "OPOP L1L1 B1 D1D1D1 B2 D2D2D2",
   },
 };
 

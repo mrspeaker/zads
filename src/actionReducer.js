@@ -66,6 +66,10 @@ const actionReducer = (s, render) => (type, value) => {
       s.machine.psw.halt = true;
       break;
     case "RUN":
+      if (!s.machine.psw.halt) {
+        s.machine.psw.halt = true;
+        break;
+      }
       memcpy(s.program.code, s.machine.mem, 0);
       s.machine.psw.pc = 0;
       s.machine.psw.halt = false;
