@@ -12,7 +12,9 @@ const action = asyncHandler(actionReducer(state, render));
 (async function main(state) {
   bindUI(state, action);
   action("STORAGE_LOAD");
-  action("PROG_LOAD", "mark6");
+  if (!state.selected) {
+    action("PROG_LOAD", "mark6");
+  }
 
   setInterval(() => {
     if (!state.machine.psw.halt) {

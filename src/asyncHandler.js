@@ -26,15 +26,15 @@ const asyncHandler = (action) => async (type, value) => {
         let programs = defaultPrograms;
         const progs = window.localStorage.getItem("programs");
         if (progs) {
-          try {
-            programs = JSON.parse(progs);
-          } catch (e) {
-            console.error("Error loading", e, progs);
-          }
+          programs = JSON.parse(progs);
         }
         action("STORAGE_LOADED", programs);
 
-        let settings = {};
+        let settings = JSON.parse(window.localStorage.getItem("settings"));
+        if (settings?.selected) {
+          action("PROGRAM_SELECT", settings.selected);
+        }
+
         // TODO: store settings. current.
       }
       break;
