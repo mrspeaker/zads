@@ -23,7 +23,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background-color: #222;
-    --text-color: #7f938b;
+/*    --text-color: #7f938b;*/
     --status-bar: #333;
   }
 }
