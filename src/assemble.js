@@ -387,7 +387,6 @@ export const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;
   const bdregex = /([\d\w]+)\(([\d\w]*),([\d\w]+)\)/g;
   const matches = [...o.matchAll(bdregex)].flat();
-
   if (matches.length === 4) {
     //base disp
     const [, disp, index, base] = matches;

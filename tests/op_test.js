@@ -1,6 +1,6 @@
 import { step } from "../src/emulate.js";
 import { ops, op_by_mn } from "../src/ops.js";
-import { regval, fw_to_bytes, memcpy } from "../src/bytes.js";
+import { regval, fw_to_bytes, memset } from "../src/bytes.js";
 import { mk_mem } from "../src/state.js";
 
 const LIFE = 42;
@@ -25,7 +25,7 @@ const op_lr = () => {
 
 const op_l = () => {
   const env = mk_env();
-  memcpy(fw_to_bytes(LIFE), env.mem, 0);
+  memset(fw_to_bytes(LIFE), env.mem, 0);
   const obj = [...code("L"), 0x00, 0x00, 0x00];
 
   step(obj, env);

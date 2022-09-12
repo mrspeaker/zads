@@ -2,7 +2,7 @@ import { step } from "./emulate.js";
 import { assemble } from "./assemble.js";
 import { bind } from "./bind.js";
 import { mk_program_from_obj } from "./program.js";
-import { memcpy, regset } from "./bytes.js";
+import { memset, regset } from "./bytes.js";
 import { mk_program } from "./state.js";
 import { chunk } from "./utils.js";
 
@@ -75,7 +75,7 @@ const actionReducer = (s, render) => (type, value) => {
         s.machine.psw.halt = true;
         break;
       }
-      memcpy(s.program.code, s.machine.mem, 0);
+      memset(s.program.code, s.machine.mem, 0);
       s.machine.psw.pc = 0;
       s.machine.psw.halt = false;
       // TODO: need to relocate prg.

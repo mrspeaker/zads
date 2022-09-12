@@ -6,6 +6,8 @@ import {
   fw_to_bytes,
   bytes_eq,
   base_displace,
+  regset,
+  regval,
 } from "../src/bytes.js";
 
 const to_nib_1 = () => arrEq(to_nibs(0xf, 1), [0xf]);
@@ -13,6 +15,7 @@ const to_nib_1 = () => arrEq(to_nibs(0xf, 1), [0xf]);
 const byte_from_nib_test = () => from_nibs([0xf, 0xf]) === 0xff;
 
 const nib_byte_nib = () => from_nibs(to_nibs(0xfe)) === 0xfe;
+const nib_overflow = () => to_nibs(0xf1, 1) === 0x01;
 
 const bytes_to_fw_min = () =>
   bytes_to_fw([0x00, 0x00, 0x00, 0x00]) === 0x00000000;
@@ -39,8 +42,16 @@ const base_disp_max_d = () => base_displace(0, 0, 0xf, 0xf, 0xf) === 0xfff;
 const base_disp_regs = () =>
   base_displace([0, 0, 0, 1], [0, 0, 0, 2], 0, 0, 3) === 6;
 
+const regset_max = () =>
+  arrEq(regset([0, 0, 0, 0], 0xfffefdfc), [0xff, 0xfe, 0xfd, 0xfc]);
+const regset_one = () =>
+  arrEq(regset([0xff, 0xff, 0xff, 0xff], 0x1), [0, 0, 0, 1]);
+const regval_max = () =>
+  regval(regset([0, 0, 0, 0], 0xfffefdfc)) === 0x0fffefdfc;
+
 export default [
   to_nib_1,
+  nib_overflow,
   byte_from_nib_test,
   nib_byte_nib,
   bytes_to_fw_min,
@@ -56,4 +67,7 @@ export default [
   base_disp_zero,
   base_disp_max_d,
   base_disp_regs,
+  regset_max,
+  regset_one,
+  regval_max,
 ];

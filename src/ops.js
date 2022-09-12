@@ -1,12 +1,12 @@
 import {
   base_displace,
-  mem_to_reg,
-  memcpy,
-  memval_f,
-  from_nibs,
   bytes_to_fw,
+  from_nibs,
   regset,
   regval,
+  memset,
+  memval_f,
+  mem_to_reg,
 } from "./bytes.js";
 
 export const get_op = (obj, psw) => {
@@ -73,7 +73,7 @@ export const ops = {
     mn: "LR",
     code: [0x18],
     len: 2,
-    f: ([r1, r2], regs) => memcpy(regs[r2], regs[r1]),
+    f: ([r1, r2], regs) => memset(regs[r2], regs[r1]),
     name: "load",
     desc:
       "The second operand is placed unchanged at the first operand location",
@@ -253,7 +253,7 @@ export const ops = {
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      memcpy(regs[r1], mem, ptr);
+      memset(regs[r1], mem, ptr);
     },
     name: "store",
     desc:

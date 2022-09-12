@@ -25,7 +25,7 @@ export const fw_to_bytes = (num) => [
 export const bytes_eq = (bytes, mem, offset = 0) =>
   bytes.every((b, i) => mem[offset + i] === b);
 
-export const memcpy = (bytes, mem, offset = 0) => {
+export const memset = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
 export const memval_f = (mem, offset) =>
@@ -38,6 +38,7 @@ export const regset = (r, num) => {
   r[1] = bytes[1];
   r[2] = bytes[2];
   r[3] = bytes[3];
+  return r;
 };
 
 export const reg_to_mem = (mem, offset, reg) => {
