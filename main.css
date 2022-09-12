@@ -18,7 +18,14 @@
 
 }
 
-
+.ok {
+    background-color: var(--highlight-cool);
+    color: #222;
+}
+.fail {
+    background-color: var(--highlight-warm);
+    color: #222;
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
