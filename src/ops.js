@@ -43,12 +43,12 @@ const addAndCC = (a, b) => {
 };
 
 const jump = (addr, psw) => {
-    if (addr === 0) {
-        psw.halt = true;
-        return;
-    }
-    psw.pc = addr; 
-}
+  if (addr === 0) {
+    psw.halt = true;
+    return;
+  }
+  psw.pc = addr;
+};
 
 export const nop = () => {};
 export const ops = {
@@ -239,7 +239,7 @@ export const ops = {
       const cc = [8, 4, 2, 1][psw.conditionCode];
       if (m & cc) {
         const ptr = base_displace(regs[x], regs[b], da, db, dc);
-        jump(ptr - 3, psw);  
+        jump(ptr - 3, psw);
       }
     },
     type: "RX",
