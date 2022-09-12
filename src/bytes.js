@@ -1,27 +1,15 @@
-import { chunk } from "./utils.js";
-
-export const to_nibs = (num, nibs) =>
+export const to_nibs = (num, nibs = 2) =>
   [...Array(nibs)].fill(0).map((_, i) => {
     const idx = nibs - i - 1;
     return (num & (Math.pow(0x10, idx + 1) - 1)) >> (idx * 4);
   });
 
-export const from_nibs = (nibs) => {
+export const from_nibs = (...nibs) => {
   const len = nibs.length - 1;
   return nibs.reduce((total, nib, i) => total + (nib << ((len - i) * 4)), 0);
 };
+export const byte_from = from_nibs;
 
-export const nib = (byte) => [byte >> 4, byte % 16];
-export const byte_from = (nib1, nib2) => (nib1 << 4) + nib2;
-export const nib3_to_byte = (nib1, nib2, nib3) =>
-  (nib1 << 8) + (nib2 << 4) + nib3;
-export const nib2_to_byte = (nib1, nib2) => nib3_to_byte(0, nib1, nib2);
-export const nibs_to_bytes = (nibs) =>
-  chunk(nibs, 2)
-    .map(([n1, n2]) => byte_from(n1, n2))
-    .flat();
-
-window.n2b = nibs_to_bytes;
 export const bytes_to_fw = (a, b, c, d) => {
   // Javascript shift ops are signed 32bit
   // ">>> 0" makes the result unsigned
@@ -52,11 +40,8 @@ export const regset = (r, num) => {
   r[3] = bytes[3];
 };
 
-export const disp_to_nibs = (d) => [(d & 0xf00) >> 8, (d & 0xf0) >> 4, d & 0xf];
-
-const disp = (n1, n2, n3) => (n1 << 8) + (n2 << 4) + n3;
 export const base_displace = (x, b, d1, d2, d3) => {
-  const D = disp(d1, d2, d3);
+  const D = from_nibs(d1, d2, d3);
   const xx = x === 0 ? 0 : regval(x);
   const bb = b === 0 ? 0 : regval(b);
   return xx + bb + D;

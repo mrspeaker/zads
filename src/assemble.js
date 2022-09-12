@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { to_nibs, disp_to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
+import { to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -396,7 +396,7 @@ export const parseBaseDisplace = (o, base, symbols) => {
     const mdisp = parseInt(disp, 10) || 0;
     return [mindex, mbase, ...to_nibs(mdisp, 3)];
   } else if (symbols[o.toLowerCase()]) {
-    return [INDEX, base, ...disp_to_nibs(symbols[o.toLowerCase()].pc)];
+    return [INDEX, base, ...to_nibs(symbols[o.toLowerCase()].pc, 3)];
   } else {
     console.warn("Missing symbol:", o);
   }

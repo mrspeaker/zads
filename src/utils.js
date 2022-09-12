@@ -16,6 +16,9 @@ export const $on = (sel, ev, f) => $(sel).addEventListener(ev, f);
 
 export const delay = (time) => new Promise((res) => setTimeout(res, time));
 
+export const arrEq = (a1, a2) =>
+  a1.length === a2.length && a1.every((a, i) => a === a2[i]);
+
 const zeros = [...Array(16)].fill(0).join("");
 export const toHex = (v, pad = 2) =>
   ((pad ? zeros : "") + (v || "").toString(16)).slice(-pad);

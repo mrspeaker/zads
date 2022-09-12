@@ -1,6 +1,6 @@
 import { get_op } from "./ops.js";
 import { toHex } from "./utils.js";
-import { nib, regset } from "./bytes.js";
+import { to_nibs, regset } from "./bytes.js";
 
 export function run(obj, env) {
   env.psw.pc = 0;
@@ -28,7 +28,7 @@ export function step(obj, env) {
   const num = len - 1;
   const opers = obj
     .slice(psw.pc, psw.pc + num)
-    .map(nib)
+    .map((v) => to_nibs(v))
     .flat();
 
   f(opers, regs, mem, psw);

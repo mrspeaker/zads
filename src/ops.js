@@ -1,7 +1,6 @@
 import {
   base_displace,
   byte_from,
-  nib3_to_byte,
   mem_to_reg,
   memcpy,
   memval_f,
@@ -408,7 +407,7 @@ export const ops = {
     f: (ops, regs, mem) => {
       // Erm, check this logic. Looks real bad.
       const [r1, r2, r3, d1, d2, d3] = ops;
-      const d = nib3_to_byte(d1, d2, d3);
+      const d = from_nibs(d1, d2, d3);
 
       // TODO: wrap r1 to r2
       let ptr = regs[r3][3] + d;
@@ -471,7 +470,7 @@ export const ops = {
     len: 4,
     f: ([r1, , ia, ib, ic, id], regs, mem, psw) => {
       const a = regval(regs[r1]);
-      const b = from_nibs([ia, ib, ic, id]);
+      const b = from_nibs(ia, ib, ic, id);
       const { res, cc } = addAndCC(a, b);
       regset(regs[r1], res);
       psw.conditionCode = cc;

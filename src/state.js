@@ -1,7 +1,7 @@
 import { mk_vic } from "./vic.js";
 
 export const mk_mem = (size) => [...Array(size)].fill(0);
-const mk_regs = (num) => [...Array(num)].fill(0).map(() => [0, 0, 0, 0]);
+export const mk_regs = (num) => [...Array(num)].fill(0).map(() => [0, 0, 0, 0]);
 
 export const mk_state = () => ({
   zads: {
