@@ -3,11 +3,14 @@ import { ops, op_by_mn } from "../src/ops.js";
 import { byte_from, regval, fw_to_bytes, memcpy } from "../src/bytes.js";
 import { mk_mem } from "../src/state.js";
 
+const mk_env = (regvals = [0], mem = 32) => ({
+  regs: regvals.map(fw_to_bytes),
+  mem: mk_mem(mem),
+  psw: { pc: 0, conditionCode: 0 },
+});
+
 const op_lr = () => {
-  const env = {
-    regs: [fw_to_bytes(10), fw_to_bytes(42)],
-    psw: { pc: 0, conditionCode: 0 },
-  };
+  const env = mk_env([10, 42]);
   const op = ops[op_by_mn["LR"]];
   const obj = [...op.code, byte_from(0, 1)];
 
@@ -21,12 +24,7 @@ const op_lr = () => {
 };
 
 const op_l = () => {
-  const env = {
-    regs: [[0, 0, 0, 0]],
-    psw: { pc: 0, conditionCode: 0 },
-    mem: mk_mem(4),
-  };
-
+  const env = mk_env();
   const INIT_VAL = 3;
   memcpy([0, 0, 0, INIT_VAL], env.mem, 0);
 
