@@ -42,6 +42,14 @@ const addAndCC = (a, b) => {
   return { res: c, cc };
 };
 
+const jump = (addr, psw) => {
+    if (addr === 0) {
+        psw.halt = true;
+        return;
+    }
+    psw.pc = addr; 
+}
+
 export const nop = () => {};
 export const ops = {
   0x05: { mn: "BALR", code: [0x05], len: 2, f: nop },
@@ -212,8 +220,7 @@ export const ops = {
       const v = bytes_to_fw(...regs[r1]);
       regset(regs[r1], v - 1);
       if (v !== 0) {
-        // set psw location
-        psw.pc = ptr - 3; //(4bytes - 1)
+        jump(ptr - 3, psw); //(4bytes - 1)
       }
     },
     name: "branch on count",
@@ -232,8 +239,7 @@ export const ops = {
       const cc = [8, 4, 2, 1][psw.conditionCode];
       if (m & cc) {
         const ptr = base_displace(regs[x], regs[b], da, db, dc);
-        // set psw location
-        psw.pc = ptr - 3; //(4bytes - 1)
+        jump(ptr - 3, psw);  
       }
     },
     type: "RX",
