@@ -383,7 +383,7 @@ const parseImmediate = (v) => {
   The assembler does not distinguish between upper-case and lower-case letters used in symbols.
 */
 
-const parseBaseDisplace = (o, base, symbols) => {
+export const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;
   const bdregex = /([\d\w]+)\(([\d\w]*),([\d\w]+)\)/g;
   const matches = [...o.matchAll(bdregex)].flat();
