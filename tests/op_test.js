@@ -1,6 +1,6 @@
 import { step } from "../src/emulate.js";
 import { ops, op_by_mn } from "../src/ops.js";
-import { from_nibs, regval, fw_to_bytes, memcpy } from "../src/bytes.js";
+import { regval, fw_to_bytes, memcpy } from "../src/bytes.js";
 import { mk_mem } from "../src/state.js";
 
 const LIFE = 42;
@@ -13,7 +13,7 @@ const mk_env = (regvals = [0], mem = 32) => ({
 
 const op_lr = () => {
   const env = mk_env([10, LIFE]);
-  const obj = [...code("LR"), from_nibs(0, 1)];
+  const obj = [...code("LR"), 0x01];
 
   step(obj, env);
   const { regs, psw } = env;
@@ -36,7 +36,7 @@ const op_l = () => {
 
 const op_cr = () => {
   const env = mk_env([LIFE - 1, LIFE]);
-  const obj = [...code("CR"), from_nibs(0, 1)];
+  const obj = [...code("CR"), 0x01];
   step(obj, env);
   return env.psw.conditionCode === 1;
 };

@@ -1,6 +1,5 @@
 import {
   base_displace,
-  byte_from,
   mem_to_reg,
   memcpy,
   memval_f,
@@ -366,7 +365,7 @@ export const ops = {
     code: [0x91],
     len: 4,
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
-      const val = byte_from(i1, i2);
+      const val = from_nibs([i1, i2]);
       const ptr = base_displace(0, regs[r1], da, db, dc);
       //TODO: test under mask. CC:
       // 0 Selected bits all zeros; or mask bits all zeros
@@ -389,7 +388,7 @@ export const ops = {
     code: [0x92],
     len: 4,
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
-      const val = byte_from(i1, i2);
+      const val = from_nibs([i1, i2]);
       const ptr = base_displace(0, regs[r1], da, db, dc);
       mem[ptr] = val;
     },
@@ -406,11 +405,11 @@ export const ops = {
     len: 4,
     f: (ops, regs, mem) => {
       // Erm, check this logic. Looks real bad.
-      const [r1, r2, r3, d1, d2, d3] = ops;
-      const d = from_nibs(d1, d2, d3);
+      const [r1, r2, r3, ...d] = ops;
+      const D = from_nibs(d);
 
       // TODO: wrap r1 to r2
-      let ptr = regs[r3][3] + d;
+      let ptr = regs[r3][3] + D;
       mem_to_reg(mem, ptr, regs[r1]);
       ptr += 4;
       mem_to_reg(mem, ptr, regs[r2]);
@@ -451,7 +450,7 @@ export const ops = {
     code: [0xd2],
     len: 12,
     f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
-      const val = byte_from(i1, i2);
+      const val = from_nibs([i1, i2]);
       const ptr = base_displace(0, regs[r1], da, db, dc);
       // TODO: +3? Where should it write?
       //mem[ptr + 3] = val;
@@ -468,9 +467,9 @@ export const ops = {
     mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
-    f: ([r1, , ia, ib, ic, id], regs, mem, psw) => {
+    f: ([r1, , ...i2], regs, mem, psw) => {
       const a = regval(regs[r1]);
-      const b = from_nibs(ia, ib, ic, id);
+      const b = from_nibs(i2);
       const { res, cc } = addAndCC(a, b);
       regset(regs[r1], res);
       psw.conditionCode = cc;

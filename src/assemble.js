@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { to_nibs, byte_from, fw_to_bytes } from "./bytes.js";
+import { to_nibs, from_nibs, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
 export const assemble = (asmTxt) => {
@@ -409,7 +409,7 @@ const expandDataStatements = (s) => {
   } else {
     s.bytes.bytes = [
       ...s.bytes.op_code,
-      ...chunk(s.bytes.operands.flat(), 2).map((b) => byte_from(...b)),
+      ...chunk(s.bytes.operands.flat(), 2).map(from_nibs),
     ];
   }
   return s;

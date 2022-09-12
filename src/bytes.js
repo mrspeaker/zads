@@ -4,11 +4,10 @@ export const to_nibs = (num, nibs = 2) =>
     return (num & (Math.pow(0x10, idx + 1) - 1)) >> (idx * 4);
   });
 
-export const from_nibs = (...nibs) => {
+export const from_nibs = (nibs) => {
   const len = nibs.length - 1;
   return nibs.reduce((total, nib, i) => total + (nib << ((len - i) * 4)), 0);
 };
-export const byte_from = from_nibs;
 
 export const bytes_to_fw = ([a, b, c, d]) => {
   // Javascript shift ops are signed 32bit
@@ -55,8 +54,8 @@ export const mem_to_reg = (reg, mem, offset) => {
   reg[3] = mem[offset + 3];
 };
 
-export const base_displace = (x, b, d1, d2, d3) => {
-  const D = from_nibs(d1, d2, d3);
+export const base_displace = (x, b, ...d) => {
+  const D = from_nibs(d);
   const xx = x === 0 ? 0 : regval(x);
   const bb = b === 0 ? 0 : regval(b);
   return xx + bb + D;

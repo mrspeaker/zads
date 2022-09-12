@@ -1,6 +1,6 @@
 import { get_op } from "./ops.js";
 import { toHex, chunk } from "./utils.js";
-import { to_nibs, byte_from } from "./bytes.js";
+import { to_nibs, from_nibs } from "./bytes.js";
 
 export function disassemble(code, symbols, showBytes) {
   let psw = 0;
@@ -29,7 +29,7 @@ function line(psw, obj, symbol, showBytes) {
       .map((v) => to_nibs(v))
       .flat();
     if (showBytes) {
-      const op_nibbles = chunk(opers, 2).map(([n1, n2]) => byte_from(n1, n2));
+      const op_nibbles = chunk(opers, 2).map(from_nibs);
       txt =
         pc_loc + [...op.code, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
     } else {
