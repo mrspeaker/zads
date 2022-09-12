@@ -22,8 +22,8 @@ export const fw_to_bytes = (num) => [
   (num & 0x000000ff) >> 0,
 ];
 
-export const chkBytes = (arr, bytes, offset = 0) =>
-  bytes.every((b, i) => arr[offset + i] === b);
+export const bytes_eq = (bytes, mem, offset = 0) =>
+  bytes.every((b, i) => mem[offset + i] === b);
 
 export const memcpy = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
@@ -40,13 +40,6 @@ export const regset = (r, num) => {
   r[3] = bytes[3];
 };
 
-export const base_displace = (x, b, d1, d2, d3) => {
-  const D = from_nibs(d1, d2, d3);
-  const xx = x === 0 ? 0 : regval(x);
-  const bb = b === 0 ? 0 : regval(b);
-  return xx + bb + D;
-};
-
 export const reg_to_mem = (mem, offset, reg) => {
   mem[offset] = reg[0];
   mem[offset + 1] = reg[1];
@@ -59,4 +52,11 @@ export const mem_to_reg = (reg, mem, offset) => {
   reg[1] = mem[offset + 1];
   reg[2] = mem[offset + 2];
   reg[3] = mem[offset + 3];
+};
+
+export const base_displace = (x, b, d1, d2, d3) => {
+  const D = from_nibs(d1, d2, d3);
+  const xx = x === 0 ? 0 : regval(x);
+  const bb = b === 0 ? 0 : regval(b);
+  return xx + bb + D;
 };

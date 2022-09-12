@@ -1,5 +1,5 @@
 import { chunk } from "./utils.js";
-import { chkBytes } from "./bytes.js";
+import { bytes_eq } from "./bytes.js";
 import { mk_program } from "./state.js";
 
 export const mk_program_from_obj = (obj, src) =>
@@ -11,7 +11,7 @@ export const mk_program_from_obj = (obj, src) =>
   });
 
 const codeFromObj = (obj) => {
-  const txt = obj.filter((r) => chkBytes(r, [0x2, 0xe3, 0xe7, 0xe3]));
+  const txt = obj.filter((r) => bytes_eq([0x2, 0xe3, 0xe7, 0xe3], r));
   return txt
     .map((t) => {
       const size = t[11];
