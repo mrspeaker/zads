@@ -88,8 +88,8 @@ export const ops = {
     code: [0x19],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
-      const a = bytes_to_fw(...regs[r1]);
-      const b = bytes_to_fw(...regs[r2]);
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
       if (a === b) {
         psw.conditionCode = 0;
       } else if (a < b) {
@@ -148,8 +148,8 @@ export const ops = {
     code: [0x1c],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
-      const a = bytes_to_fw(...regs[r1]);
-      const b = bytes_to_fw(...regs[r2]);
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
       /*if (a === b) {
         psw.conditionCode = 0;
       } else if (a < b) {
@@ -172,8 +172,8 @@ export const ops = {
     code: [0x1d],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
-      const a = bytes_to_fw(...regs[r1]);
-      const b = bytes_to_fw(...regs[r2]);
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
       /*if (a === b) {
         psw.conditionCode = 0;
       } else if (a < b) {
@@ -216,7 +216,7 @@ export const ops = {
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
-      const v = bytes_to_fw(...regs[r1]);
+      const v = bytes_to_fw(regs[r1]);
       regset(regs[r1], v - 1);
       if (v !== 0) {
         jump(ptr - 3, psw); //(4bytes - 1)

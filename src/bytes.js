@@ -10,11 +10,12 @@ export const from_nibs = (...nibs) => {
 };
 export const byte_from = from_nibs;
 
-export const bytes_to_fw = (a, b, c, d) => {
+export const bytes_to_fw = ([a, b, c, d]) => {
   // Javascript shift ops are signed 32bit
   // ">>> 0" makes the result unsigned
   return ((a << 24) >>> 0) + (b << 16) + (c << 8) + d;
 };
+
 export const fw_to_bytes = (num) => [
   (num & 0xff000000) >>> 24,
   (num & 0x00ff0000) >> 16,
@@ -29,9 +30,9 @@ export const memcpy = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
 export const memval_f = (mem, offset) =>
-  bytes_to_fw(mem[offset], mem[offset + 1], mem[offset + 2], mem[offset + 3]);
+  bytes_to_fw([mem[offset], mem[offset + 1], mem[offset + 2], mem[offset + 3]]);
 
-export const regval = (r) => bytes_to_fw(...r);
+export const regval = bytes_to_fw;
 export const regset = (r, num) => {
   const bytes = fw_to_bytes(num);
   r[0] = bytes[0];

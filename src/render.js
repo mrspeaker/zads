@@ -24,7 +24,7 @@ function render(state) {
   if (machine) {
     const { regs, mem, psw, vic } = machine;
     $("#regs").value = regs
-      .map((v) => bytes_to_fw(...v))
+      .map(bytes_to_fw)
       .map((v, i) => (i < 10 ? " " : "") + i + ": " + toHex(v, 8))
       .join("\n");
     $("#mem").value = mem.map((m) => toHex(m));
