@@ -1,3 +1,5 @@
+import { $ } from "../src/utils.js";
+
 import bytes_test from "./bytes_test.js";
 import base_displace_test from "./base_displace_test.js";
 import disassemble_test from "./disassemble_test.js";
@@ -18,15 +20,14 @@ const tests = () =>
 function main() {
   tests().forEach((group) => {
     const grpdiv = document.createElement("div");
-    grpdiv.style.marginBottom = "2px";
     group.map(({ name, passed }) => {
       const div = document.createElement("div");
       div.innerHTML = `<span class="${passed ? "ok " : "fail"}">${
         passed ? "&nbsp;OK&nbsp;" : "FAIL"
       }</span> ${name}`;
       grpdiv.appendChild(div);
-      document.body.appendChild(grpdiv);
     });
+    $("#tests").appendChild(grpdiv);
   });
 }
 

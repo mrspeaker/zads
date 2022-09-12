@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <head>
   <link href="./main.css" type="text/css" rel="stylesheet" />
+  <style>
+    #tests {
+      column-count: 3;
+      column-game: 10px;
+      column-rule: 1px solid #999;
+    }
+    #tests > div {
+      margin-bottom: 2px;
+    }
+  </style>
 </head>
 <body>
+  <div id="tests"></div>
   <script src="tests/index.js" type="module"></script>
 </body>
