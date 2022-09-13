@@ -63,6 +63,8 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "UPDATE_OBJ":
       s.program.code = value.code;
+      memset(s.program.code, s.machine.mem, 0);
+
       break;
     case "OBJ_BYTES":
       s.zads.showObjBytes = !s.zads.showObjBytes;
@@ -84,7 +86,8 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "STEP":
       {
-        const code_txt = step(s.program.code, s.machine);
+        //const code_txt = step(s.program.code, s.machine);
+        const code_txt = step(s.machine.mem, s.machine);
         s.program.code_txt = [code_txt, ...s.program.code_txt.slice(0, 25)];
       }
       break;
@@ -113,6 +116,7 @@ const actionReducer = (s, render) => (type, value) => {
           return [...ac, ...el];
         }, []);
         s.program = mk_program_from_obj(s.program.obj, value);
+        memset(s.program.code, s.machine.mem, 0);
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;
         s.program.addressing.base_addr = addressing.base_addr;
