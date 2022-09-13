@@ -62,6 +62,17 @@ function renderScreen(mem, vic) {
   c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
+  const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
+  // TODO: what if vic.screen.mem was a pointer to offset?
+  // then animation could be just moving pointer.
+  imgData.data.forEach((d, i) => {
+    imgData.data[i * 4] = mem[i + 200];
+    imgData.data[i * 4 + 1] = mem[i + 200];
+    imgData.data[i * 4 + 2] = mem[i + 200];
+    imgData.data[i * 4 + 3] = 255;
+  });
+  c.putImageData(imgData, 0, 0);
+
   c.fillStyle = pal_to_rgb(mval(vic_regs.SPR1_COL));
   c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
   c.fillStyle = pal_to_rgb(mval(vic_regs.SPR2_COL));
