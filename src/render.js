@@ -1,5 +1,5 @@
 import { disassemble } from "./disassemble.js";
-import { vic_regs, pal_to_rgb } from "./vic.js";
+import { vic_regs, pal_to_rgb, updateVic } from "./vic.js";
 
 import { $, toHex, formatObjRecord } from "./utils.js";
 import { memval, bytes_to_fw } from "./bytes.js";
@@ -27,7 +27,9 @@ function render(state) {
       .map(bytes_to_fw)
       .map((v, i) => (i < 10 ? " " : "") + i + ": " + toHex(v, 8))
       .join("\n");
-    $("#mem").value = mem.map((m) => toHex(m));
+    $("#mem").value = mem
+      .map((m) => toHex(m))
+      .map((v) => (v === "00" ? "__" : v));
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
     renderScreen(mem, vic);
@@ -50,11 +52,7 @@ function render(state) {
 function renderScreen(mem, vic) {
   const { regs } = vic;
 
-  // Copy regs
-  let offset = 100;
-  [...Array(regs.length)].fill(0).map((_, i) => {
-    regs[i] = mem[i + offset];
-  });
+  updateVic(vic, mem, { right: Math.random() < 0.1 });
 
   const mval = (reg_name) => memval(regs, reg_name);
 
@@ -62,13 +60,13 @@ function renderScreen(mem, vic) {
   c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
+  const scrmem = vic.screen.memp;
+
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
-  // TODO: what if vic.screen.mem was a pointer to offset?
-  // then animation could be just moving pointer.
   imgData.data.forEach((d, i) => {
-    imgData.data[i * 4] = mem[i + 200];
-    imgData.data[i * 4 + 1] = mem[i + 200];
-    imgData.data[i * 4 + 2] = mem[i + 200];
+    imgData.data[i * 4] = mem[scrmem + i];
+    imgData.data[i * 4 + 1] = mem[scrmem + i];
+    imgData.data[i * 4 + 2] = mem[scrmem + i];
     imgData.data[i * 4 + 3] = 255;
   });
   c.putImageData(imgData, 0, 0);

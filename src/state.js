@@ -13,6 +13,15 @@ export const mk_state = () => ({
   selected: null,
 });
 
+const key_handler = (dom) => {
+  dom.addEventListener("keydown", () => {});
+  dom.addEventListener("keyup", () => {});
+  return () => {
+    //    if (isRight) right();
+    //    if (isLeft) left();
+  };
+};
+
 const mk_machine = () => ({
   regs: mk_regs(16),
   mem: mk_mem(4096),
