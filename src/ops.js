@@ -75,7 +75,8 @@ export const ops = {
     len: 2,
     f: ([r1, r2], regs) => memset(regs[r2], regs[r1]),
     name: "load",
-    desc: "The second operand is placed unchanged at the first operand location",
+    desc:
+      "The second operand is placed unchanged at the first operand location",
     pdf: "7-150",
     type: "RR",
     form: "OP R1,R2",
@@ -97,7 +98,8 @@ export const ops = {
       }
     },
     type: "RR",
-    desc: "The first operand is compared with the second operand, and the result is indicated in the condition code.",
+    desc:
+      "The first operand is compared with the second operand, and the result is indicated in the condition code.",
     pdf: "7-56",
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
@@ -114,7 +116,8 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add",
-    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
     type: "RR",
     form: "OP R1,R2",
@@ -132,7 +135,8 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "subtract",
-    desc: "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
+    desc:
+      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
     type: "RR",
     form: "OP R1,R2",
@@ -155,7 +159,8 @@ export const ops = {
       regset(regs[r1], a * b);
     },
     type: "RR",
-    desc: "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.",
+    desc:
+      "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.",
     pdf: "7-304",
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
@@ -179,7 +184,8 @@ export const ops = {
       regset(regs[r1], Math.floor(a / b));
     },
     type: "RR",
-    desc: "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
+    desc:
+      "first operand (the multiplicand) is multiplied by the 32-bit second-operand (the multiplier), and the 64-bit product is placed at the first-operand location.The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
     pdf: "7-251",
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
@@ -195,7 +201,8 @@ export const ops = {
       regset(regs[r1], ptr);
     },
     name: "load address",
-    desc: "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
+    desc:
+      "The address specified by the X2, B2, and D2 fields is placed in general register R1.",
     pdf: "7-265",
     type: "RX", //RX-a",
     form: "OP R1,D2(X2,B2)",
@@ -215,7 +222,8 @@ export const ops = {
       }
     },
     name: "branch on count",
-    desc: "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
+    desc:
+      "A one is subtracted from the first operand. When the result is zero, normal instruction sequencing proceeds with the updated instruction address. When the result is not zero, the instruction address in the current PSW is replaced by the branch address.",
     pdf: "7-2xx",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -234,9 +242,33 @@ export const ops = {
     },
     type: "RX",
     pdf: "7-29",
-    desc: "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
+    desc:
+      "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
     form: "OP M1,D2(X2,B2)",
     form_int: "OPOP M1 X2 B2 D2D2D2",
+  },
+  0x49: {
+    mn: "CH",
+    code: [0x49],
+    len: 4,
+    f: ([r1, x, b, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(regs[x], regs[b], da, db, dc);
+      const rval = bytes_to_fw(regs[r1]);
+      const sval = memval(mem, ptr); // NOPE! This is Full word, not half.
+      if (rval === sval) {
+        psw.conditionCode = 0;
+      } else if (rval < sval) {
+        psw.conditionCode = 1;
+      } else {
+        psw.conditionCode = 2;
+      }
+    },
+    type: "RX",
+    pdf: "7-72",
+    desc:
+      "The first operand is compared with the second operand, and the result is indicated in the condition code. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
   },
   0x50: {
     mn: "ST",
@@ -247,7 +279,8 @@ export const ops = {
       memset(regs[r1], mem, ptr);
     },
     name: "store",
-    desc: "The first operand is placed unchanged at the second operand location.",
+    desc:
+      "The first operand is placed unchanged at the second operand location.",
     pdf: "7-211",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -264,7 +297,8 @@ export const ops = {
     },
     pdf: "7-150",
     type: "RX",
-    desc: "The second operand is placed unchanged at the first operand location",
+    desc:
+      "The second operand is placed unchanged at the first operand location",
     form: "OP R1,D2(X2,B2)",
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
@@ -281,7 +315,8 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add",
-    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location.",
     pdf: "7-20",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -300,7 +335,8 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "subtract",
-    desc: "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
+    desc:
+      "The second operand is subtracted from the first operand, and the difference is placed at the first-operand location.",
     pdf: "7-219",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -319,7 +355,8 @@ export const ops = {
       //psw.conditionCode = cc;
     },
     name: "multiply",
-    desc: "first operand (the multiplicand) is multiplied by the 32-bit second operand (the multiplier), and the 64-bit product is placed at the first operand location.",
+    desc:
+      "first operand (the multiplicand) is multiplied by the 32-bit second operand (the multiplier), and the 64-bit product is placed at the first operand location.",
     pdf: "7-304",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -338,7 +375,8 @@ export const ops = {
       //psw.conditionCode = cc;
     },
     name: "divide",
-    desc: "The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
+    desc:
+      "The 64-bit first operand (the dividend) is divided by the 32-bit second operand (the divisor), and the 32-bit remainder and quotient are placed at the first operand location",
     pdf: "7-251",
     type: "RX",
     form: "OP R1,D2(X2,B2)",
@@ -361,7 +399,8 @@ export const ops = {
       // 3 Selected bits all ones
     },
     name: "test under mask",
-    desc: "A mask is used to select bits of the first operand, and the result is indicated in the condition code.",
+    desc:
+      "A mask is used to select bits of the first operand, and the result is indicated in the condition code.",
     pdf: "7-400",
     type: "SI",
     form: "OP D1(B1),I2",
@@ -409,7 +448,7 @@ export const ops = {
   0xc20d: {
     mn: "CFI",
     code: [0xc20d],
-    len: 6,
+    len: 4,
     f: ([...args], regs, mem, psw) => {
       /*      const a = regval(regs[r1]);
       const b = from_nibs([ia, ib, ic, id]);
@@ -420,7 +459,8 @@ export const ops = {
       console.log("CFI args:", args);
     },
     name: "compare immediate",
-    desc: "The first operand is compared with the second operand, and the result is indicated in the condition code.",
+    desc:
+      "The first operand is compared with the second operand, and the result is indicated in the condition code.",
     pdf: "7-22",
     type: "RI", //RIL
     form: "OP R1,I2",
@@ -439,7 +479,8 @@ export const ops = {
       //mem[ptr + 3] = val;
     },
     name: "move",
-    desc: "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
+    desc:
+      "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",
     pdf: "7-163",
     type: "SS",
     form: "OP D1(L1,B1),D2(B2)",
@@ -457,7 +498,8 @@ export const ops = {
       psw.conditionCode = cc;
     },
     name: "add halfword immediate",
-    desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
+    desc:
+      "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
     pdf: "7-22",
     type: "RI",
     form: "OP R1,I2",
