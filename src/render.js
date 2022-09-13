@@ -2,7 +2,7 @@ import { disassemble } from "./disassemble.js";
 import { vic_regs, pal_to_rgb } from "./vic.js";
 
 import { $, toHex, formatObjRecord } from "./utils.js";
-import { memval_f, bytes_to_fw } from "./bytes.js";
+import { memval, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
   const { machine, program, zads, programs, selected } = state;
@@ -56,7 +56,7 @@ function renderScreen(mem, vic) {
     regs[i] = mem[i + offset];
   });
 
-  const mval = (reg_name) => memval_f(regs, reg_name);
+  const mval = (reg_name) => memval(regs, reg_name);
 
   const c = $("#screen").getContext("2d");
   c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));

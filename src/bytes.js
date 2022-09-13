@@ -28,7 +28,7 @@ export const bytes_eq = (bytes, mem, offset = 0) =>
 export const memset = (bytes, mem, offset = 0) => {
   bytes.forEach((b, i) => (mem[i + offset] = b));
 };
-export const memval_f = (mem, offset) =>
+export const memval = (mem, offset = 0) =>
   bytes_to_fw([mem[offset], mem[offset + 1], mem[offset + 2], mem[offset + 3]]);
 
 export const regval = bytes_to_fw;
@@ -41,18 +41,20 @@ export const regset = (r, num) => {
   return r;
 };
 
-export const reg_to_mem = (mem, offset, reg) => {
+export const reg_to_mem = (reg, mem, offset = 0) => {
   mem[offset] = reg[0];
   mem[offset + 1] = reg[1];
   mem[offset + 2] = reg[2];
   mem[offset + 3] = reg[3];
+  return reg;
 };
 
-export const mem_to_reg = (reg, mem, offset) => {
+export const mem_to_reg = (reg, mem, offset = 0) => {
   reg[0] = mem[offset];
   reg[1] = mem[offset + 1];
   reg[2] = mem[offset + 2];
   reg[3] = mem[offset + 3];
+  return reg;
 };
 
 export const base_displace = (x, b, ...d) => {

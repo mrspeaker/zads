@@ -8,6 +8,9 @@ import {
   base_displace,
   regset,
   regval,
+  reg_to_mem,
+  mem_to_reg,
+  memval,
 } from "../src/bytes.js";
 
 const to_nib_1 = () => arrEq(to_nibs(0xf, 1), [0xf]);
@@ -49,6 +52,26 @@ const regset_one = () =>
 const regval_max = () =>
   regval(regset([0, 0, 0, 0], 0xfffefdfc)) === 0x0fffefdfc;
 
+const reg_mem_1 = () => {
+  const mem = [0, 0, 0, 0];
+  reg_to_mem([0xff, 0xff, 0xff, 0xff], mem);
+  return arrEq([0xff, 0xff, 0xff, 0xff], mem);
+};
+const reg_mem_offset = () => {
+  const mem = [0, 0, 0, 0, 0, 0, 0, 0];
+  reg_to_mem([0xff, 0xff, 0xff, 0xff], mem, 2);
+  return arrEq([0, 0, 0xff, 0xff, 0xff, 0xff, 0, 0], mem);
+};
+
+const mem_reg_1 = () => {
+  const mem = [0, 0, 0xff, 0xff, 0xff, 0xff];
+  const r = mem_to_reg([0, 0, 0, 0], mem, 2);
+  return arrEq(r, [0xff, 0xff, 0xff, 0xff]);
+};
+
+const memval_max = () =>
+  memval([0xff, 0xff, 0xff, 0xff]) === bytes_to_fw([0xff, 0xff, 0xff, 0xff]);
+
 export default [
   to_nib_1,
   nib_overflow,
@@ -70,4 +93,8 @@ export default [
   regset_max,
   regset_one,
   regval_max,
+  reg_mem_1,
+  reg_mem_offset,
+  mem_reg_1,
+  memval_max,
 ];
