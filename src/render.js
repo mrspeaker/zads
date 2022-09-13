@@ -85,9 +85,14 @@ function renderMemViz(mem) {
   const c = $("#memviz").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
   imgData.data.forEach((d, i) => {
-    imgData.data[i * 4] = mem[i];
-    imgData.data[i * 4 + 1] = mem[i];
-    imgData.data[i * 4 + 2] = mem[i];
+    const v = mem[i] % 7;
+    const c = pal_to_rgb(v)
+      .split("")
+      .slice(1)
+      .map((h) => parseInt(h, 16) * 16);
+    imgData.data[i * 4] = c[0];
+    imgData.data[i * 4 + 1] = c[1];
+    imgData.data[i * 4 + 2] = c[2];
     imgData.data[i * 4 + 3] = 255;
   });
   c.putImageData(imgData, 0, 0);

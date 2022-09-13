@@ -81,7 +81,6 @@ const actionReducer = (s, render) => (type, value) => {
       // TODO: need to relocate prg.
       regset(s.machine.regs[15], 0);
       s.program.code_txt = [];
-      //s.program.code_txt = run(s.program.code, s.machine);
       break;
     case "STEP":
       {

@@ -52,7 +52,7 @@ export function updateVic(vic, mem, input) {
 }
 
 export const pal_to_rgb = (pal) => {
-  const rgbs = ["#000", "#fff", "#800", "#08a"];
+  const rgbs = ["#000", "#fff", "#800", "#afe", "#c4c", "#0c5", "#00A", "#ee7"];
   return rgbs[pal % rgbs.length];
 };
 export const pal = {
@@ -60,4 +60,8 @@ export const pal = {
   WHITE: 1,
   RED: 2,
   CYAN: 3,
+  VIOLET: 4,
+  GREEN: 5,
+  BLUE: 6,
+  YELLOW: 7,
 };
