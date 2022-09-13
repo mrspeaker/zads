@@ -264,7 +264,7 @@ const expandMacros = (ac, stmt) => {
   return ac;
 };
 
-const expandLiterals = (ac, stmt) => {
+export const expandLiterals = (ac, stmt) => {
   stmt.operands = stmt.operands.map((o) => {
     if (o.startsWith("=")) {
       const lit = {
