@@ -18,6 +18,7 @@ const to_nib_1 = () => arrEq(to_nibs(0xf, 1), [0xf]);
 const byte_from_nib_test = () => from_nibs([0xf, 0xf]) === 0xff;
 
 const nib_byte_nib = () => from_nibs(to_nibs(0xfe)) === 0xfe;
+// TODO: fix overflow
 const nib_overflow = () => to_nibs(0xf1, 1) === 0x01;
 
 const bytes_to_fw_min = () =>
@@ -26,6 +27,9 @@ const bytes_to_fw_one = () =>
   bytes_to_fw([0x00, 0x00, 0x00, 0x01]) === 0x00000001;
 const bytes_to_fw_max = () =>
   bytes_to_fw([0xff, 0xff, 0xff, 0xff]) === 0xffffffff;
+
+// TODO: fix overflow
+const bytes_overflow = () => bytes_to_fw([0x00, 0x00, 0x00, 256]) === 0xff;
 
 const fw_to_bytes_min = () =>
   arrEq(fw_to_bytes(0x00000000), [0x00, 0x00, 0x00, 0x00]);
@@ -80,6 +84,7 @@ export default [
   bytes_to_fw_min,
   bytes_to_fw_one,
   bytes_to_fw_max,
+  bytes_overflow,
   fw_to_bytes_max,
   fw_to_bytes_one,
   fw_to_bytes_min,
