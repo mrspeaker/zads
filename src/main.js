@@ -5,12 +5,26 @@ import { mk_state } from "./state.js";
 import { $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
+import { updateVic } from "./vic.js";
+
+const key_handler = (dom) => {
+  const isDown = {};
+  dom.addEventListener("keydown", ({ which }) => {
+    //    console.log(which);
+    isDown[which] = true;
+  });
+  dom.addEventListener("keyup", ({ which }) => (isDown[which] = false));
+  return {
+    down: (key) => isDown[key],
+  };
+};
 
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
 
 (async function main(state) {
   bindUI(state, action);
+  const keys = key_handler(document.body);
   action("STORAGE_LOAD");
   if (!state.selected) {
     action("PROG_LOAD", "mark6");
@@ -20,6 +34,11 @@ const action = asyncHandler(actionReducer(state, render));
     if (!state.machine.psw.halt) {
       action("STEP");
     }
+
+    updateVic(state.machine.vic, state.machine.mem, {
+      left: keys.down(37),
+      right: keys.down(39),
+    });
   }, 16);
 })(state, action);
 

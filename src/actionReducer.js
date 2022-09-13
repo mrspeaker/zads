@@ -117,6 +117,8 @@ const actionReducer = (s, render) => (type, value) => {
         }, []);
         s.program = mk_program_from_obj(s.program.obj, value);
         memset(s.program.code, s.machine.mem, 0);
+        s.machine.psw.pc = 0;
+
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;
         s.program.addressing.base_addr = addressing.base_addr;

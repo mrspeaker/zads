@@ -17,6 +17,7 @@ export function run(obj, env) {
 
 export function step(obj, env) {
   const { regs, mem, psw } = env;
+  const oldpc = psw.pc;
   const op = get_op(obj, psw.pc++);
   if (!op) {
     console.log("op?", psw.pc, "(", op.code.join(""), ")");
@@ -34,5 +35,5 @@ export function step(obj, env) {
   f(opers, regs, mem, psw);
   psw.pc += num;
 
-  return toHex(psw.pc - 1) + ":" + mn + " " + opers.join(".");
+  return toHex(oldpc) + ":" + mn + " " + opers.join(".");
 }

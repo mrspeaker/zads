@@ -52,8 +52,6 @@ function render(state) {
 function renderScreen(mem, vic) {
   const { regs } = vic;
 
-  updateVic(vic, mem, { right: Math.random() < 0.1 });
-
   const mval = (reg_name) => memval(regs, reg_name);
 
   const c = $("#screen").getContext("2d");
@@ -85,7 +83,7 @@ function renderMemViz(mem) {
   const c = $("#memviz").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
   imgData.data.forEach((d, i) => {
-    const v = mem[i] % 7;
+    const v = mem[i] % 16;
     const c = pal_to_rgb(v)
       .split("")
       .slice(1)

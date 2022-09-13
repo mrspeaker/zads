@@ -25,6 +25,7 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
     },
     regs: mk_mem(Object.keys(vic_regs).length * 4),
     keys: {
+      left: false,
       right: false,
     },
   });
@@ -42,17 +43,37 @@ export function updateVic(vic, mem, input) {
   });
 
   vic.keys.right = input.right;
+  vic.keys.left = input.left;
   //hmm... why bother stor in vic regs?
   vic.regs[vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
+  vic.regs[vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
 
   // WRITE
+  mem[offset + vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
   mem[offset + vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
 
   return vic;
 }
 
 export const pal_to_rgb = (pal) => {
-  const rgbs = ["#000", "#fff", "#800", "#afe", "#c4c", "#0c5", "#00A", "#ee7"];
+  const rgbs = [
+    "#000",
+    "#fff",
+    "#800",
+    "#afe",
+    "#c4c",
+    "#0c5",
+    "#00A",
+    "#ee7",
+    "#d85",
+    "#640",
+    "#f77",
+    "#333",
+    "#777",
+    "#af6",
+    "#08f",
+    "#bbb",
+  ];
   return rgbs[pal % rgbs.length];
 };
 export const pal = {
@@ -64,4 +85,12 @@ export const pal = {
   GREEN: 5,
   BLUE: 6,
   YELLOW: 7,
+  ORANGE: 8,
+  BROWN: 9,
+  PINK: 10,
+  DARK_GREY: 11,
+  GREY: 12,
+  LIGHT_GREEN: 13,
+  LIGHT_BLUE: 14,
+  LIGHT_GREY: 15,
 };
