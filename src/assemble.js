@@ -264,11 +264,12 @@ const expandMacros = (ac, stmt) => {
   return ac;
 };
 
+export const LITERAL_GEN_PREFIX = "_lit_";
 export const expandLiterals = (ac, stmt) => {
   stmt.operands = stmt.operands.map((o) => {
     if (o.startsWith("=")) {
       const lit = {
-        label: "_lit_" + ac.lits.length.toString(),
+        label: LITERAL_GEN_PREFIX + ac.lits.length.toString(),
         value: o.slice(1),
       };
       ac.lits.push(lit);
@@ -276,16 +277,6 @@ export const expandLiterals = (ac, stmt) => {
     }
     return o;
   });
-  //const value = parseImmediate(o.slice(1));
-  //console.log("need to add", o, "to symbols", value, symbols);
-
-  // const mstmt = adddata(env, stmt);
-  // const bytes = parsedataoperand(mstmt.stmt.operands[0]);
-  // mstmt.stmt.operands = bytes;
-  // label && (symbols[label_lc] = { pc: env.pc, len: bytes.length });
-  // env.pc += bytes.length;
-
-  //
   ac.stmts.push(stmt);
   return ac;
 };
@@ -299,7 +290,11 @@ const checkBoundaryPadding = (env) => {
   }
 };
 
-const assembleStatement = (env, stmt) => {
+// Ok, what is this function actually doing?
+// What should be the results? At the moment it
+// does a bunch of things depending on the type of op.
+// TODO: rename.
+export const assembleStatement = (env, stmt) => {
   const { symbols } = env;
   const { mn, operands, label } = stmt;
   const label_lc = label.toLowerCase(); // make up...
@@ -333,7 +328,7 @@ const assembleStatement = (env, stmt) => {
     // TODO: currently only finds symbols _before_ current statement!
     env.base_addr = addr_lc === "*" ? env.pc : symbols[addr_lc];
   } else {
-    // ============= Label ============
+    // ============= Unknown ============
 
     const lbltxt = label ? `[${label}]` : " ";
     label && (symbols[label_lc] = { pc: env.pc, len: 4 });
