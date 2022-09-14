@@ -9,8 +9,7 @@ import { updateVic } from "./vic.js";
 
 const key_handler = (dom) => {
   const isDown = {};
-  dom.addEventListener("keydown", ({ which }) => {
-    //    console.log(which);
+    dom.addEventListener("keydown", ({ which }) => {
     isDown[which] = true;
   });
   dom.addEventListener("keyup", ({ which }) => (isDown[which] = false));
@@ -38,6 +37,8 @@ const action = asyncHandler(actionReducer(state, render));
     updateVic(state.machine.vic, state.machine.mem, {
       left: keys.down(37),
       right: keys.down(39),
+      up: keys.down(38),
+      down: keys.down(40),
     });
   }, 16);
 })(state, action);

@@ -250,6 +250,7 @@ export const ops = {
   0x49: {
     mn: "CH",
     code: [0x49],
+    name:"compare",
     len: 4,
     f: ([r1, x, b, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x], regs[b], da, db, dc);

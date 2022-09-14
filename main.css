@@ -55,6 +55,7 @@ body {
   margin: 0;
   font-family: vga, monospace;
   font-size: 1.2rem;
+  overflow: hidden;
 }
 
 a {

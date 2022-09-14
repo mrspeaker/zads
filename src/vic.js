@@ -27,6 +27,8 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
     keys: {
       left: false,
       right: false,
+      up: false,
+      down: false,
     },
   });
 }
@@ -44,13 +46,19 @@ export function updateVic(vic, mem, input) {
 
   vic.keys.right = input.right;
   vic.keys.left = input.left;
+  vic.keys.up = input.up;
+  vic.keys.down = input.down;
   //hmm... why bother stor in vic regs?
   vic.regs[vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
   vic.regs[vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
+  vic.regs[vic_regs.KEY_UP + 3] = vic.keys.up ? 1 : 0;
+  vic.regs[vic_regs.KEY_DOWN + 3] = vic.keys.down ? 1 : 0;
 
   // WRITE
   mem[offset + vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
   mem[offset + vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
+  mem[offset + vic_regs.KEY_UP + 3] = vic.keys.up ? 1 : 0;
+  mem[offset + vic_regs.KEY_DOWN + 3] = vic.keys.down ? 1 : 0;
 
   return vic;
 }
