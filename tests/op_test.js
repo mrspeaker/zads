@@ -81,6 +81,20 @@ const op_ori_zero = () => {
   return env.mem[0] == 0b00000000 && env.psw.conditionCode === 0;
 };
 
+const op_or_rr = () => {
+  const env = mk_env([0b11100000, 0b00000111]);
+  const obj = [code("OR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b11100111 && env.psw.conditionCode === 1;
+};
+
+const op_or_zero_rr = () => {
+  const env = mk_env([0b00000000, 0b00000000]);
+  const obj = [code("OR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
+};
+
 const op_and = () => {
   const env = mk_env();
   env.mem[0] = 0b10101111;
@@ -97,6 +111,50 @@ const op_and_zero = () => {
   return env.mem[0] == 0b00000000 && env.psw.conditionCode === 0;
 };
 
+const op_and_rr = () => {
+  const env = mk_env([0b10101111, 0b11010001]);
+  const obj = [code("NR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b10000001 && env.psw.conditionCode === 1;
+};
+
+const op_and_zero_rr = () => {
+  const env = mk_env([0b11110000, 0b00001111]);
+  const obj = [code("NR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
+};
+
+const op_xor = () => {
+  const env = mk_env();
+  env.mem[0] = 0b10111101;
+  const obj = [code("XI")[0], 0b11000011, 0, 0, 0];
+  step(obj, env);
+  return env.mem[0] == 0b01111110 && env.psw.conditionCode === 1;
+};
+
+const op_xor_zero = () => {
+  const env = mk_env();
+  env.mem[0] = 0b10101010;
+  const obj = [code("XI")[0], 0b10101010, 0, 0, 0];
+  step(obj, env);
+  return env.mem[0] == 0b00000000 && env.psw.conditionCode === 0;
+};
+
+const op_xor_rr = () => {
+  const env = mk_env([0b10111101, 0b11000011]);
+  const obj = [code("XR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b01111110 && env.psw.conditionCode === 1;
+};
+
+const op_xor_zero_rr = () => {
+  const env = mk_env([0b11001100, 0b11001100]);
+  const obj = [code("XR")[0], 0x01];
+  step(obj, env);
+  return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
+};
+
 export default [
   op_lr,
   op_l,
@@ -106,6 +164,14 @@ export default [
   op_ahi_sub1,
   op_ori,
   op_ori_zero,
+  op_or_rr,
+  op_or_zero_rr,
   op_and,
   op_and_zero,
+  op_and_rr,
+  op_and_zero_rr,
+  op_xor,
+  op_xor_zero,
+  op_xor_rr,
+  op_xor_zero_rr,
 ];
