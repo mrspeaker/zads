@@ -73,10 +73,6 @@ function renderScreen(mem, vic) {
   c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
   c.fillStyle = pal_to_rgb(mval(vic_regs.SPR2_COL));
   c.fillRect(mval(vic_regs.SPR2_X), mval(vic_regs.SPR2_Y), 2, 2);
-  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR3_COL));
-  c.fillRect(mval(vic_regs.SPR3_X), mval(vic_regs.SPR3_Y), 2, 2);
-  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR4_COL));
-  c.fillRect(mval(vic_regs.SPR4_X), mval(vic_regs.SPR4_Y), 2, 2);
 }
 
 function renderMemViz(mem) {

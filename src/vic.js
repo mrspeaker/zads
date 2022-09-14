@@ -102,3 +102,60 @@ export const pal = {
   LIGHT_BLUE: 14,
   LIGHT_GREY: 15,
 };
+/*
+
+  # merri_2018-08-31.vpl
+# VICE Palette file
+#
+# Syntax:
+# Red Green Blue Dither
+#
+
+# Black
+00 00 00 0
+
+# White
+FF FF FF E
+
+# Red
+9F 35 35 4
+
+# Cyan
+90 B6 BC C
+
+# Purple
+56 68 83 8
+
+# Green
+71 A5 43 4
+
+# Blue
+0D 54 71 4
+
+# Yellow
+DF D0 8B C
+
+# Orange
+9A 5B 1E 4
+
+# Brown
+6A 39 04 4
+
+# Light Red
+B6 7A 70 8
+
+# Dark Gray
+4A 5E 3C 4
+
+# Medium Gray
+7F 82 74 8
+
+# Light Green
+C2 DC 94 8
+
+# Light Blue
+47 91 BF 8
+
+# Light Gray
+BD A7 91 C
+*/
