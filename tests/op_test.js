@@ -65,4 +65,20 @@ const op_ahi_sub1 = () => {
   return regval(r0) === 0xffffffff;
 };
 
-export default [op_lr, op_l, op_cr, op_ahi_add1, op_ahi_add_ff, op_ahi_sub1];
+const op_ori = () => {
+  const env = mk_env();
+  const obj = [code("OI")[0], 0b11111111, 0, 0, 0];
+  step(obj, env);
+  console.log(env);
+  return false;
+};
+
+export default [
+  op_lr,
+  op_l,
+  op_cr,
+  op_ahi_add1,
+  op_ahi_add_ff,
+  op_ahi_sub1,
+  op_ori,
+];

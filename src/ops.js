@@ -423,6 +423,27 @@ export const ops = {
     form: "OP D1(B1),I2",
     form_int: "OPOP I2I2 B1 D1D1D1",
   },
+  0x96: {
+    mn: "OI",
+    code: [0x96],
+    len: 4,
+    f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
+      // cc: 0 === zero, 1 === not zero
+      const val = from_nibs([i1, i2]);
+      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const b = memval(mem, ptr);
+      // TODO: set OR val to storage
+      console.log(val, b, ptr, val | b);
+      //mem[ptr] = val;
+    },
+    name: "or",
+    desc:
+      "The OR of the first and second operands is placed at the first-operand location.",
+    pdf: "7-180",
+    type: "SI",
+    form: "OP D1(B1),I2",
+    form_int: "OPOP I2I2 B1 D1D1D1",
+  },
   0x98: {
     mn: "LM",
     code: [0x98],
