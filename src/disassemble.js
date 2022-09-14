@@ -30,8 +30,10 @@ function line(psw, obj, symbol, showBytes) {
       .flat();
     if (showBytes) {
       const op_nibbles = chunk(opers, 2).map(from_nibs);
+      // TODO: something wrong when updating AHI op
+      // (load prg, hit update-obj see diff
       txt =
-        pc_loc + [...op.code, ...op_nibbles].map((v) => toHex(v, 0)).join(",");
+        pc_loc + [op.code[0], ...op_nibbles].map((v) => toHex(v, 2)).join(",");
     } else {
       txt = pc_loc + mn + " " + opers.join(".");
     }
