@@ -49,6 +49,14 @@ const op_ahi_add1 = () => {
   return regval(r0) === 1;
 };
 
+const op_ahi_add_ff = () => {
+  const env = mk_env([1]);
+  const obj = [code("AHI")[0], 0x0a, 0x00, 0xff];
+  step(obj, env);
+  const [r0] = env.regs;
+  return regval(r0) === 0x100;
+};
+
 const op_ahi_sub1 = () => {
   const env = mk_env();
   const obj = [code("AHI")[0], 0x0a, 0xff, 0xff];
@@ -57,4 +65,4 @@ const op_ahi_sub1 = () => {
   return regval(r0) === 0xffffffff;
 };
 
-export default [op_lr, op_l, op_cr, op_ahi_add1, op_ahi_sub1];
+export default [op_lr, op_l, op_cr, op_ahi_add1, op_ahi_add_ff, op_ahi_sub1];
