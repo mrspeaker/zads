@@ -423,20 +423,41 @@ export const ops = {
     form: "OP D1(B1),I2",
     form_int: "OPOP I2I2 B1 D1D1D1",
   },
+  0x94: {
+    mn: "NI",
+    code: [0x94],
+    len: 4,
+    f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const a = mem[ptr];
+      const val = from_nibs([i1, i2]);
+      const and_val = a & val;
+      // cc: 0 === zero, 1 === not zero\
+      psw.conditionCode = and_val === 0 ? 0 : 1;
+      mem[ptr] = and_val;
+    },
+    name: "AND",
+    desc:
+      "The AND of the first and second operands is placed at the first-operand location.",
+    pdf: "7-25",
+    type: "SI",
+    form: "OP D1(B1),I2",
+    form_int: "OPOP I2I2 B1 D1D1D1",
+  },
   0x96: {
     mn: "OI",
     code: [0x96],
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
-      // cc: 0 === zero, 1 === not zero
-      const val = from_nibs([i1, i2]);
       const ptr = base_displace(0, regs[b1], da, db, dc);
-      const b = memval(mem, ptr);
-      // TODO: set OR val to storage
-      console.log(val, b, ptr, val | b);
-      //mem[ptr] = val;
+      const a = mem[ptr];
+      const val = from_nibs([i1, i2]);
+      const or_val = a | val;
+      // cc: 0 === zero, 1 === not zero\
+      psw.conditionCode = or_val === 0 ? 0 : 1;
+      mem[ptr] = or_val;
     },
-    name: "or",
+    name: "OR",
     desc:
       "The OR of the first and second operands is placed at the first-operand location.",
     pdf: "7-180",

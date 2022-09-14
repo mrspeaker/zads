@@ -67,10 +67,34 @@ const op_ahi_sub1 = () => {
 
 const op_ori = () => {
   const env = mk_env();
-  const obj = [code("OI")[0], 0b11111111, 0, 0, 0];
+  env.mem[0] = 0b11100000;
+  const obj = [code("OI")[0], 0b00000111, 0, 0, 0];
   step(obj, env);
-  console.log(env);
-  return false;
+  return env.mem[0] == 0b11100111 && env.psw.conditionCode === 1;
+};
+
+const op_ori_zero = () => {
+  const env = mk_env();
+  env.mem[0] = 0b00000000;
+  const obj = [code("OI")[0], 0b00000000, 0, 0, 0];
+  step(obj, env);
+  return env.mem[0] == 0b00000000 && env.psw.conditionCode === 0;
+};
+
+const op_and = () => {
+  const env = mk_env();
+  env.mem[0] = 0b10101111;
+  const obj = [code("NI")[0], 0b11010001, 0, 0, 0];
+  step(obj, env);
+  return env.mem[0] == 0b10000001 && env.psw.conditionCode === 1;
+};
+
+const op_and_zero = () => {
+  const env = mk_env();
+  env.mem[0] = 0b11110000;
+  const obj = [code("NI")[0], 0b00001111, 0, 0, 0];
+  step(obj, env);
+  return env.mem[0] == 0b00000000 && env.psw.conditionCode === 0;
 };
 
 export default [
@@ -81,4 +105,7 @@ export default [
   op_ahi_add_ff,
   op_ahi_sub1,
   op_ori,
+  op_ori_zero,
+  op_and,
+  op_and_zero,
 ];
