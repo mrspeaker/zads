@@ -69,6 +69,44 @@ export const ops = {
   },
   0x0b: { mn: "BSM", code: [0x0b], len: 2, f: nop },
   0x0d: { mn: "BSR", code: [0x0d], len: 2, f: nop },
+  0x14: {
+    mn: "NR",
+    code: [0x14],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
+      const and_ab = a & b;
+      regset(regs[r1], and_ab);
+      psw.conditionCode = and_ab === 0 ? 0 : 1;
+    },
+    name: "AND",
+    desc:
+      "The AND of the first and second operands is placed at the first-operand location.",
+    pdf: "7-25",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
+  0x16: {
+    mn: "OR",
+    code: [0x16],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
+      const or_ab = a | b;
+      regset(regs[r1], or_ab);
+      psw.conditionCode = or_ab === 0 ? 0 : 1;
+    },
+    name: "OR",
+    desc:
+      "The OR of the first and second operands is placed at the first-operand location.",
+    pdf: "7-180",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
   0x18: {
     mn: "LR",
     code: [0x18],
