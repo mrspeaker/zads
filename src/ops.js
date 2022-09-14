@@ -490,9 +490,20 @@ export const ops = {
     mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
-    f: ([r1, , ...i2], regs, mem, psw) => {
-      const a = regval(regs[r1]);
-      const b = from_nibs(i2);
+      f: ([r1, , i2a,i2b,i2c,i2d], regs, mem, psw) => {
+          const a = regval(regs[r1]);
+          // propagate sign:
+          const b = bytes_to_fw([
+              from_nibs([i2a,i2a]),
+              from_nibs([i2a,i2a]),
+              from_nibs([i2a, i2b]),
+              from_nibs([i2c, i2d])]);
+        /*
+The ADD HALFWORD instruction algebraically adds
+the contents of a two-byte field in storage to the contents of a register. The storage operand is expanded
+to 32 bits after it is fetched and before it is used in the
+add operation. The expansion consists in propagating the leftmost (sign) bit 16 positions to the left.
+*/
       const { res, cc } = addAndCC(a, b);
       regset(regs[r1], res);
       psw.conditionCode = cc;

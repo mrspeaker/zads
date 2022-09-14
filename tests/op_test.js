@@ -54,8 +54,7 @@ const op_ahi_sub1 = () => {
   const obj = [code("AHI")[0], 0x0a, 0xff, 0xff];
   step(obj, env);
   const [r0] = env.regs;
-  console.log(r0);
-  return regval(r0) === -1;
+  return regval(r0) === 0xffffffff;
 };
 
 export default [op_lr, op_l, op_cr, op_ahi_add1, op_ahi_sub1];
