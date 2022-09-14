@@ -250,7 +250,7 @@ export const ops = {
   0x49: {
     mn: "CH",
     code: [0x49],
-    name:"compare",
+    name: "compare",
     len: 4,
     f: ([r1, x, b, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x], regs[b], da, db, dc);
@@ -491,14 +491,15 @@ export const ops = {
     mn: "AHI",
     code: [0xa7, 0x0a],
     len: 4,
-      f: ([r1,,i2a,i2b,i2c,i2d], regs, mem, psw) => {
-          const a = regval(regs[r1]);
-          // propagate sign:
-          const b = bytes_to_fw([
-              from_nibs([i2a,i2a]),
-              from_nibs([i2a,i2a]),
-              from_nibs([i2a, i2b]),
-              from_nibs([i2c, i2d])]);
+    f: ([r1, , i2a, i2b, i2c, i2d], regs, mem, psw) => {
+      const a = regval(regs[r1]);
+      // propagate sign:
+      const b = bytes_to_fw([
+        from_nibs([i2a, i2a]),
+        from_nibs([i2a, i2a]),
+        from_nibs([i2a, i2b]),
+        from_nibs([i2c, i2d]),
+      ]);
       const { res, cc } = addAndCC(a, b);
       regset(regs[r1], res);
       psw.conditionCode = cc;
