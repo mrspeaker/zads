@@ -83,7 +83,7 @@ function renderMemViz(mem) {
   const c = $("#memviz").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
   imgData.data.forEach((d, i) => {
-    const v = mem[i] % 16;
+    const v = mem[i] === 0 ? 0 : (((mem[i] / 255) * 15) | 0) + 1;
     const c = pal_to_rgb(v)
       .split("")
       .slice(1)

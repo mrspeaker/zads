@@ -2,14 +2,15 @@ import render from "./render.js";
 import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
 import { mk_state } from "./state.js";
-import { $, $click, $on } from "./utils.js";
+import { $$, $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
-import { updateVic } from "./vic.js";
+import { pal_to_rgb, updateVic } from "./vic.js";
 
 const key_handler = (dom) => {
   const isDown = {};
-    dom.addEventListener("keydown", ({ which }) => {
+  dom.addEventListener("keydown", ({ which }) => {
+    //    console.log(which);
     isDown[which] = true;
   });
   dom.addEventListener("keyup", ({ which }) => (isDown[which] = false));
@@ -23,6 +24,7 @@ const action = asyncHandler(actionReducer(state, render));
 
 (async function main(state) {
   bindUI(state, action);
+  dumColors();
   const keys = key_handler(document.body);
   action("STORAGE_LOAD");
   if (!state.selected) {
@@ -122,4 +124,11 @@ function bindUI(state, action) {
   $click("#btnRun1", () => action("RUN"));
   $click("#btnStop", () => action("STOP"));
   $click("#btnStep", () => action("STEP"));
+}
+
+function dumColors() {
+  $$("textarea").forEach((t, i) => {
+    console.log(t, i);
+    t.style.color = pal_to_rgb(((i * 3) % 16) + 1);
+  });
 }

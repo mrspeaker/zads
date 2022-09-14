@@ -8,8 +8,8 @@
   --background-color: #fdfff4;;
   --text-color: #000;
   --status-bar: rgba(225, 226, 217, 0.7);
-  --highlight-warm: #eaa49c;
-  --highlight-cool: #b4e3d1;
+  --highlight-warm: #c4c; /*#eaa49c;*/
+  --highlight-cool: #afe; /*#b4e3d1*/;
 
     --background-color: #222;
     --text-color: #eaa49c;/*#b4e3c9;*/
@@ -54,7 +54,7 @@ body {
   color: var(--text-color);
   margin: 0;
   font-family: vga, monospace;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   overflow: hidden;
 }
 
