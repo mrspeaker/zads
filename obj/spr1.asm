@@ -6,7 +6,8 @@ sprite   csect
          mvi   131(,15),0
          
          l     3,zero
-loop     ds    0    
+loop     ds    0
+         xi    111(,15),b'00001011'    
          l     1,116(,15)     load spr x
          l     2,120(,15)     spr y
 
@@ -28,6 +29,7 @@ down     ch    3,144(,15)
          
 done     st    1,116(,15)     store x
          st    2,120(,15)     store y
+  
          b     loop
 
 
@@ -35,3 +37,4 @@ done     st    1,116(,15)     store x
 zero     dc    f'0'
           
          end   sprite
+    
