@@ -107,6 +107,25 @@ export const ops = {
     form: "OP R1,R2",
     form_int: "OPOP R1 R2",
   },
+  0x17: {
+    mn: "XR",
+    code: [0x17],
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      const a = bytes_to_fw(regs[r1]);
+      const b = bytes_to_fw(regs[r2]);
+      const xor_ab = a ^ b;
+      regset(regs[r1], xor_ab);
+      psw.conditionCode = xor_ab === 0 ? 0 : 1;
+    },
+    name: "XOR",
+    desc:
+      "The EXCLUSIVE OR of the first and second operands is placed at the first-operand location.",
+    pdf: "7-142",
+    type: "RR",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
   0x18: {
     mn: "LR",
     code: [0x18],
@@ -499,6 +518,27 @@ export const ops = {
     desc:
       "The OR of the first and second operands is placed at the first-operand location.",
     pdf: "7-180",
+    type: "SI",
+    form: "OP D1(B1),I2",
+    form_int: "OPOP I2I2 B1 D1D1D1",
+  },
+  0x97: {
+    mn: "XI",
+    code: [0x97],
+    len: 4,
+    f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const a = mem[ptr];
+      const val = from_nibs([i1, i2]);
+      const xor_val = a ^ val;
+      // cc: 0 === zero, 1 === not zero\
+      psw.conditionCode = xor_val === 0 ? 0 : 1;
+      mem[ptr] = xor_val;
+    },
+    name: "OR",
+    desc:
+      "The EXCLUSIVE OR of the first and second operands is placed at the first-operand location.",
+    pdf: "7-142",
     type: "SI",
     form: "OP D1(B1),I2",
     form_int: "OPOP I2I2 B1 D1D1D1",
