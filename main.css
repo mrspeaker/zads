@@ -1,36 +1,39 @@
 @font-face {
-    font-family: "vga";
-    src: url("res/Web437_IBM_VGA_8x16.woff") format('woff');
+  font-family: "vga";
+  src: url("res/Web437_IBM_VGA_8x16.woff") format("woff");
 }
 
+html,
+body {
+  height: 100%;
+}
 
 :root {
-  --background-color: #fdfff4;;
+  --background-color: #fdfff4;
   --text-color: #000;
   --status-bar: rgba(225, 226, 217, 0.7);
   --highlight-warm: #c4c; /*#eaa49c;*/
-  --highlight-cool: #afe; /*#b4e3d1*/;
+  --highlight-cool: #afe; /*#b4e3d1*/
 
-    --background-color: #222;
-    --text-color: #eaa49c;/*#b4e3c9;*/
-    --text-color-unselected: #999;
-    --status-bar: #333;
-
+  --background-color: #222;
+  --text-color: #eaa49c; /*#b4e3c9;*/
+  --text-color-unselected: #999;
+  --status-bar: #333;
 }
 
 .ok {
-    background-color: var(--highlight-cool);
-    color: #222;
+  background-color: var(--highlight-cool);
+  color: #222;
 }
 .fail {
-    background-color: var(--highlight-warm);
-    color: #222;
+  background-color: var(--highlight-warm);
+  color: #222;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background-color: #222;
-/*    --text-color: #7f938b;*/
+    /*    --text-color: #7f938b;*/
     --status-bar: #333;
   }
 }
@@ -54,8 +57,9 @@ body {
   color: var(--text-color);
   margin: 0;
   font-family: vga, monospace;
-  font-size: 1.0rem;
+  font-size: 1rem;
   overflow: hidden;
+  height: 100vh;
 }
 
 a {
@@ -65,16 +69,15 @@ input,
 button,
 select,
 textarea {
-    font-size:1.2rem;
+  font-size: 1.2rem;
   font-family: vga, monospace;
   caret-color: var(--highlight-warm);
-  border-radius:2px;
+  border-radius: 2px;
   border: 0;
   scrollbar-width: none;
-
 }
 
-button{ 
+button {
   background-color: var(--highlight-cool);
   border: 0;
   cursor: pointer;
@@ -90,38 +93,38 @@ input {
   width: 50px;
 }
 
+#board {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 20px 1fr;
+}
 .boxes {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
-
 .boxes > * {
-  height: calc(50vh - 10px);
-  flex: 0 0 33.333333%;
-/*  border-right: 1px dashed rgba(0, 0, 0, 0.4);*/
-  position: relative;
+  display: grid;
+  grid-template-rows: 1fr 20px;
 }
-.boxes > * > textarea {
+.boxes > * > * {
   width: 100%;
-  height: 100%;
-  
 }
-.boxes > * > .boxbar {
-  width: 100%;
-  background-color: var(--status-bar);
-  color: #5d5f55;
-  position: absolute;
-  bottom: -1px;
-  height: 18px;
-}
-
 textarea {
-  border: 0;
   padding: 8px;
-  background-color:var(--background-color);
+  background-color: var(--background-color);
   color: var(--text-color-unselected);
   resize: none;
-  padding-bottom: 20px;
+}
+.boxbar {
+  background-color: var(--status-bar);
+  color: #5d5f55;
+}
+#srcbox {
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+#docs {
+  padding: 8px;
 }
 textarea:focus {
   color: var(--text-color);
@@ -129,7 +132,7 @@ textarea:focus {
 
 select {
   border: 0;
-  background-color: var(--highlight-warm)
+  background-color: var(--highlight-warm);
 }
 .controls {
   display: flex;
@@ -152,13 +155,10 @@ select {
 }
 #screens {
   position: absolute;
-  right: 12px;
-  top: 12px;
 }
-#screens canvas  {
+#screens canvas {
   background-color: #444;
-  width: 128px;
-  height: 128px;
+  width: 49%;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;

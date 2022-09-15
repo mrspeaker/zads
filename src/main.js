@@ -6,6 +6,7 @@ import { $$, $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
 import { pal_to_rgb, updateVic } from "./vic.js";
+import { ops } from "./ops.js";
 
 const key_handler = (dom) => {
   const isDown = {};
@@ -98,6 +99,10 @@ function bindUI(state, action) {
       action("CYCLES_SET", v);
     }
   });
+
+  $("#docs").innerText = Object.values(ops)
+    .map(({ mn, form }) => `${mn}`)
+    .join(" - ");
 
   $click("#btnResetMem", () => action("MEM_RESET"));
 

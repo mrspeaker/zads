@@ -3,61 +3,75 @@
   <link href="./main.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-  <div class="controls">
-    <div class="buttons">
-      <button id="btnRun">run</button>
-      <button id="btnAsm">assemble</button>
-      <span id="help">...</span>
-    </div>
-    <div class="psw">
-      <span>(<span id="hz">_</span>Hz)</span>
-      <span> cycles:<input type="text" id="cycles" /></span>
-      <span id="format">fmt</span>
-      <span> cc:<input type="text" id="psw_cc" /></span>
-      <span> pc:<input type="text" id="psw_pc" /></span>
-    </div>
-  </div>
-
-  <div class="boxes">
-    <div>
-      <textarea id="src" spellcheck="false"></textarea>
-      <div class="boxbar">
-        <select id="programs">
-          <option value="-1">--sel--</option></select
-        ><button id="btnSavePgm">save</button
-        ><button id="btnDeletePgm">delete</button>
+  <div id="board">
+    <div class="controls">
+      <div class="buttons">
+        <button id="btnRun">run</button>
+        <button id="btnAsm">assemble</button>
+        <span id="help">...</span>
       </div>
-    </div>
-    <div>
-      <textarea id="mem" spellcheck="false"></textarea>
-    </div>
-    <div>
-      <textarea id="dis" spellcheck="false"></textarea>
-      <div class="boxbar">bytes</div>
-    </div>
-    <div>
-      <textarea id="emu" spellcheck="false"></textarea>
-      <div class="boxbar">
-        <button id="btnRun1">run</button><button id="btnStop">stop</button
-        ><button id="btnStep">step</button>
+      <div class="psw">
+        <span>(<span id="hz">_</span>Hz)</span>
+        <span> cycles:<input type="text" id="cycles"/></span>
+        <span id="format">fmt</span>
+        <span> cc:<input type="text" id="psw_cc"/></span>
+        <span> pc:<input type="text" id="psw_pc"/></span>
       </div>
     </div>
 
-    <div>
-      <textarea id="regs" spellcheck="false"></textarea>
-      <div class="boxbar">regs<button id="btnResetMem">reset mem</button></div>
-      <div id="screens">
-        <canvas id="screen" width="32" height="32"></canvas>
-        <canvas id="memviz" width="32" height="32"></canvas>
+    <div class="boxes">
+      <div id="srcbox">
+        <textarea id="src" spellcheck="false"></textarea>
+        <div class="boxbar">
+          <select id="programs">
+            <option value="-1">--sel--</option></select
+          ><button id="btnSavePgm">save</button
+          ><button id="btnDeletePgm">delete</button>
+        </div>
       </div>
-    </div>
-    <div>
-      <textarea id="obj" spellcheck="false"></textarea>
-      <div class="boxbar">
-        <button id="btnObjBytes">obj bytes</button>
-        <button id="btnUpdate">update obj</button>
+
+      <div>
+        <textarea id="mem" spellcheck="false"></textarea>
+      </div>
+
+      <div>
+        <textarea id="dis" spellcheck="false"></textarea>
+      </div>
+
+      <div>
+        <textarea id="emu" spellcheck="false"></textarea>
+        <div class="boxbar">
+          <button id="btnRun1">run</button><button id="btnStop">stop</button
+          ><button id="btnStep">step</button>
+        </div>
+      </div>
+
+      <div>
+        <textarea id="regs" spellcheck="false"></textarea>
+        <div class="boxbar">
+          regs<button id="btnResetMem">reset mem</button>
+        </div>
+      </div>
+
+      <div>
+        <textarea id="obj" spellcheck="false"></textarea>
+        <div class="boxbar">
+          <button id="btnObjBytes">obj bytes</button>
+          <button id="btnUpdate">update obj</button>
+        </div>
+      </div>
+      <div style="position:relative">
+        <div id="screens">
+          <canvas id="screen" width="32" height="32"></canvas>
+          <canvas id="memviz" width="32" height="32"></canvas>
+        </div>
+      </div>
+      <div>
+        <div id="docs"></div>
+        <div class="boxbar">bar</div>
       </div>
     </div>
   </div>
+
   <script src="src/main.js" type="module"></script>
 </body>
