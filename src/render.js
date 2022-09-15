@@ -34,6 +34,8 @@ function render(state) {
     $("#psw_pc").value = toHex(psw.pc);
     renderScreen(mem, vic);
     renderMemViz(mem);
+
+    $("#btnRun").className = psw.halt ? "ok" : "fail";
   }
 
   const sel = $("#programs");
