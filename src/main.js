@@ -129,6 +129,6 @@ function bindUI(state, action) {
 function dumColors() {
   $$("textarea").forEach((t, i) => {
     console.log(t, i);
-    t.style.color = pal_to_rgb(((i * 3) % 16) + 1);
+    t.style.color = pal_to_rgb(((i * 3) % 16) + 14);
   });
 }
