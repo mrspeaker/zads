@@ -128,6 +128,8 @@ const actionReducer = (s, render) => (type, value) => {
     default:
       console.log("Unhandled ", type);
   }
+  // TODO: not full re-render on every action
+  // because you can't do two steps per frame
   render(s);
   return s;
 };

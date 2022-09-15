@@ -10,7 +10,6 @@ import { pal_to_rgb, updateVic } from "./vic.js";
 const key_handler = (dom) => {
   const isDown = {};
   dom.addEventListener("keydown", ({ which }) => {
-    //    console.log(which);
     isDown[which] = true;
   });
   dom.addEventListener("keyup", ({ which }) => (isDown[which] = false));
@@ -31,18 +30,19 @@ const action = asyncHandler(actionReducer(state, render));
     action("PROG_LOAD", "mark6");
   }
 
-  setInterval(() => {
+  function update() {
     if (!state.machine.psw.halt) {
       action("STEP");
+      updateVic(state.machine.vic, state.machine.mem, {
+        left: keys.down(37),
+        right: keys.down(39),
+        up: keys.down(38),
+        down: keys.down(40),
+      });
     }
-
-    updateVic(state.machine.vic, state.machine.mem, {
-      left: keys.down(37),
-      right: keys.down(39),
-      up: keys.down(38),
-      down: keys.down(40),
-    });
-  }, 16);
+    requestAnimationFrame(update);
+  }
+  update();
 })(state, action);
 
 function bindUI(state, action) {
