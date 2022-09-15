@@ -137,7 +137,7 @@ export const eb2code = (ch) => {
   return code ?? 0;
 };
 
-const despace = (ch) => (ch === 0x40 ? " " : toHex(ch));
+const despace = (ch) => (ch === 0x40 ? "_" : toHex(ch));
 
 export const formatObjRecord = (rec) => {
   const [, ta, tb, tc, ...theRest] = rec;

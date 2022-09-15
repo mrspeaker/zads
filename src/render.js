@@ -5,10 +5,11 @@ import { $, toHex, formatObjRecord } from "./utils.js";
 import { memval, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
-  const { machine, program, zads, programs, selected } = state;
+  const { machine, program, zads, programs, selected, cyclesPerFrame } = state;
   const { showObjBytes } = zads;
 
   $("#btnUpdate").disabled = !showObjBytes;
+  $("#hz").innerText = 60 * state.cyclesPerFrame;
 
   if (program) {
     const { goff, obj, src, code_txt, code, symbols } = program;
@@ -16,7 +17,7 @@ function render(state) {
     $("#src").value = src;
     $("#obj").value = showObjBytes
       ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
-      : obj.map(formatObjRecord).join("\n----------------\n");
+      : obj.map(formatObjRecord).join("\n\n");
     $("#emu").value = code_txt?.join("\n");
     $("#dis").value = disassemble(code, symbols, showObjBytes).join("\n");
   }
