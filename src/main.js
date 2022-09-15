@@ -100,9 +100,17 @@ function bindUI(state, action) {
     }
   });
 
-  $("#docs").innerText = Object.values(ops)
-    .map(({ mn, form }) => `${mn}`)
+  $("#mns").innerHTML = Object.values(ops)
+    .map(
+      ({ mn, desc, name }) =>
+        `<span data-desc="${desc}">${mn} ${name ?? ""}</span>`
+    )
     .join(" - ");
+  $on("#docs", "click", (e) => {
+    if (e.target.dataset.desc) {
+      $("#desc").innerText = e.target.dataset.desc;
+    }
+  });
 
   $click("#btnResetMem", () => action("MEM_RESET"));
 
@@ -148,4 +156,5 @@ function dumColors() {
     if (i === 1) c = 9;
     t.style.color = pal_to_rgb(c);
   });
+  $("#docs").style.color = pal_to_rgb(3);
 }

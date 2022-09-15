@@ -38,11 +38,10 @@
         <textarea id="dis" spellcheck="false"></textarea>
       </div>
 
-      <div>
-        <textarea id="emu" spellcheck="false"></textarea>
-        <div class="boxbar">
-          <button id="btnRun1">run</button><button id="btnStop">stop</button
-          ><button id="btnStep">step</button>
+      <div style="position:relative">
+        <div id="screens">
+          <canvas id="screen" width="32" height="32"></canvas>
+          <canvas id="memviz" width="32" height="32"></canvas>
         </div>
       </div>
 
@@ -60,14 +59,20 @@
           <button id="btnUpdate">update obj</button>
         </div>
       </div>
-      <div style="position:relative">
-        <div id="screens">
-          <canvas id="screen" width="32" height="32"></canvas>
-          <canvas id="memviz" width="32" height="32"></canvas>
+
+      <div>
+        <textarea id="emu" spellcheck="false"></textarea>
+        <div class="boxbar">
+          <button id="btnRun1">run</button><button id="btnStop">stop</button
+          ><button id="btnStep">step</button>
         </div>
       </div>
+
       <div>
-        <div id="docs"></div>
+        <div id="docs">
+          <div id="mns"></div>
+          <div id="desc"></div>
+        </div>
         <div class="boxbar">bar</div>
       </div>
     </div>
