@@ -70,6 +70,7 @@ textarea {
   caret-color: var(--highlight-warm);
   border-radius:2px;
   border: 0;
+  scrollbar-width: none;
 
 }
 
@@ -110,7 +111,8 @@ input {
   background-color: var(--status-bar);
   color: #5d5f55;
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
+  height: 18px;
 }
 
 textarea {
@@ -150,8 +152,8 @@ select {
 }
 #screens {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: 20px;
+  bottom: 2px;
 }
 #screens canvas  {
   background-color: #444;
