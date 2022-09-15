@@ -17,6 +17,7 @@ const saveSettings = async (settings) => {
 
 const actionReducer = (s, render) => (type, value) => {
   console.log("Action", type);
+  let do_render = true;
   switch (type) {
     case "PROG_LOADED":
       s.program = value;
@@ -89,6 +90,7 @@ const actionReducer = (s, render) => (type, value) => {
         //const code_txt = step(s.program.code, s.machine);
         const code_txt = step(s.machine.mem, s.machine);
         s.program.code_txt = [code_txt, ...s.program.code_txt.slice(0, 25)];
+        if (!s.machine.psw.halt) do_render = false;
       }
       break;
     case "MEM_UPDATE":
@@ -128,9 +130,7 @@ const actionReducer = (s, render) => (type, value) => {
     default:
       console.log("Unhandled ", type);
   }
-  // TODO: not full re-render on every action
-  // because you can't do two steps per frame
-  render(s);
+  do_render && render(s);
   return s;
 };
 

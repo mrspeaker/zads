@@ -30,15 +30,20 @@ const action = asyncHandler(actionReducer(state, render));
     action("PROG_LOAD", "mark6");
   }
 
+  const CYCLES_PER_FRAME = 2;
+
   function update() {
     if (!state.machine.psw.halt) {
-      action("STEP");
+      for (let i = 0; i < CYCLES_PER_FRAME; i++) {
+        action("STEP");
+      }
       updateVic(state.machine.vic, state.machine.mem, {
         left: keys.down(37),
         right: keys.down(39),
         up: keys.down(38),
         down: keys.down(40),
       });
+      render(state);
     }
     requestAnimationFrame(update);
   }
@@ -128,7 +133,8 @@ function bindUI(state, action) {
 
 function dumColors() {
   $$("textarea").forEach((t, i) => {
-    console.log(t, i);
-    t.style.color = pal_to_rgb(((i * 3) % 16) + 14);
+    let c = ((i * 3) % 16) + 14;
+    if (i === 1) c = 9;
+    t.style.color = pal_to_rgb(c);
   });
 }
