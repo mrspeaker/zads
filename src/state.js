@@ -11,6 +11,7 @@ export const mk_state = () => ({
   program: null,
   programs: {},
   selected: null,
+  cyclesPerFrame: 2,
 });
 
 const key_handler = (dom) => {

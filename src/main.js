@@ -30,11 +30,9 @@ const action = asyncHandler(actionReducer(state, render));
     action("PROG_LOAD", "mark6");
   }
 
-  const CYCLES_PER_FRAME = 2;
-
   function update() {
     if (!state.machine.psw.halt) {
-      for (let i = 0; i < CYCLES_PER_FRAME; i++) {
+      for (let i = 0; i < state.cyclesPerFrame; i++) {
         action("STEP");
       }
       updateVic(state.machine.vic, state.machine.mem, {
@@ -90,6 +88,14 @@ function bindUI(state, action) {
   $click("#btnDeletePgm", () => {
     if (state.selected && confirm("Yeah?")) {
       action("PROGRAM_DELETE");
+    }
+  });
+
+  $("#cycles").value = state.cyclesPerFrame;
+  $on("#cycles", "change", (e) => {
+    const v = parseInt(e.target.value, 10);
+    if (!isNaN(v)) {
+      action("CYCLES_SET", v);
     }
   });
 

@@ -127,6 +127,14 @@ const actionReducer = (s, render) => (type, value) => {
         s.program.stmts = stmts;
       }
       break;
+    case "CYCLES_SET":
+      {
+        const v = parseInt(value, 10);
+        if (!isNaN(v)) {
+          s.cyclesPerFrame = Math.max(0, parseInt(value, 10));
+        }
+      }
+      break;
     default:
       console.log("Unhandled ", type);
   }
