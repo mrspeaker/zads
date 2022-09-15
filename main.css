@@ -152,8 +152,8 @@ select {
 }
 #screens {
   position: absolute;
-  right: 20px;
-  bottom: 2px;
+  right: 12px;
+  top: 12px;
 }
 #screens canvas  {
   background-color: #444;
