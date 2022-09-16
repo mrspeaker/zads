@@ -103,7 +103,7 @@ function bindUI(state, action) {
   $("#mns").innerHTML = Object.values(ops)
     .map(
       ({ mn, desc, name }) =>
-        `<span data-desc="${desc}">${mn} ${name ?? ""}</span>`
+        `<span data-desc="${desc ?? "???"}">${mn} ${name ?? ""}</span>`
     )
     .join(" - ");
   $on("#docs", "click", (e) => {
