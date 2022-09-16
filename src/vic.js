@@ -21,7 +21,7 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
       rows: scr_rows,
       cols: scr_cols,
       mem: mk_mem(scr_cols * scr_rows),
-      memp: 200,
+      memp: 400,
     },
     regs: mk_mem(Object.keys(vic_regs).length * 4),
     keys: {
@@ -39,7 +39,7 @@ export function initVic(vic) {
 
 export function updateVic(vic, mem, input) {
   // Copy regs
-  let offset = 100;
+  let offset = 200;
   vic.regs.forEach((_, i) => {
     vic.regs[i] = mem[i + offset];
   });

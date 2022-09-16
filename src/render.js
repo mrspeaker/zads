@@ -1,7 +1,7 @@
 import { disassemble } from "./disassemble.js";
 import { vic_regs, pal_to_rgb, updateVic } from "./vic.js";
 
-import { $, toHex, formatObjRecord } from "./utils.js";
+import { chunk, $, toHex, formatObjRecord } from "./utils.js";
 import { memval, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
@@ -24,9 +24,9 @@ function render(state) {
 
   if (machine) {
     const { regs, mem, psw, vic } = machine;
-    $("#regs").value = regs
+    $("#regs").value = [...regs, ...chunk(vic.regs, 4)]
       .map(bytes_to_fw)
-      .map((v, i) => (i < 10 ? " " : "") + i + ": " + toHex(v, 8))
+      .map((v, i) => (i % 16 < 10 ? " " : "") + (i % 16) + ": " + toHex(v, 8))
       .join("\n");
     $("#mem").value = mem
       .map((m) => toHex(m))
