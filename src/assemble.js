@@ -3,7 +3,7 @@ import { chunk, eb2code } from "./utils.js";
 import { to_nibs, from_nibs, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 
-export const assemble = (asmTxt) => {
+export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
   const tokens = asmTxt
     .split("\n")
     .filter((v) => !!v.trim() && v[0] !== "*")
@@ -24,7 +24,7 @@ export const assemble = (asmTxt) => {
   // _before_ assebmbling the statement.
   console.log("Literals:", expanded.lits);
 
-  const equateExpanded = remapEquates(expanded.stmts);
+  const equateExpanded = remapEquates(expanded.stmts, extraEqsF);
 
   const { stmts, symbols, base, base_addr } = equateExpanded
     .map(remapExtendedMnemonics)
@@ -37,8 +37,7 @@ export const assemble = (asmTxt) => {
       base_addr: 0,
     });
 
-  // Some memory for a addressable "graphics screen"
-  symbols["screen"] = { pc: 0x200, len: 0x100 };
+  extraSymbolsF && extraSymbolsF(symbols);
 
   const bytes = stmts
     .map((s) => parseOperands(s, symbols, base, base_addr))
@@ -215,7 +214,7 @@ const remapExtendedMnemonics = (stmt) => {
   return stmt;
 };
 
-const remapEquates = (stmts) => {
+const remapEquates = (stmts, injectExtraEqsF) => {
   const eqs = stmts.reduce((ac, el) => {
     const { label, mn, operands } = el;
     if (mn.toLowerCase() === "equ") {
@@ -223,6 +222,7 @@ const remapEquates = (stmts) => {
     }
     return ac;
   }, {});
+  injectExtraEqsF && injectExtraEqsF(eqs);
   return stmts.reduce((ac, el) => {
     if (el.mn.toLowerCase() === "equ") return ac;
     ac.push(el);
@@ -304,6 +304,18 @@ export const assembleStatement = (env, stmt) => {
   const isData = ["DC", "DS"].includes(mn_uc);
   const isUsing = ["USING"].includes(mn_uc);
 
+  // SYmbol definition:
+  /*
+  The symbol must not consist of more than 63 alphanumeric characters.
+  The first character must be an alphabetic character.
+  An alphabetic character is a letter from A through Z,
+  or from a through z, or $, _, #, or @.
+  The other characters in the symbol can be alphabetic characters,
+  digits, or a combination of the two.
+  
+  The assembler does not distinguish between upper-case and lower-case letters used in symbols.
+  */
+
   if (op_code) {
     // ====== Regular op code =========
 
@@ -365,18 +377,6 @@ const parseImmediate = (v) => {
 
   return [parseInt(v, 10)];
 };
-
-// SYmbol definition:
-/*
-  The symbol must not consist of more than 63 alphanumeric characters.
-  The first character must be an alphabetic character.
-  An alphabetic character is a letter from A through Z,
-  or from a through z, or $, _, #, or @.
-  The other characters in the symbol can be alphabetic characters,
-  digits, or a combination of the two.
-
-  The assembler does not distinguish between upper-case and lower-case letters used in symbols.
-*/
 
 export const parseBaseDisplace = (o, base, symbols) => {
   const INDEX = 0;

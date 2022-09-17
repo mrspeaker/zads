@@ -1,9 +1,16 @@
 sprite   csect                 
-         mvi   211(,15),4
-         mvi   215(,15),3
-         mvi   219(,15),15
-         mvi   223(,15),15
-         mvi   231(,15),0
+         la    r6,screen
+         mvi   11(,6),4
+         mvi   15(,6),3
+         mvi   19(,6),15
+         mvi   23(,6),15
+         mvi   31(,6),0
+
+         mvi   130(,r6),7
+         mvi   132(,r6),7
+         mvi   134(,r6),7
+         mvi   136(,r6),7
+         mvi   138(,r6),7
          
          l     3,zero
          l     4,thirty2
@@ -43,6 +50,7 @@ done     st    1,216(,15)     store x
 
          bcr   b'1111',14
 zero     dc    f'0'
-thirty2  dc    f'32'        
+thirty2  dc    f'32'  
+        asmdreg      
          end   sprite
     

@@ -1,7 +1,7 @@
 import { disassemble } from "./disassemble.js";
 import { vic_regs, pal_to_rgb, pal_to_hex } from "./vic.js";
 
-import { chunk, $, toHex, formatObjRecord } from "./utils.js";
+import { $, toHex, formatObjRecord } from "./utils.js";
 import { memval, to_nibs, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
@@ -24,7 +24,7 @@ function render(state) {
 
   if (machine) {
     const { regs, mem, psw, vic } = machine;
-    $("#regs").value = [...regs, ...chunk(vic.regs, 4)]
+    $("#regs").value = [...regs]
       .map(bytes_to_fw)
       .map((v, i) => (i % 16 < 10 ? " " : "") + (i % 16) + ": " + toHex(v, 8))
       .join("\n");
@@ -53,15 +53,15 @@ function render(state) {
 }
 
 function renderScreen(mem, vic) {
-  const { regs, base, screen } = vic;
+  const { base, screen } = vic;
 
-  const mval = (reg_name) => memval(regs, reg_name);
+  const mval = (offset) => memval(mem, base + offset);
 
   const c = $("#screen").getContext("2d");
   c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
-  const scrmem = base + screen.memp;
+  const scrmem = base + screen;
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
   for (let i = 0; i < imgData.data.length; i += 4) {
     const c = pal_to_rgb(mem[(scrmem + i / 4) % mem.length] % 16);

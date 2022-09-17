@@ -1,4 +1,3 @@
-import { mk_mem } from "./state.js";
 import { chunk } from "./utils.js";
 
 export const vic_regs = {
@@ -16,53 +15,42 @@ export const vic_regs = {
   KEY_DOWN: 44,
 };
 
-export function mk_vic(scr_cols = 320, scr_rows = 240) {
-  return initVic({
-    screen: {
-      rows: scr_rows,
-      cols: scr_cols,
-      mem: mk_mem(scr_cols * scr_rows),
-      memp: 0,
-    },
+export function mk_vic(cols = 320, rows = 240) {
+  return {
+    rows,
+    cols,
     base: 200,
-    regs: mk_mem(Object.keys(vic_regs).length * 4),
+    regs: 0,
+    screen: 0, // Will be end of reg address + 1
     keys: {
       left: false,
       right: false,
       up: false,
       down: false,
     },
-  });
-}
-
-export function initVic(vic) {
-  return vic;
+  };
 }
 
 export function updateVic(vic, mem, input) {
-  // Copy regs
-  let offset = 200;
-  vic.regs.forEach((_, i) => {
-    vic.regs[i] = mem[i + offset];
-  });
+  const { keys, base, regs } = vic;
+  const offset = base + regs;
 
-  vic.keys.right = input.right;
-  vic.keys.left = input.left;
-  vic.keys.up = input.up;
-  vic.keys.down = input.down;
-  //hmm... why bother stor in vic regs?
-  vic.regs[vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
-  vic.regs[vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
-  vic.regs[vic_regs.KEY_UP + 3] = vic.keys.up ? 1 : 0;
-  vic.regs[vic_regs.KEY_DOWN + 3] = vic.keys.down ? 1 : 0;
+  keys.right = input.right;
+  keys.left = input.left;
+  keys.up = input.up;
+  keys.down = input.down;
 
   // WRITE
-  mem[offset + vic_regs.KEY_LEFT + 3] = vic.keys.left ? 1 : 0;
-  mem[offset + vic_regs.KEY_RIGHT + 3] = vic.keys.right ? 1 : 0;
-  mem[offset + vic_regs.KEY_UP + 3] = vic.keys.up ? 1 : 0;
-  mem[offset + vic_regs.KEY_DOWN + 3] = vic.keys.down ? 1 : 0;
+  mem[offset + vic_regs.KEY_LEFT + 3] = keys.left ? 1 : 0;
+  mem[offset + vic_regs.KEY_RIGHT + 3] = keys.right ? 1 : 0;
+  mem[offset + vic_regs.KEY_UP + 3] = keys.up ? 1 : 0;
+  mem[offset + vic_regs.KEY_DOWN + 3] = keys.down ? 1 : 0;
 
   return vic;
+}
+
+export function injectEquates(vic, table) {
+  table.boop = 10;
 }
 
 const pal_hex = [

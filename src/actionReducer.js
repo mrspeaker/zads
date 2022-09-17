@@ -104,7 +104,17 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "ASSEMBLE_SRC":
       {
-        const { stmts, bytes, symbols, addressing } = assemble(value);
+        const { stmts, bytes, symbols, addressing } = assemble(
+          value,
+          (eqs) => {
+            eqs.EX_EQU = "10";
+          },
+          (symbols) => {
+            symbols["screen"] = {
+              pc: s.machine.vic.base,
+            };
+          }
+        );
 
         const code_bytes = [
           ...bytes
