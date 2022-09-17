@@ -20,8 +20,8 @@ export function step(obj, env) {
   const oldpc = psw.pc;
   const op = get_op(obj, psw.pc++);
   if (!op) {
-    console.log("op?", psw.pc, "(", op.code.join(""), ")");
-    return toHex(psw.pc - 1) + ": ??? " + op.code.join("");
+    console.log("op?", psw.pc, "(", obj[psw.pc], ")");
+    return toHex(psw.pc - 1) + ":??? " + obj[psw.pc];
   }
 
   // Execute operation

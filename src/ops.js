@@ -57,7 +57,7 @@ export const ops = {
     code: [0x07],
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
-      if (r1 === 15 && r2 == 14) {
+      if (r1 === 15 && r2 === 14) {
         // lol, just faking exit.
         // need to properly figure out exit
         psw.halt = true;

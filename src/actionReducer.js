@@ -110,8 +110,11 @@ const actionReducer = (s, render) => (type, value) => {
             eqs.EX_EQU = "10";
           },
           (symbols) => {
+            symbols["vic"] = {
+              pc: s.machine.vic.base + s.machine.vic.regs,
+            };
             symbols["screen"] = {
-              pc: s.machine.vic.base,
+              pc: s.machine.vic.base + s.machine.vic.screen,
             };
           }
         );

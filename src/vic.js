@@ -21,7 +21,7 @@ export function mk_vic(cols = 320, rows = 240) {
     cols,
     base: 200,
     regs: 0,
-    screen: 0, // Will be end of reg address + 1
+    screen: 100, // Will be end of reg address + 1
     keys: {
       left: false,
       right: false,

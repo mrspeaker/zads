@@ -101,9 +101,11 @@ function bindUI(state, action) {
   });
 
   $("#mns").innerHTML = Object.values(ops)
+    .sort((a, b) => (a.mn < b.mn ? -1 : 1))
     .map(
       ({ mn, desc, name }) =>
-        `<span data-desc="${desc ?? "???"}">${mn} ${name ?? ""}</span>`
+        `<span data-desc="${desc ?? "???"}"><strong>${mn}</strong> ${name ??
+          ""}</span>`
     )
     .join(" - ");
   $on("#docs", "click", (e) => {

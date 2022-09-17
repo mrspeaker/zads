@@ -1,16 +1,17 @@
 sprite   csect                 
-         la    r6,screen
+         la    r6,vic
          mvi   11(,6),4
          mvi   15(,6),3
          mvi   19(,6),15
          mvi   23(,6),15
          mvi   31(,6),0
 
-         mvi   130(,r6),7
-         mvi   132(,r6),7
-         mvi   134(,r6),7
-         mvi   136(,r6),7
-         mvi   138(,r6),7
+         la    r7,screen
+         mvi   130(,r7),7
+         mvi   132(,r7),7
+         mvi   134(,r7),7
+         mvi   136(,r7),7
+         mvi   138(,r7),7
          
          l     3,zero
          l     4,thirty2
