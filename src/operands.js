@@ -9,15 +9,19 @@ import { parseImmediate, parseBaseDisplace } from "./assemble.js";
   - Expression:
   -- Term | Arithemetic combination of terms
   - Term:
-  -- A symbol literal | Loc Counter Reference | Symbol Attribute | Self-defining term
+  -- A symbol | Loc Counter Reference | Symbol Attribute | Self-defining term | Literal
   - Self-defining term:
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
- */
+*/
+
+export const tokenizeOperands = (ops) => {
+  // comma, followed by NOT open paren, stuff, close paren.
+  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
+  return ops?.split(/,(?![^(]*\))/g) ?? [];
+};
 
 export const parseOperands = (s, symbols, base) => {
   const { stmt, bytes, type } = s;
-
-  console.log(stmt.operands);
 
   // Parse to bytes
   const enc = stmt.operands.map((o, i) =>
@@ -96,6 +100,17 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
   }
 };
 
+/*
+  DC and DS Operands can be composed of one to five subfields
+  - Subfields:
+  -- Duplication factor
+  -- Type
+  -- Type Extension
+  -- Modifiers (eg L2)
+  -- Nominal Value
+  - Nominal Value:
+  -- Decimal Number | Expression | Character String | Graphic String  
+ */
 export const parseDataOperand = (d) => {
   const numReps = parseInt(d, 10);
   if (isNaN(numReps)) {
@@ -104,4 +119,21 @@ export const parseDataOperand = (d) => {
   // Expand repetitions
   const value = d.slice((numReps + "").length);
   return new Array(numReps).fill(parseImmediate(value)).flat();
+};
+
+export const LITERAL_GEN_PREFIX = "_lit_";
+export const expandLiterals = (ac, stmt) => {
+  stmt.operands = stmt.operands.map((o) => {
+    if (o.startsWith("=")) {
+      const lit = {
+        label: LITERAL_GEN_PREFIX + ac.lits.length.toString(),
+        value: o.slice(1),
+      };
+      ac.lits.push(lit);
+      return lit.label;
+    }
+    return o;
+  });
+  ac.stmts.push(stmt);
+  return ac;
 };

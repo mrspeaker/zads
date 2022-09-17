@@ -2,7 +2,12 @@ import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
 import { to_nibs, from_nibs, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
-import { parseOperands, parseDataOperand } from "./operands.js";
+import {
+  parseOperands,
+  parseDataOperand,
+  expandLiterals,
+  tokenizeOperands,
+} from "./operands.js";
 
 export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
   const tokens = asmTxt
@@ -94,12 +99,6 @@ const addData = (env, stmt) => {
   return d;
 };
 
-const tokenizeOperands = (ops) => {
-  // comma, followed by NOT open paren, stuff, close paren.
-  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
-  return ops?.split(/,(?![^(]*\))/g) ?? [];
-};
-
 const tokenize = (line) => {
   const tok = line.split(" ").reduce((ac, el, i) => {
     if (i === 0 || el !== "") {
@@ -173,23 +172,6 @@ const expandMacros = (ac, stmt) => {
     default:
       ac.push(stmt);
   }
-  return ac;
-};
-
-export const LITERAL_GEN_PREFIX = "_lit_";
-export const expandLiterals = (ac, stmt) => {
-  stmt.operands = stmt.operands.map((o) => {
-    if (o.startsWith("=")) {
-      const lit = {
-        label: LITERAL_GEN_PREFIX + ac.lits.length.toString(),
-        value: o.slice(1),
-      };
-      ac.lits.push(lit);
-      return lit.label;
-    }
-    return o;
-  });
-  ac.stmts.push(stmt);
   return ac;
 };
 
