@@ -1,5 +1,5 @@
 import { disassemble } from "./disassemble.js";
-import { vic_regs, pal_to_rgb, updateVic } from "./vic.js";
+import { vic_regs, pal_to_rgb, pal_to_hex } from "./vic.js";
 
 import { chunk, $, toHex, formatObjRecord } from "./utils.js";
 import { memval, to_nibs, bytes_to_fw } from "./bytes.js";
@@ -9,7 +9,7 @@ function render(state) {
   const { showObjBytes } = zads;
 
   $("#btnUpdate").disabled = !showObjBytes;
-  $("#hz").innerText = 60 * state.cyclesPerFrame;
+  $("#hz").innerText = 60 * cyclesPerFrame;
 
   if (program) {
     const { goff, obj, src, code_txt, code, symbols } = program;
@@ -53,7 +53,7 @@ function render(state) {
 }
 
 function renderScreen(mem, vic) {
-  const { regs } = vic;
+  const { regs, base, screen } = vic;
 
   const mval = (reg_name) => memval(regs, reg_name);
 
@@ -61,38 +61,34 @@ function renderScreen(mem, vic) {
   c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
-  const scrmem = vic.screen.memp;
-
+  const scrmem = base + screen.memp;
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
-  imgData.data.forEach((d, i) => {
-    imgData.data[i * 4] = mem[scrmem + i];
-    imgData.data[i * 4 + 1] = mem[scrmem + i];
-    imgData.data[i * 4 + 2] = mem[scrmem + i];
-    imgData.data[i * 4 + 3] = 255;
-  });
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    const c = pal_to_rgb(mem[(scrmem + i / 4) % mem.length] % 16);
+    imgData.data[i] = c[0];
+    imgData.data[i + 1] = c[1];
+    imgData.data[i + 2] = c[2];
+    imgData.data[i + 3] = 255;
+  }
   c.putImageData(imgData, 0, 0);
 
-  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR1_COL));
+  c.fillStyle = pal_to_hex(mval(vic_regs.SPR1_COL));
   c.fillRect(mval(vic_regs.SPR1_X), mval(vic_regs.SPR1_Y), 2, 2);
-  c.fillStyle = pal_to_rgb(mval(vic_regs.SPR2_COL));
+  c.fillStyle = pal_to_hex(mval(vic_regs.SPR2_COL));
   c.fillRect(mval(vic_regs.SPR2_X), mval(vic_regs.SPR2_Y), 2, 2);
 }
 
 function renderMemViz(mem) {
   const c = $("#memviz").getContext("2d");
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height - 10);
-  imgData.data.forEach((d, i) => {
-    //const v = mem[i] === 0 ? 0 : (((mem[i] / 255) * 15) | 0) + 1;
-    const v = to_nibs(mem[i]);
-    const c = pal_to_rgb(v[1] === 0 ? v[0] : v[1])
-      .split("")
-      .slice(1)
-      .map((h) => parseInt(h, 16) * 16);
-    imgData.data[i * 4] = c[0];
-    imgData.data[i * 4 + 1] = c[1];
-    imgData.data[i * 4 + 2] = c[2];
-    imgData.data[i * 4 + 3] = 255; //(vv[1]/16)*255;
-  });
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    const v = to_nibs(mem[i / 4]);
+    const c = pal_to_rgb(v[1] === 0 ? v[0] : v[1]);
+    imgData.data[i] = c[0];
+    imgData.data[i + 1] = c[1];
+    imgData.data[i + 2] = c[2];
+    imgData.data[i + 3] = 255;
+  }
   c.putImageData(imgData, 0, 0);
 }
 

@@ -5,7 +5,7 @@ import { mk_state } from "./state.js";
 import { $$, $, $click, $on } from "./utils.js";
 import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
-import { pal_to_rgb, updateVic } from "./vic.js";
+import { pal_to_hex, updateVic } from "./vic.js";
 import { ops } from "./ops.js";
 
 const key_handler = (dom) => {
@@ -154,7 +154,7 @@ function dumColors() {
   $$("textarea").forEach((t, i) => {
     let c = ((i * 3) % 16) + 14;
     if (i === 1) c = 9;
-    t.style.color = pal_to_rgb(c);
+    t.style.color = pal_to_hex(c);
   });
-  $("#docs").style.color = pal_to_rgb(3);
+  $("#docs").style.color = pal_to_hex(3);
 }

@@ -1,4 +1,5 @@
 import { mk_mem } from "./state.js";
+import { chunk } from "./utils.js";
 
 export const vic_regs = {
   BG_COL: 0,
@@ -21,8 +22,9 @@ export function mk_vic(scr_cols = 320, scr_rows = 240) {
       rows: scr_rows,
       cols: scr_cols,
       mem: mk_mem(scr_cols * scr_rows),
-      memp: 400,
+      memp: 0,
     },
+    base: 200,
     regs: mk_mem(Object.keys(vic_regs).length * 4),
     keys: {
       left: false,
@@ -63,27 +65,34 @@ export function updateVic(vic, mem, input) {
   return vic;
 }
 
-export const pal_to_rgb = (pal) => {
-  const rgbs = [
-    "#000",
-    "#fff",
-    "#800",
-    "#afe",
-    "#c4c",
-    "#0c5",
-    "#00A",
-    "#ee7",
-    "#d85",
-    "#640",
-    "#f77",
-    "#333",
-    "#777",
-    "#af6",
-    "#08f",
-    "#bbb",
-  ];
-  return rgbs[pal % rgbs.length];
+const pal_hex = [
+  "#000000",
+  "#ffffff",
+  "#880000",
+  "#aaffee",
+  "#cc44cc",
+  "#00cc55",
+  "#0000aa",
+  "#eeee77",
+  "#dd8855",
+  "#664400",
+  "#ff7777",
+  "#333333",
+  "#777777",
+  "#aaff66",
+  "#0088ff",
+  "#bbbbbb",
+];
+const pal_rgb = pal_hex.map((v) =>
+  chunk(v.split("").slice(1), 2).map((v) => parseInt(v.join(""), 16))
+);
+export const pal_to_hex = (pal) => {
+  return pal_hex[pal % pal_hex.length];
 };
+export const pal_to_rgb = (pal) => {
+  return pal_rgb[pal % pal_rgb.length];
+};
+
 export const pal = {
   BLACK: 0,
   WHITE: 1,
