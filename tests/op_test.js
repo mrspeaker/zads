@@ -155,6 +155,14 @@ const op_xor_zero_rr = () => {
   return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
 };
 
+const op_ic = () => {
+  const env = mk_env([0, 0xff000000]);
+  env.mem[0] = 0xff;
+  const obj = [code("IC")[0], 0x10, 0x00, 0x00];
+  step(obj, env);
+  return regval(env.regs[1]) == 0xff0000ff;
+};
+
 export default [
   op_lr,
   op_l,
@@ -174,4 +182,5 @@ export default [
   op_xor_zero,
   op_xor_rr,
   op_xor_zero_rr,
+  op_ic,
 ];

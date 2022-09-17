@@ -6,6 +6,7 @@ import {
   fw_to_bytes,
   bytes_eq,
   base_displace,
+  base_displace_regs,
   regset,
   regval,
   reg_to_mem,
@@ -48,6 +49,17 @@ const base_disp_zero = () => base_displace(0, 0, 0, 0, 0) === 0;
 const base_disp_max_d = () => base_displace(0, 0, 0xf, 0xf, 0xf) === 0xfff;
 const base_disp_regs = () =>
   base_displace([0, 0, 0, 1], [0, 0, 0, 2], 0, 0, 3) === 6;
+
+const base_disp_regs_b0x0 = () =>
+  base_displace_regs([[0, 0, 0, 0xff]], 0, 0, 0, 0, 1) === 1;
+const base_disp_regs_b0x1 = () =>
+  base_displace_regs([[0, 0, 0, 0], [0, 0, 0, 0xff]], 0, 1, 0, 0, 1) === 0x100;
+const base_disp_regs_b1x0 = () =>
+  base_displace_regs([[0, 0, 0, 0x0f], [0, 0, 0, 0xf0]], 1, 0, 0, 0, 0) ===
+  0xf0;
+const base_disp_regs_b1x1 = () =>
+  base_displace_regs([[0, 0, 0, 0xf0], [0, 0, 0x1, 0]], 1, 1, 0, 0, 0) ===
+  0x200;
 
 const regset_max = () =>
   arrEq(regset([0, 0, 0, 0], 0xfffefdfc), [0xff, 0xfe, 0xfd, 0xfc]);
@@ -95,6 +107,10 @@ export default [
   base_disp_zero,
   base_disp_max_d,
   base_disp_regs,
+  base_disp_regs_b0x0,
+  base_disp_regs_b1x0,
+  base_disp_regs_b0x1,
+  base_disp_regs_b1x1,
   regset_max,
   regset_one,
   regval_max,

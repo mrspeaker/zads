@@ -58,8 +58,16 @@ export const mem_to_reg = (reg, mem, offset = 0) => {
 };
 
 export const base_displace = (x, b, ...d) => {
+  //console.warn("replace all me");
   const D = from_nibs(d);
   const xx = x === 0 ? 0 : regval(x);
   const bb = b === 0 ? 0 : regval(b);
+  return xx + bb + D;
+};
+
+export const base_displace_regs = (regs, x, b, ...d) => {
+  const D = from_nibs(d);
+  const xx = x === 0 ? 0 : regval(regs[x]);
+  const bb = b === 0 ? 0 : regval(regs[b]);
   return xx + bb + D;
 };

@@ -31,7 +31,6 @@ export function step(obj, env) {
     .slice(psw.pc, psw.pc + num)
     .map((v) => to_nibs(v))
     .flat();
-
   f(opers, regs, mem, psw);
   psw.pc += num;
 

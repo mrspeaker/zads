@@ -1,5 +1,6 @@
 import {
   base_displace,
+  base_displace_regs,
   bytes_to_fw,
   from_nibs,
   regset,
@@ -254,7 +255,7 @@ export const ops = {
     code: [0x41],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       regset(regs[r1], ptr);
     },
     name: "load address",
@@ -266,12 +267,29 @@ export const ops = {
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
 
+  0x43: {
+    mn: "IC",
+    code: [0x43],
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
+      regs[r1][3] = mem[ptr];
+    },
+    name: "insert character",
+    desc:
+      "The byte at the second-operand location is inserted into bit positions 56-63 of general register R1. The remaining bits in the register remain unchanged.",
+    pdf: "7-148",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
+  },
+
   0x46: {
     mn: "BCT",
     code: [0x46],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const v = bytes_to_fw(regs[r1]);
       regset(regs[r1], v - 1);
       if (v !== 0) {
@@ -290,10 +308,10 @@ export const ops = {
     mn: "BC",
     code: [0x47],
     len: 4,
-    f: ([m, x, b, da, db, dc], regs, mem, psw) => {
+    f: ([m1, x2, b2, da, db, dc], regs, mem, psw) => {
       const cc = [8, 4, 2, 1][psw.conditionCode];
-      if (m & cc) {
-        const ptr = base_displace(regs[x], regs[b], da, db, dc);
+      if (m1 & cc) {
+        const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
         jump(ptr - 3, psw);
       }
     },
@@ -309,8 +327,8 @@ export const ops = {
     code: [0x49],
     name: "compare",
     len: 4,
-    f: ([r1, x, b, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x], regs[b], da, db, dc);
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const rval = bytes_to_fw(regs[r1]);
       const sval = memval(mem, ptr); // NOPE! This is Full word, not half.
       if (rval === sval) {
@@ -348,10 +366,9 @@ export const ops = {
     mn: "L",
     code: [0x58],
     len: 4,
-    f: ([r, x, b, d1, d2, d3], regs, mem) => {
-      // L R1,D2(X2,B2)   [RX]
-      const ptr = base_displace(regs[x], regs[b], d1, d2, d3);
-      mem_to_reg(regs[r], mem, ptr);
+    f: ([r1, x2, b2, da, db, dc], regs, mem) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
+      mem_to_reg(regs[r1], mem, ptr);
     },
     pdf: "7-150",
     type: "RX",
@@ -365,7 +382,7 @@ export const ops = {
     code: [0x5a],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const a = regval(regs[r1]);
       const b = memval(mem, ptr);
       const { res, cc } = addAndCC(a, b);
@@ -385,7 +402,7 @@ export const ops = {
     code: [0x5b],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const a = regval(regs[r1]);
       const b = memval(mem, ptr);
       const { res, cc } = addAndCC(a, -b);
@@ -405,7 +422,7 @@ export const ops = {
     code: [0x5c],
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const a = regval(regs[r1]);
       const b = memval(mem, ptr);
       //const { res, cc } = addAndCC(a, -b);
@@ -424,8 +441,8 @@ export const ops = {
     mn: "D",
     code: [0x5d],
     len: 4,
-    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
+    f: ([r1, x2, b2, da, db, dc], regs, mem) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const a = regval(regs[r1]);
       const b = memval(mem, ptr);
       //const { res, cc } = addAndCC(a, -b);
@@ -445,9 +462,10 @@ export const ops = {
     mn: "TM",
     code: [0x91],
     len: 4,
-    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+    f: ([i1, i2, b1, da, db, dc], regs) => {
       const val = from_nibs([i1, i2]);
-      const ptr = base_displace(0, regs[r1], da, db, dc);
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
+      console.warn("no test under mask yet!", val, ptr);
       //TODO: test under mask. CC:
       // 0 Selected bits all zeros; or mask bits all zeros
       // 1 Selected bits mixed zeros and ones (TM and TMY only)
@@ -468,9 +486,9 @@ export const ops = {
     mn: "MVI",
     code: [0x92],
     len: 4,
-    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+    f: ([i1, i2, b1, da, db, dc], regs, mem) => {
       const val = from_nibs([i1, i2]);
-      const ptr = base_displace(0, regs[r1], da, db, dc);
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
       mem[ptr] = val;
     },
     name: "move",
@@ -485,7 +503,7 @@ export const ops = {
     code: [0x94],
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
       const a = mem[ptr];
       const val = from_nibs([i1, i2]);
       const and_val = a & val;
@@ -506,7 +524,7 @@ export const ops = {
     code: [0x96],
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
       const a = mem[ptr];
       const val = from_nibs([i1, i2]);
       const or_val = a | val;
@@ -527,7 +545,7 @@ export const ops = {
     code: [0x97],
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
-      const ptr = base_displace(0, regs[b1], da, db, dc);
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
       const a = mem[ptr];
       const val = from_nibs([i1, i2]);
       const xor_val = a ^ val;
@@ -593,11 +611,10 @@ export const ops = {
     mn: "MVC",
     code: [0xd2],
     len: 12,
-    f: ([i1, i2, r1, da, db, dc], regs, mem, psw) => {
+    f: ([i1, i2, b1, da, db, dc], regs) => {
       const val = from_nibs([i1, i2]);
-      const ptr = base_displace(0, regs[r1], da, db, dc);
-      // TODO: +3? Where should it write?
-      //mem[ptr + 3] = val;
+      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
+      console.warn("no mvc", val, ptr);
     },
     name: "move",
     desc:
