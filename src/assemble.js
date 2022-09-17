@@ -2,6 +2,7 @@ import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
 import { to_nibs, from_nibs, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
+import { parseOperands, parseDataOperand } from "./operands.js";
 
 export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
   const tokens = asmTxt
@@ -21,7 +22,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
     .reduce(expandLiterals, { lits: [], stmts: [] });
 
   // TODO: need to inject literals somewhere - with corresponding PC,
-  // _before_ assebmbling the statement.
+  // _before_ assebmbling the statement. Sould be LTORG
   console.log("Literals:", expanded.lits);
 
   const equateExpanded = remapEquates(expanded.stmts, extraEqsF);
@@ -114,95 +115,6 @@ const tokenize = (line) => {
     tokenizeOperands(operands),
     comment?.join(" ")
   );
-};
-
-const parseOperands = (s, symbols, base) => {
-  const { stmt, bytes, type } = s;
-  // Parse to bytes
-  const enc = stmt.operands.map((o, i) =>
-    parseOperand(o, symbols, base, type, i, stmt.mn)
-  );
-
-  // Re-org operands depending on operation.
-  switch (type) {
-    case "RR":
-    case "RX":
-      if (enc.length > 2) {
-        console.warn("nop, rong length", enc);
-      }
-      bytes.operands.push(...enc[0], ...enc[1]);
-      break;
-    case "RI":
-      {
-        // extract extra opcode byte
-        const extra = ops[bytes.op_code[0]].code[1];
-        bytes.operands.push(...enc[0], extra, ...enc[1]);
-      }
-      break;
-    case "SI":
-      // I2I2 B1 D1D1D1
-      bytes.operands.push(...enc[1], ...enc[0].slice(1));
-      break;
-    case "SS":
-      // L1L1 B1 D1D1D1 B2 D2D2D2
-      console.log("eg MVC. TODO!");
-      break;
-    case "DC":
-    case undefined:
-      // Just dump the bytes
-      enc.forEach((bs) => bytes.operands.push(...bs));
-      break;
-    default:
-      console.log("not rr rx si...", type, enc);
-  }
-  return s;
-};
-
-// Return (mostly?) nibbles
-const parseOperand = (o, symbols, base, type, idx, mn) => {
-  if (type === "DC") {
-    return parseImmediate(o);
-  }
-  const otype =
-    {
-      RR: ["R", "R"],
-      RX: ["R", "X"],
-      SI: ["S", "I"],
-      SS: ["I", "X", "X"],
-      RI: ["R", "I"],
-    }[type] || [];
-  const oidx = otype[idx];
-  if (type && type !== "DC" && (!otype || !oidx)) {
-    console.warn("What's this operand?", type, o, idx, mn);
-  }
-  switch (oidx) {
-    case "R":
-      // One number? Correct? Should not be over 15 anyway.
-      if (o > 15 || o < 0) console.warn("bad reg", o);
-      return parseImmediate(o);
-    case "I": {
-      const nibs = type === "RI" ? 4 : 2;
-      return to_nibs(parseImmediate(o), nibs);
-    }
-    case "X":
-    case "S": {
-      return parseBaseDisplace(o, base, symbols);
-    }
-    default: {
-      console.warn("unhandeld mn?", oidx, otype, type);
-      return parseImmediate(o);
-    }
-  }
-};
-
-const parseDataOperand = (d) => {
-  const numReps = parseInt(d, 10);
-  if (isNaN(numReps)) {
-    return parseImmediate(d);
-  }
-  // Expand repetitions
-  const value = d.slice((numReps + "").length);
-  return new Array(numReps).fill(parseImmediate(value)).flat();
 };
 
 const remapExtendedMnemonics = (stmt) => {
@@ -350,7 +262,7 @@ export const assembleStatement = (env, stmt) => {
   return env;
 };
 
-const parseImmediate = (v) => {
+export const parseImmediate = (v) => {
   const [a, b, ...rest] = v.toString().split("");
   if (b === "'") {
     const num = rest.slice(0, -1).join("");

@@ -31,3 +31,141 @@ Denotes a register-and-indexed-storage operation.
   
 *** SS Format
   ... several...  
+
+
+
+** Machine instructions
+
+#+BEGIN_SRC
+
+ Figure 1. Machine instructions
+
+┌───────────────┐        ┌───────────────┐        ┌───────────────┐
+│               │        │               │        │               │
+│     NAME      │        │   OPERATION   │        │    OPERAND    │
+│     Field     │        │   Field       │        │    Field      │
+│               │        │               │        │               │
+└───────┬───────┘        └───────┬───────┘        └───────┬───────┘
+        │                        │                        │
+        V Which                  V Which                  V Which
+        │ can be                 │ must be                │ can be
+┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
+│               │        │               │        │               │
+│   A Symbol¹   │        │   A symbolic  │        │  Zero or more │
+│   (or space)  │        │   Operation   │        │  arguments    │
+│               │        │   Code        │        │               │
+└───────────────┘        └───────────────┘        └───────┬───────┘
+                                                          │
+                                                          V Composed of one of
+                     ┌────────────────────────┬───────────┴────────────┐
+                     V                        V                        V
+             ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
+             │               │        │               │        │               │
+             │               │        │               │        │  Exp(Exp,Exp) │
+             │   Expression  │        │    Exp(Exp)   │        │  or           │
+             │               │        │               │        │  Exp(,Exp)    │
+             │               │        │               │        │               │
+             └───────┬───────┘        └───────────────┘        └───────────────┘
+                     │
+                     V Which can be one of
+        ┌────────────┴───────────┐
+        V                        V
+┌───────┴───────┐        ┌───────┴───────┐
+│               │        │               │
+│               │        │  Arithmetic   │
+│     Term      │        │  combination  │
+│               │        │  of terms     │
+│               │        │               │
+└───────┬───────┘        └───────────────┘
+        │
+        V Which can be any of
+        ├────────────────────────┬────────────────────────┬────────────────────────┬────────────────────────┐
+        V                        V                        V                        V                        V
+┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
+│               │        │               │        │               │        │               │        │               │
+│  A Symbol     │        │   Location    │        │ Symbol        │        │ A             │        │ A Literal     │
+│               │        │   Counter     │        │ Attribute     │        │ Self-Defining │        │               │
+│               │        │   Reference   │        │ Reference     │        │ Term          │        │               │
+│  (e.g. HERE)  │        │   (i.e. *)    │        │ (e.g. L'HERE) │        │               │        │ (e.g. =H'9')  │
+└───────────────┘        └───────────────┘        └───────────────┘        └───────┬───────┘        └───────────────┘
+                                                                                   │
+                                                                                   V Which can be any of
+        ┌────────────────────────┬────────────────────────┬────────────────────────┼────────────────────────┐
+        V                        V                        V                        V                        V
+┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
+│               │        │               │        │               │        │               │        │               │
+│    Decimal    │        │ Hexadecimal   │        │ Binary        │        │ Character     │        │ Graphic²      │
+│               │        │               │        │               │        │               │        │               │
+│    (e.g. 9)   │        │ (e.g. X'F9')  │        │ (e.g. B'111') │        │ (e.g. C'JAN') │        │ (e.g. G'<.A>')│
+│               │        │               │        │               │        │               │        │               │
+└───────────────┘        └───────────────┘        └───────────────┘        └───────────────┘        └───────────────┘
+
+¹ Can be an ordinary symbol, a variable symbol, or a sequence symbol
+² With DBCS option only
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+
+
+Figure 1. Ordinary assembler instruction statements
+
+             ┌───────────────┐        ┌───────────────┐        ┌───────────────┐
+             │     NAME      │        │   OPERATION   │        │    OPERAND    │
+             │     Field     │        │   Field       │        │    Field      │
+             └───────┬───────┘        └───────┬───────┘        └───────┬───────┘
+                     │                        │                        │
+                     V Which                  V Which                  V Which
+                     │ can be                 │ must be                │ can be
+             ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
+             │    A Symbol¹  │        │   A symbolic  │        │  Zero or more │
+             │   (or space)  │        │   Operation   │        │  operands     │
+             │               │        │   Code²       │        │               │
+             └───────────────┘        └───────────────┘        └───────┬───────┘
+                                                                       │
+                                                                       │
+                       ┌───────────────────────────────────────────────┴────────────────────────────┐
+                       V                                                                            V
+            ┌──────────┴──────────┐                                                      ┌──────────┴──────────┐
+            │ For Data Definition │                                                      │ For all other       │
+            │ (DC and DS          │                                                      │ ordinary Assembler  │
+            │ Instructions)       │                                                      │ Instructions        │
+            └──────────┬──────────┘                                                      └──────────┬──────────┘
+                       │                                                                            │
+                       V Operands can be                                                            V Operands
+                       │ composed of one                                                            │ can be composed
+                       │ to five subfields³                                                         │ of³
+      ┌────────────────┼──────────────┬───────────────┬────────────────┐            ┌───────────────┼────────────────┐
+      │                │              │               │                │            │               │                │
+┌─────┴──────┐  ┌──────┴─────┐  ┌─────┴──────┐  ┌─────┴──────┐   ┌─────┴──────┐     │               │                │
+│            │  │            │  │            │  │            │   │            │     │               │                │
+│Duplication │  │    Type    │  │    Type    │  │  Modifiers │   │   Nominal  │     │               │                │
+│ factor     │  │            │  │  Extension │  │            │   │    Value   │     │               │                │
+│            │  │            │  │            │  │            │   │            │     │               │                │
+└──────┬─────┘  └──────┬─────┘  └─────┬──────┘  └─────┬──────┘   └─────┬──────┘     │               │                │
+       │               │              │               │                │            V               V                V
+       │               │              │               │                │            │               │                │
+       V               V              V               V                V      ┌─────┴──────┐  ┌─────┴──────┐   ┌─────┴──────┐
+       │ ┌─────────────┘              │               │                │      │ Expression │  │ Character  │   │  Symbolic  │
+       │ │  ┌─────────────────────────┘               │                │      │ (e.g.*+14) │  │   String   │   │   Option   │
+       │ │  │   ┌─────────────────────────────────────┘                │      │            │  │ (e.g. 'XX')│   │ (e.g. GEN) │
+       │ │  │   │     ┌──────┐                                         │      └────────────┘  └────────────┘   └────────────┘
+       │ │  │   │     │      │                                         │
+       V V  V   V     V      │                                         V
+ e.g. 10 E  B   L2  '12'     │                                         │ One or more nominal values
+     └──┴──┴──┴───┴─────┘    │   ┌────────────────────────┬────────────┴─────────────┬──────────────────────────┐
+                             ∧   │                        │                          │                          │
+                             │   V                        V                          V                          V
+                         ┌───┴───┴───────┐        ┌───────┴───────┐           ┌──────┴──────┐           ┌───────┴───────┐
+                         │ 'Decimal      │        │ (Expression)  │           │ 'Character  │           │ 'Graphic      │
+                         │  number'      │        │               │           │  string'    │           │  string'⁴     │
+                         │ (e.g. '12')   │        │ (e.g. (ADDR)) │           │ (e.g. 'ABC')│           │ (e.g. '<.A>') │
+                         └───────────────┘        └───────────────┘           └─────────────┘           └───────────────┘
+
+¹ Can be an ordinary symbol, a variable symbol, or a sequence symbol
+² Includes symbolic operation codes of macro definitions
+³ Discussed more fully where individual instructions are described
+⁴ With DBCS option only
+
+#+END_SRC
