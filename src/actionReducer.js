@@ -121,7 +121,7 @@ const actionReducer = (s, render) => (type, value) => {
 
         const code_bytes = [
           ...bytes
-            .filter((s) => !["DS"].includes(s.stmt.mn.toUpperCase()))
+            .filter((s) => !["ds"].includes(s.stmt.mn.toLowerCase()))
             .map((s) => s.bytes.bytes),
         ].flat();
 

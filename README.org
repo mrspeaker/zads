@@ -112,19 +112,19 @@ Denotes a register-and-indexed-storage operation.
 Figure 1. Ordinary assembler instruction statements
 
              ┌───────────────┐        ┌───────────────┐        ┌───────────────┐
-             │     NAME      │        │   OPERATION   │        │    OPERAND    │
-             │     Field     │        │   Field       │        │    Field      │
+             │     NAME        │        │   OPERATION    │        │    OPERAND      │
+             │     Field       │        │   Field        │        │    Field        │
              └───────┬───────┘        └───────┬───────┘        └───────┬───────┘
-                     │                        │                        │
-                     V Which                  V Which                  V Which
-                     │ can be                 │ must be                │ can be
+                     │                           │                        │
+                     V Which                     V Which                  V Which
+                     │ can be                    │ must be                │ can be
              ┌───────┴───────┐        ┌───────┴───────┐        ┌───────┴───────┐
-             │    A Symbol¹  │        │   A symbolic  │        │  Zero or more │
-             │   (or space)  │        │   Operation   │        │  operands     │
-             │               │        │   Code²       │        │               │
+             │    A Symbol¹    │        │   A symbolic  │        │  Zero or more │
+             │   (or space)    │        │   Operation   │        │  operands     │
+             │                 │        │   Code²       │        │               │
              └───────────────┘        └───────────────┘        └───────┬───────┘
-                                                                       │
-                                                                       │
+                                                                            │
+                                                                            │
                        ┌───────────────────────────────────────────────┴────────────────────────────┐
                        V                                                                            V
             ┌──────────┴──────────┐                                                      ┌──────────┴──────────┐
@@ -139,10 +139,10 @@ Figure 1. Ordinary assembler instruction statements
       ┌────────────────┼──────────────┬───────────────┬────────────────┐             ┌───────────────┼────────────────┐
       │                  │                │                │                  │            │               │                │
 ┌─────┴──────┐  ┌──────┴─────┐  ┌─────┴──────┐  ┌─────┴──────┐   ┌─────┴──────┐     │               │                │
-│            │  │               │  │            │   │             │   │            │     │               │                │
-│Duplication │  │    Type       │  │    Type    │   │  Modifiers  │   │   Nominal  │     │               │                │
-│ factor     │  │               │  │  Extension │   │             │   │    Value   │     │               │                │
-│            │  │               │  │            │   │             │   │            │     │               │                │
+│             │  │               │  │            │   │             │   │            │     │               │                │
+│Duplication  │  │    Type       │  │    Type    │   │  Modifiers  │   │   Nominal  │     │               │                │
+│ factor      │  │               │  │  Extension │   │             │   │    Value   │     │               │                │
+│             │  │               │  │            │   │             │   │            │     │               │                │
 └──────┬─────┘  └──────┬─────┘  └─────┬──────┘  └─────┬──────┘   └─────┬──────┘     │               │                │
        │                 │                │                │                 │            V               V                V
        │                 │                │                │                 │            │               │                │

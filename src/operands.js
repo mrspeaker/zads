@@ -2,7 +2,22 @@ import { ops } from "./ops.js";
 import { to_nibs } from "./bytes.js";
 import { parseImmediate, parseBaseDisplace } from "./assemble.js";
 
-/*
+export const tokenizeOperands = (ops) => {
+  // comma, followed by NOT open paren, stuff, close paren.
+  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
+  return ops?.split(/,(?![^(]*\))/g) ?? [];
+};
+
+//const literalExpaned... .reduce(expandLiterals, { lits: [], stmts: [] });
+// TODO: need to inject literals somewhere - with corresponding PC,
+// _before_ assebmbling the statement. Sould be LTORG
+//  console.log("Literals:", expanded.lits);
+
+export const parseOperands = (s, symbols, eqs, base) => {
+  const { stmt, bytes, type } = s;
+  console.log("ddd", eqs, s.stmt.operands);
+
+  /*
   Operand is:
   - Zero or more arguments of:
   -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
@@ -12,16 +27,25 @@ import { parseImmediate, parseBaseDisplace } from "./assemble.js";
   -- A symbol | Loc Counter Reference | Symbol Attribute | Self-defining term | Literal
   - Self-defining term:
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
-*/
+  */
 
-export const tokenizeOperands = (ops) => {
-  // comma, followed by NOT open paren, stuff, close paren.
-  // Splits on commas, but not inside parens (eg `L R1,0(,R15)`)
-  return ops?.split(/,(?![^(]*\))/g) ?? [];
-};
+  // TODO: better equ matching
+  stmt.operands = stmt.operands.map((v) => {
+    if (!v.split) return v; // TODO: nope.
 
-export const parseOperands = (s, symbols, base) => {
-  const { stmt, bytes, type } = s;
+    // Split up base/display parens
+    const [first, ...rest] = v.split(/[,()]/g);
+
+    const firstEq = eqs[first.toLowerCase()];
+    const head = firstEq !== undefined ? firstEq : first;
+
+    const parens = rest.slice(0, -1).map((v) => {
+      const equate = eqs[v.toLocaleLowerCase()];
+      return v && equate !== undefined ? equate : v;
+    });
+    // Rebuild them.
+    return head + (parens.length ? "(" + parens.join(",") + ")" : "");
+  });
 
   // Parse to bytes
   const enc = stmt.operands.map((o, i) =>
