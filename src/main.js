@@ -22,8 +22,9 @@ const key_handler = (dom) => {
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
 
-(async function main(state) {
+(async function main(state, action) {
   bindUI(state, action);
+
   dumColors();
   const keys = key_handler(document.body);
   action("STORAGE_LOAD");
@@ -53,6 +54,8 @@ function bindUI(state, action) {
   editor($("#src"), (text) => action("ASSEMBLE_SRC", text));
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
+
+  $click("#btnDumMem", () => dumBG(state));
 
   $on("#src", "selectionchange", (e) => {
     const area = e.target;
@@ -159,4 +162,18 @@ function dumColors() {
     t.style.color = pal_to_hex(c);
   });
   $("#docs").style.color = pal_to_hex(3);
+}
+
+function dumBG(state) {
+  const { machine } = state;
+  const { vic, mem } = machine;
+  console.log(mem);
+  const scrbase = vic.base + vic.screen;
+  for (let j = 0; j < vic.rows; j++) {
+    for (let i = 0; i < vic.cols; i++) {
+      const v = Math.sin(i / 3) * Math.cos(j / 3);
+
+      mem[scrbase + j * vic.cols + i] = v > 0.6 ? 11 : v > 0.4 ? 6 : 0;
+    }
+  }
 }

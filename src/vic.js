@@ -53,7 +53,7 @@ export function injectEquates(vic, table) {
   table.boop = 10;
 }
 
-const pal_hex = [
+const pal_hex_c64 = [
   "#000000",
   "#ffffff",
   "#880000",
@@ -71,7 +71,7 @@ const pal_hex = [
   "#0088ff",
   "#bbbbbb",
 ];
-const pal_hex_a = [
+const pal_hex_dark = [
   "#000000",
   "#9D9D9D",
   "#FFFFFF",
@@ -89,6 +89,27 @@ const pal_hex_a = [
   "#31A2F2",
   "#B2DCEF",
 ];
+
+const pal_hex_64b = [
+  "#000000",
+  "#ffffff",
+  "#9f3535",
+  "#90b6bc",
+  "#566883",
+  "#71a543",
+  "#0d5471",
+  "#dfd08b",
+  "#9a5b1e",
+  "#6a3904",
+  "#b67a70",
+  "#4a5e3c",
+  "#7f8274",
+  "#c2dc94",
+  "#4791bf",
+  "#bda791",
+];
+
+const pal_hex = pal_hex_c64;
 const pal_rgb = pal_hex.map((v) =>
   chunk(v.split("").slice(1), 2).map((v) => parseInt(v.join(""), 16))
 );
@@ -125,7 +146,6 @@ export const pal = {
 # Syntax:
 # Red Green Blue Dither
 #
-
 # Black
 00 00 00 0
 

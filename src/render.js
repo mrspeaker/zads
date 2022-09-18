@@ -33,6 +33,7 @@ function render(state) {
       .map((v) => (v === "00" ? "__" : v));
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
+
     renderScreen(mem, vic);
     renderMemViz(mem);
 

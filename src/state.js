@@ -23,7 +23,7 @@ const mk_machine = () => ({
     halt: true,
   },
   cpuState: "operating", // stopped, operating, load, check-stop
-  vic: mk_vic(320, 240),
+  vic: mk_vic(32, 32),
 });
 
 export const mk_program = () => ({
