@@ -134,7 +134,7 @@ function bindUI(state, action) {
       .trim()
       .split(",")
       .map((v, i) => {
-        const val = parseInt(v, 16);
+        const val = v === "__" ? 0 : parseInt(v, 16);
         if (isNaN(val)) {
           console.warn("bad mem at ", i, ":", v);
           return 0;
