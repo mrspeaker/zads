@@ -5,7 +5,6 @@ import { ops_extended } from "./ops_extended.js";
 import {
   parseOperands,
   parseDataOperand,
-  expandLiterals,
   tokenizeOperands,
 } from "./operands.js";
 
@@ -22,26 +21,26 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
     // TODO: insert END.
   }
 
-  const expanded = tokens
-    .reduce(expandMacros, [])
-    .reduce(expandLiterals, { lits: [], stmts: [] });
-
+  const macroExpanded = tokens.reduce(expandMacros, []);
+  //const literalExpaned... .reduce(expandLiterals, { lits: [], stmts: [] });
   // TODO: need to inject literals somewhere - with corresponding PC,
   // _before_ assebmbling the statement. Sould be LTORG
-  console.log("Literals:", expanded.lits);
+  //  console.log("Literals:", expanded.lits);
 
-  const equateExpanded = remapEquates(expanded.stmts, extraEqsF);
+  const equateExpanded = remapEquates(macroExpanded, extraEqsF);
+  const mnemonicsExtended = equateExpanded.map(remapExtendedMnemonics);
 
-  const { stmts, symbols, base, base_addr } = equateExpanded
-    .map(remapExtendedMnemonics)
-    .reduce(assembleStatement, {
+  const { stmts, symbols, base, base_addr } = mnemonicsExtended.reduce(
+    assembleStatement,
+    {
       pc: 0,
       stmts: [],
       symbols: {},
       equates: {},
       base: 15, // default to base reg 15. Is that correct?
       base_addr: 0,
-    });
+    }
+  );
 
   extraSymbolsF && extraSymbolsF(symbols);
 
