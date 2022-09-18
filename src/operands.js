@@ -15,7 +15,6 @@ export const tokenizeOperands = (ops) => {
 
 export const parseOperands = (s, symbols, eqs, base) => {
   const { stmt, bytes, type } = s;
-  console.log("ddd", eqs, s.stmt.operands);
 
   /*
   Operand is:
