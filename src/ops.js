@@ -267,6 +267,23 @@ export const ops = {
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
 
+  0x42: {
+    mn: "STC",
+    code: [0x42],
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
+      mem[ptr] = regs[r1][3];
+    },
+    name: "store character",
+    desc:
+      "Bits 56-63 of general register R1 are placed unchanged at the second-operand location. The second operand is one byte in length.",
+    pdf: "7-212",
+    type: "RX",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
+  },
+
   0x43: {
     mn: "IC",
     code: [0x43],

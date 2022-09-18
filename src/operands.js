@@ -55,9 +55,6 @@ export const parseOperands = (s, symbols, eqs, base) => {
   switch (type) {
     case "RR":
     case "RX":
-      if (enc.length > 2) {
-        console.warn("nop, rong length", enc);
-      }
       bytes.operands.push(...enc[0], ...enc[1]);
       break;
     case "RI":

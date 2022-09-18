@@ -1,9 +1,5 @@
-import {
-  assembleStatement,
-  expandLiterals,
-  LITERAL_GEN_PREFIX,
-} from "../src/assemble.js";
-
+import { assembleStatement } from "../src/assemble.js";
+import { expandLiterals, LITERAL_GEN_PREFIX } from "../src/operands.js";
 const expand_literals_test = () => {
   const stmt = { operands: ["=f'1'"] };
   const env = { lits: [], stmts: [] };
