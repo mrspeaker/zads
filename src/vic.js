@@ -71,6 +71,24 @@ const pal_hex = [
   "#0088ff",
   "#bbbbbb",
 ];
+const pal_hex_a = [
+  "#000000",
+  "#9D9D9D",
+  "#FFFFFF",
+  "#BE2633",
+  "#E06F8B",
+  "#493C2B",
+  "#A46422",
+  "#EB8931",
+  "#F7E26B",
+  "#2F484E",
+  "#44891A",
+  "#A3CE27",
+  "#1B2632",
+  "#005784",
+  "#31A2F2",
+  "#B2DCEF",
+];
 const pal_rgb = pal_hex.map((v) =>
   chunk(v.split("").slice(1), 2).map((v) => parseInt(v.join(""), 16))
 );
@@ -155,4 +173,23 @@ C2 DC 94 8
 
 # Light Gray
 BD A7 91 C
+*/
+
+/*
+"#000000"
+"#9D9D9D"
+"#FFFFFF"
+"#BE2633"
+"#E06F8B"
+"#493C2B"
+"#A46422"
+"#EB8931"
+"#F7E26B"
+"#2F484E"
+"#44891A"
+"#A3CE27"
+"#1B2632"
+"#005784"
+"#31A2F2"
+"#B2DCEF"
 */
