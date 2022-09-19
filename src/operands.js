@@ -159,6 +159,14 @@ export const expandLiterals = (ac, stmt) => {
   return ac;
 };
 
+const lex_tokens = {
+  LParen: "LParen",
+  RParen: "RParen",
+  Comma: "Comma",
+  NumberLiteral: "NumberLiteral",
+  Unknown: "Unknown",
+};
+
 /*
   Operand is:
   -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
@@ -203,7 +211,17 @@ const is_digit = (v) => v.length && !isNaN(v);
 const read_letter = (ctx) => {
   const ch = ctx.ch;
   readCh(ctx);
-  return { type: "CH", value: ch };
+  if (ch === "(") {
+    return { type: lex_tokens.LParen };
+  }
+  if (ch === ")") {
+    return { type: lex_tokens.RParen };
+  }
+  if (ch === ",") {
+    return { type: lex_tokens.Comma };
+  }
+
+  return { type: lex_tokens.Unknown, value: ch };
 };
 
 const read_num = (ctx) => {
@@ -212,7 +230,7 @@ const read_num = (ctx) => {
     readCh(ctx);
   }
   return {
-    type: "NUMBER",
+    type: lex_tokens.NumberLiteral,
     val: parseInt(ctx.inp.substring(init, ctx.cur), 10),
   };
 };
