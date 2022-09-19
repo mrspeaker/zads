@@ -27,6 +27,7 @@ export const parseOperands = (s, symbols, eqs, base) => {
   - Self-defining term:
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
   */
+  const lexed = stmt.operands.map(lexOperand);
 
   // TODO: better equ matching
   stmt.operands = stmt.operands.map((v) => {
@@ -156,4 +157,62 @@ export const expandLiterals = (ac, stmt) => {
   });
   ac.stmts.push(stmt);
   return ac;
+};
+
+/*
+  Operand is:
+  -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
+  - Expression:
+  -- Term | Arithemetic combination of terms
+  - Term:
+  -- A symbol | Loc Counter Reference | Symbol Attribute | Self-defining term | Literal
+  - Self-defining term:
+  -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
+  */
+const lexOperand = (op) => {
+  const ctx = {
+    inp: op + "",
+    ch: "",
+    cur: 0,
+    next: 0,
+  };
+  const toks = [];
+  readCh(ctx);
+  while (ctx.cur < ctx.inp.length) {
+    toks.push(getToken(ctx));
+  }
+  console.log(op, toks);
+  return toks;
+};
+
+const getToken = (ctx) => {
+  if (is_digit(ctx.ch)) {
+    return read_num(ctx);
+  }
+  return read_letter(ctx);
+};
+
+const readCh = (ctx) => {
+  const { next, inp } = ctx;
+  ctx.ch = next >= inp.length ? "" : inp[next];
+  ctx.cur = next;
+  ctx.next += 1;
+};
+const is_digit = (v) => v.length && !isNaN(v);
+
+const read_letter = (ctx) => {
+  const ch = ctx.ch;
+  readCh(ctx);
+  return { type: "CH", value: ch };
+};
+
+const read_num = (ctx) => {
+  const init = ctx.cur;
+  while (is_digit(ctx.ch)) {
+    readCh(ctx);
+  }
+  return {
+    type: "NUMBER",
+    val: parseInt(ctx.inp.substring(init, ctx.cur), 10),
+  };
 };
