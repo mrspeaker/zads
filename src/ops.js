@@ -460,10 +460,17 @@ export const ops = {
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
+          if (r1 % 2 !== 0) {
+              console.warn("Bad REG for Divide. Needs to be even-odd pair.");
+              return;
+          }
       const a = regval(regs[r1]);
-      const b = memval(mem, ptr);
-      //const { res, cc } = addAndCC(a, -b);
-      regset(regs[r1], Math.floor(a / b));
+          const b = memval(mem, ptr);
+          const v = a / b;
+          const quot = Math.floor(v);
+          const rem = Math.floor(v - quot);
+      regset(regs[r1], quot);
+      regset(regs[r1+1], rem);
       //psw.conditionCode = cc;
     },
     name: "divide",

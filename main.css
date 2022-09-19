@@ -127,9 +127,8 @@ textarea {
   padding: 8px;
   max-height: 40px;
 }
-#desc {
-  padding-top: 8px;
-}
+#docs #mns span { cursor: pointer }
+#desc { padding-top: 8px; }
 textarea:focus {
   color: var(--text-color);
 }
