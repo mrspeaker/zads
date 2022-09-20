@@ -27,6 +27,7 @@ export const parseOperands = (s, symbols, eqs, base) => {
   - Self-defining term:
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
   */
+
   const lexed = stmt.operands.map(lexOperand);
 
   // TODO: better equ matching
@@ -163,7 +164,15 @@ const lex_tokens = {
   LParen: "LParen",
   RParen: "RParen",
   Comma: "Comma",
+  Plus: "Plus",
+  Minus: "Minus",
+  Asterisk: "Asterisk",
+  Divide: "Divide",
+  Equals: "Equals",
+  Quote: "Quote",
+  Underscore: "Underscore",
   NumberLiteral: "NumberLiteral",
+  Symbol: "Symbol",
   Unknown: "Unknown",
 };
 
@@ -197,6 +206,14 @@ const getToken = (ctx) => {
   if (is_digit(ctx.ch)) {
     return read_num(ctx);
   }
+  if (is_hexbin_literal(ctx)) {
+    // REturn 3 tokens? ["x", "'", SYMBOL]
+    // Or return one "hex+symbol" or "bin+symbol"
+    console.log("Should be hexbin");
+  }
+  if (is_alpha(ctx.ch)) {
+    return read_symbol(ctx);
+  }
   return read_letter(ctx);
 };
 
@@ -206,19 +223,32 @@ const readCh = (ctx) => {
   ctx.cur = next;
   ctx.next += 1;
 };
-const is_digit = (v) => v.length && !isNaN(v);
+const is_digit = (ch) => ch.search(/[0-9]/) === 0;
+const is_alpha = (ch) => ch.search(/[a-zA-Z]/) === 0;
+const is_symbol_char = (ch) => ch.search(/[a-zA-Z0-9]/) === 0;
+const is_hexbin_literal = (ctx) => {
+  const lines = ctx.inp.substr(ctx.cur, 2);
+  return lines.search(/[xb]'/) === 0;
+};
 
+const maths_chars = {
+  "(": lex_tokens.LParen,
+  ")": lex_tokens.RParen,
+  ",": lex_tokens.Comma,
+  "+": lex_tokens.Plus,
+  "-": lex_tokens.Minus,
+  "*": lex_tokens.Asterisk,
+  "/": lex_tokens.Divide,
+  "'": lex_tokens.Quote,
+  "=": lex_tokens.Equals,
+  _: lex_tokens.Underscore,
+};
 const read_letter = (ctx) => {
   const ch = ctx.ch;
   readCh(ctx);
-  if (ch === "(") {
-    return { type: lex_tokens.LParen };
-  }
-  if (ch === ")") {
-    return { type: lex_tokens.RParen };
-  }
-  if (ch === ",") {
-    return { type: lex_tokens.Comma };
+
+  if (maths_chars[ch]) {
+    return { type: maths_chars[ch] };
   }
 
   return { type: lex_tokens.Unknown, value: ch };
@@ -229,8 +259,20 @@ const read_num = (ctx) => {
   while (is_digit(ctx.ch)) {
     readCh(ctx);
   }
+
   return {
     type: lex_tokens.NumberLiteral,
     val: parseInt(ctx.inp.substring(init, ctx.cur), 10),
+  };
+};
+
+const read_symbol = (ctx) => {
+  const init = ctx.cur;
+  while (is_symbol_char(ctx.ch)) {
+    readCh(ctx);
+  }
+  return {
+    type: lex_tokens.Symbol,
+    val: ctx.inp.substring(init, ctx.cur),
   };
 };
