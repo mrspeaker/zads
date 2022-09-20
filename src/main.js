@@ -55,7 +55,10 @@ function bindUI(state, action) {
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
 
-  $click("#btnDumMem", () => dumBG(state));
+  $click("#btnDumMem", () => {
+    dumBG(state);
+    action("NOP");
+  });
 
   $on("#src", "selectionchange", (e) => {
     const area = e.target;
@@ -164,10 +167,9 @@ function dumColors() {
   $("#docs").style.color = pal_to_hex(3);
 }
 
-function dumBG(state) {
+function dumBG(state, action) {
   const { machine } = state;
   const { vic, mem } = machine;
-  console.log(mem);
   const scrbase = vic.base + vic.screen;
   for (let j = 0; j < vic.rows; j++) {
     for (let i = 0; i < vic.cols; i++) {
