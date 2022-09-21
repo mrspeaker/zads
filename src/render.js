@@ -89,9 +89,9 @@ const drawChar = (x, y, ch, img, cols) => {
     const yoff = (yy + j) * datasPerLine;
     for (let i = 0; i < 8; i++) {
       const v = (i + j) % 2 === 0 ? 255 : 0;
-      //      img[yoff + (xx + i) * 4] = v;
-      //      img[yoff + (xx + i) * 4 + 1] = v;
-      //      img[yoff + (xx + i) * 4 + 2] = v;
+      img[yoff + (xx + i) * 4] = (Math.random() * 255) | 0;
+      img[yoff + (xx + i) * 4 + 1] = v;
+      img[yoff + (xx + i) * 4 + 2] = v;
       img[yoff + (xx + i) * 4 + 3] = v;
     }
   }
