@@ -62,6 +62,7 @@ const drawPixel = (x, y, c, img, cols) => {
   for (let j = 0; j < 8; j++) {
     const yoff = (yy + j) * datasPerLine;
     for (let i = 0; i < 8; i++) {
+      if (j === 0 || i === 0) continue;
       img[yoff + (xx + i) * 4] = c[0];
       img[yoff + (xx + i) * 4 + 1] = c[1];
       img[yoff + (xx + i) * 4 + 2] = c[2];
@@ -70,28 +71,38 @@ const drawPixel = (x, y, c, img, cols) => {
   }
 };
 
+const drawSprite = (sprNum, data, cols, mval) => {
+  const x = mval(vic_regs["SPR" + sprNum + "_X"]);
+  const y = mval(vic_regs["SPR" + sprNum + "_Y"]);
+  const col = pal_to_rgb(mval(vic_regs["SPR" + sprNum + "_COL"]));
+  drawPixel(x, y, col, data, cols);
+  drawPixel(x + 1, y, col, data, cols);
+  drawPixel(x, y + 1, col, data, cols);
+  drawPixel(x + 1, y + 1, col, data, cols);
+};
+
 function renderScreen(mem, vic) {
   const { base, screen, rows, cols } = vic;
   const mval = (offset) => memval(mem, base + offset);
 
   const c = $("#screen").getContext("2d");
-  c.fillStyle = pal_to_rgb(mval(vic_regs.BG_COL));
+  c.fillStyle = pal_to_hex(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
   const scrmem = base + screen;
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
+  const { data } = imgData;
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const idx = y * cols + x;
       const c = pal_to_rgb(mem[(scrmem + idx) % mem.length] % 16);
-      drawPixel(x, y, c, imgData.data, cols);
+      drawPixel(x, y, c, data, cols);
     }
   }
+
+  drawSprite(1, data, cols, mval);
+  drawSprite(2, data, cols, mval);
   c.putImageData(imgData, 0, 0);
-  c.fillStyle = pal_to_hex(mval(vic_regs.SPR1_COL));
-  c.fillRect(mval(vic_regs.SPR1_X) * 8, mval(vic_regs.SPR1_Y) * 8, 16, 16);
-  c.fillStyle = pal_to_hex(mval(vic_regs.SPR2_COL));
-  c.fillRect(mval(vic_regs.SPR2_X) * 8, mval(vic_regs.SPR2_Y) * 8, 16, 16);
 }
 
 function renderMemViz(mem) {
