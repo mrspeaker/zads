@@ -69,9 +69,9 @@ const is_hex = (ch) => ch.search(/[a-fA-F0-9]/) === 0;
 const is_alpha = (ch) => ch.search(/[a-zA-Z]/) === 0;
 const is_symbol_char = (ch) => ch.search(/[a-zA-Z0-9]/) === 0;
 const is_binary_literal = (ctx) =>
-  ctx.inp.substr(ctx.cur, 2).search(/[bB]'/) === 0;
+  ctx.inp.substr(ctx.cur).search(/[bB]'[01]+'/) === 0;
 const is_hex_literal = (ctx) =>
-  ctx.inp.substr(ctx.cur, 2).search(/[xX]'/) === 0;
+  ctx.inp.substr(ctx.cur).search(/[xX]'[0-9a-fA-F]+'/) === 0;
 
 const maths_chars = {
   "(": lex_tokens.LParen,
@@ -108,48 +108,32 @@ const read_num = (ctx) => {
   };
 };
 
-const read_binary_literal = (ctx) => {
+// TODO: don't thing x'F00F' is "self-defining". I think that's =x'F00F'?.
+const read_self_defining_literal = (ctx, isF, type) => {
   const head = ctx.ch;
   readCh(ctx);
   const quot = ctx.ch;
   readCh(ctx);
   const init = ctx.cur;
-  while (is_binary(ctx.ch)) {
+  while (isF(ctx.ch)) {
     readCh(ctx);
   }
   const num = ctx.inp.substring(init, ctx.cur);
   if (ctx.ch !== "'") {
-    console.log("error - missing quote on bin lit", ctx.ch);
+    console.log("error - missing quote on lit", type, ctx.ch);
   }
   const quot2 = ctx.ch;
   const val = head + quot + num + quot2;
   readCh(ctx);
   return {
-    type: lex_tokens.BinaryLiteral,
+    type: type,
     val,
   };
 };
-const read_hex_literal = (ctx) => {
-  const head = ctx.ch;
-  readCh(ctx);
-  const quot = ctx.ch;
-  readCh(ctx);
-  const init = ctx.cur;
-  while (is_hex(ctx.ch)) {
-    readCh(ctx);
-  }
-  const num = ctx.inp.substring(init, ctx.cur);
-  if (ctx.ch !== "'") {
-    console.log("error - missing quote on hex lit", ctx.ch);
-  }
-  const quot2 = ctx.ch;
-  const val = head + quot + num + quot2;
-  readCh(ctx);
-  return {
-    type: lex_tokens.HexLiteral,
-    val,
-  };
-};
+const read_binary_literal = (ctx) =>
+  read_self_defining_literal(ctx, is_binary, lex_tokens.BinaryLiteral);
+const read_hex_literal = (ctx) =>
+  read_self_defining_literal(ctx, is_hex, lex_tokens.HexLiteral);
 
 const read_symbol = (ctx) => {
   const init = ctx.cur;
