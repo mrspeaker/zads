@@ -12,10 +12,10 @@
       </div>
       <div class="psw">
         <span>(<span id="hz">_</span>_IPS)</span>
-        <span> cycles:<input type="text" id="cycles"/></span>
+        <span> cycles:<input type="text" id="cycles" /></span>
         <span id="format">fmt</span>
-        <span> cc:<input type="text" id="psw_cc"/></span>
-        <span> pc:<input type="text" id="psw_pc"/></span>
+        <span> cc:<input type="text" id="psw_cc" /></span>
+        <span> pc:<input type="text" id="psw_pc" /></span>
       </div>
     </div>
 
@@ -38,9 +38,9 @@
         <textarea id="dis" spellcheck="false"></textarea>
       </div>
 
-      <div style="position:relative">
+      <div style="position: relative">
         <div id="screens">
-          <canvas id="screen" width="32" height="32"></canvas>
+          <canvas id="screen" width="256" height="256"></canvas>
           <canvas id="memviz" width="32" height="32"></canvas>
         </div>
       </div>
@@ -49,9 +49,7 @@
         <textarea id="regs" spellcheck="false"></textarea>
         <div class="boxbar">
           <button id="btnResetMem">reset mem</button
-          ><button id="btnDumMem">
-            set scr</button
-          >regs
+          ><button id="btnDumMem">set scr</button>regs
         </div>
       </div>
 
