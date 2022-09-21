@@ -62,7 +62,6 @@ const drawPixel = (x, y, c, img, cols) => {
   for (let j = 0; j < 8; j++) {
     const yoff = (yy + j) * datasPerLine;
     for (let i = 0; i < 8; i++) {
-      if (j === 0 || i === 0) continue;
       img[yoff + (xx + i) * 4] = c[0];
       img[yoff + (xx + i) * 4 + 1] = c[1];
       img[yoff + (xx + i) * 4 + 2] = c[2];
@@ -81,11 +80,29 @@ const drawSprite = (sprNum, data, cols, mval) => {
   drawPixel(x + 1, y + 1, col, data, cols);
 };
 
+const drawChar = (x, y, ch, img, cols) => {
+  const xx = x * 8;
+  const yy = y * 8;
+  const pixelsPerLine = cols * 8;
+  const datasPerLine = pixelsPerLine * 4;
+  for (let j = 0; j < 8; j++) {
+    const yoff = (yy + j) * datasPerLine;
+    for (let i = 0; i < 8; i++) {
+      const v = (i + j) % 2 === 0 ? 255 : 0;
+      //      img[yoff + (xx + i) * 4] = v;
+      //      img[yoff + (xx + i) * 4 + 1] = v;
+      //      img[yoff + (xx + i) * 4 + 2] = v;
+      img[yoff + (xx + i) * 4 + 3] = v;
+    }
+  }
+};
+
 function renderScreen(mem, vic) {
   const { base, screen, rows, cols } = vic;
   const mval = (offset) => memval(mem, base + offset);
 
   const c = $("#screen").getContext("2d");
+  c.font = "1px monospace";
   c.fillStyle = pal_to_hex(mval(vic_regs.BG_COL));
   c.fillRect(0, 0, c.canvas.width, c.canvas.height);
 
@@ -95,8 +112,10 @@ function renderScreen(mem, vic) {
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const idx = y * cols + x;
-      const c = pal_to_rgb(mem[(scrmem + idx) % mem.length] % 16);
-      drawPixel(x, y, c, data, cols);
+      const v = mem[(scrmem + idx) % mem.length];
+      const col = pal_to_rgb(v % 16);
+      drawPixel(x, y, col, data, cols);
+      if (v == 0x06) drawChar(x, y, v, data, cols);
     }
   }
 
