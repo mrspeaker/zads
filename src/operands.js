@@ -32,7 +32,8 @@ export const parseOperands = (s, symbols, eqs, base) => {
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
   */
 
-  // TODO: better equ matching
+  // This is handling Expr(Expr,Expr) and also replacing equates.
+
   stmt.operands = stmt.operands.map((v) => {
     if (!v.split) return v; // TODO: nope.
 
