@@ -1,4 +1,4 @@
-const lex_tokens = {
+export const lex_tokens = {
   LParen: "LParen",
   RParen: "RParen",
   Comma: "Comma",

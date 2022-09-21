@@ -1,7 +1,7 @@
 import { ops } from "./ops.js";
 import { to_nibs } from "./bytes.js";
 import { parseImmediate, parseBaseDisplace } from "./assemble.js";
-import { lex_operand } from "./operand_lex.js";
+import { lex_operand, lex_tokens } from "./operand_lex.js";
 
 export const tokenizeOperands = (ops) => {
   // comma, followed by NOT open paren, stuff, close paren.
@@ -18,7 +18,8 @@ export const parseOperands = (s, symbols, eqs, base) => {
   const { stmt, bytes, type } = s;
 
   const lexed = stmt.operands.map(lex_operand);
-  console.log("Lex:", stmt.operands.join(","), ...lexed);
+  const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
+  console.log("Lex:", stmt.operands.join(","), ...eqReplaced);
 
   /*
   Operand is:
@@ -33,7 +34,6 @@ export const parseOperands = (s, symbols, eqs, base) => {
   */
 
   // This is handling Expr(Expr,Expr) and also replacing equates.
-
   stmt.operands = stmt.operands.map((v) => {
     if (!v.split) return v; // TODO: nope.
 
@@ -86,6 +86,19 @@ export const parseOperands = (s, symbols, eqs, base) => {
       console.log("not rr rx si...", type, enc);
   }
   return s;
+};
+
+const replaceEqs = (o, eqs) => {
+  return o.map((tok) => {
+    const { type, val } = tok;
+    if (type === lex_tokens.Symbol && eqs[val.toLowerCase()]) {
+      return {
+        type: lex_tokens.NumberLiteral,
+        val: parseInt(eqs[val.toLowerCase()], 10),
+      };
+    }
+    return tok;
+  });
 };
 
 // Return (mostly?) nibbles
