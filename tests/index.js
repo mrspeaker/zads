@@ -5,6 +5,7 @@ import base_displace_test from "./base_displace_test.js";
 import assemble_test from "./assemble_test.js";
 import disassemble_test from "./disassemble_test.js";
 import op_test from "./op_test.js";
+import lex_test from "./lex_test.js";
 import utils_test from "./utils_test.js";
 
 const tests = () =>
@@ -15,6 +16,7 @@ const tests = () =>
     disassemble_test,
     op_test,
     base_displace_test,
+    lex_test,
   ].map((tests) =>
     tests.reduce((ac, f) => {
       const name = f.name;

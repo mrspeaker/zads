@@ -20,7 +20,6 @@ const assemble_stmt_test = () => {
   //{"pc":0,"stmts":[],"symbols":{},"equates":{},"base":15,"base_addr":0}
   //{"label":"","mn":"l","operands":["1","a1"],"comment":"load register"}
   assembleStatement(env, stmt);
-  console.log(env);
   return false;
 };
 

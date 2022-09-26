@@ -16,6 +16,13 @@ export const lex_tokens = {
   Unknown: "Unknown",
 };
 
+export const mk_lex_ctx = (inp) => ({
+  inp,
+  ch: "",
+  cur: 0,
+  next: 0,
+});
+
 /*
   Operand is:
   -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
@@ -27,12 +34,7 @@ export const lex_tokens = {
   -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
   */
 export const lex_operand = (op) => {
-  const ctx = {
-    inp: op + "",
-    ch: "",
-    cur: 0,
-    next: 0,
-  };
+  const ctx = mk_lex_ctx(op);
   const toks = [];
   readCh(ctx);
   while (ctx.cur < ctx.inp.length) {
@@ -41,7 +43,7 @@ export const lex_operand = (op) => {
   return toks;
 };
 
-const getToken = (ctx) => {
+export const getToken = (ctx) => {
   if (is_digit(ctx.ch)) {
     return read_num(ctx);
   }
@@ -57,7 +59,7 @@ const getToken = (ctx) => {
   return read_letter(ctx);
 };
 
-const readCh = (ctx) => {
+export const readCh = (ctx) => {
   const { next, inp } = ctx;
   ctx.ch = next >= inp.length ? "" : inp[next];
   ctx.cur = next;
@@ -67,6 +69,9 @@ const is_digit = (ch) => ch.search(/[0-9]/) === 0;
 const is_binary = (ch) => ch.search(/[01]/) === 0;
 const is_hex = (ch) => ch.search(/[a-fA-F0-9]/) === 0;
 const is_alpha = (ch) => ch.search(/[a-zA-Z]/) === 0;
+const is_national = (ch) => ch.search(/[@$#]/) === 0;
+const is_special = (ch) => ch.search(/[+-,=.*()'/&]/) === 0;
+const is_underscore = (ch) => ch === "_";
 const is_symbol_char = (ch) => ch.search(/[a-zA-Z0-9]/) === 0;
 const is_binary_literal = (ctx) =>
   ctx.inp.substr(ctx.cur).search(/[bB]'[01]+'/) === 0;

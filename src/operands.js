@@ -20,20 +20,11 @@ export const parseOperands = (s, symbols, eqs, base) => {
   const lexed = stmt.operands.map(lex_operand);
   const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
   console.log("Lex:", stmt.operands.join(","), ...eqReplaced);
+  const encLex = eqReplaced.map((v) => parseLexedOperand(v));
+  console.log(encLex, "########");
 
-  /*
-  Operand is:
-  - Zero or more arguments of:
-  -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
-  - Expression:
-  -- Term | Arithemetic combination of terms
-  - Term:
-  -- A symbol | Loc Counter Reference | Symbol Attribute | Self-defining term | Literal
-  - Self-defining term:
-  -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
-  */
-
-  // This is handling Expr(Expr,Expr) and also replacing equates.
+  // This is replacing equates inside Expr(Expr,Expr).
+  // Not needed if using LEXED
   stmt.operands = stmt.operands.map((v) => {
     if (!v.split) return v; // TODO: nope.
 
@@ -99,6 +90,116 @@ const replaceEqs = (o, eqs) => {
     }
     return tok;
   });
+};
+
+const parseExpression = (v) => {
+  const { exprs } = v.reduce(
+    (ac, el) => {
+      const { st, exprs } = ac;
+      if (st > 2) {
+        console.log("ERROR... too many statements");
+        return ac;
+      }
+      const expr = exprs[st];
+      switch (el.type) {
+        case lex_tokens.LParen:
+          if (st !== 0) {
+            console.error("Bad LParen", st);
+          } else {
+            return { st: 1, exprs: [...exprs, []] };
+          }
+          break;
+        case lex_tokens.Comma:
+          if (st === 1) {
+            // inside parens, sep st.
+            return { st: 2, exprs: [...exprs, []] };
+          }
+          break;
+        case lex_tokens.RParen:
+          if (st !== 1 && st !== 2) {
+            console.error("Bad RParen", st);
+          } else {
+            return { st: 3, exprs };
+          }
+          break;
+        default:
+          expr.push(el);
+          break;
+      }
+      return { st, exprs };
+    },
+    { st: 0, exprs: [[]] }
+  );
+  return exprs;
+};
+
+const parseTerm = (expr) => {
+  console.log("oh hai", expr);
+  return expr;
+};
+
+/*
+  Characters:
+  When you code terms and expressions (see Terms, literals, and expressions)
+  in assembler language statements, you can only use the set of characters
+  described above. However, when you code remarks, comments, or character
+  strings between paired apostrophes, you can use any character in the
+  EBCDIC character set.
+  */
+
+const TAlpha = [["a", "z"], ["A", "Z"]];
+const TDigit = "0123456789";
+const TNational = "@$#";
+const TUnderscore = "_";
+const TSpecial = "+-,=.*()'/&";
+const TCharacters = [TAlpha, TDigit, TNational, TUnderscore, TSpecial];
+
+const TTerm = {
+  Symbol: "Symbol", // Abs or Rel
+  LocationCounterReference: "LocationCounterReference", // Rel
+  SymbolAttribute: "SymbolAttribute", // Abs or Rel
+  SelfDefiningTerm: "SelfDefiningTerm", //Abs
+  Literal: "Literal", // Rel
+};
+
+const TSelfDefining = {
+  Decimal: "Decimal",
+  Hexadecimal: "Hexadecimal",
+  Binary: "Binary",
+  Character: "Character",
+  Graphic: "Graphic",
+};
+
+//
+const parseLexedOperand = (v) => {
+  /*
+  Operand is:
+  -- Expression | Exp(Exp) | Exp(Exp,Exp) or Exp(,Exp)
+    --- Expr: factor | +-factor | factor+-factor
+    --- Factor: primary | primary*primary | primary/primary
+    --- Primary: term | ( expr )
+    
+
+  - Expression:
+  -- Term | Arithemetic combination of terms
+  - Term:
+  -- A symbol | Loc Counter Reference | Symbol Attribute | Self-defining term | Literal
+  - Self-defining term:
+  -- Decimal | Hexadecimal | Binary | Character | Graphic (G'<.A>')
+
+  -- symbol attribute: L' | I' | S'
+  */
+  const exprs = parseExpression(v);
+  const terms = exprs.map(parseTerm);
+  console.log("dones", terms);
+
+  if (v.length === 1) {
+    // if numlit, parse it.
+    if (v[0].type === lex_tokens.NumberLiteral) {
+      return parseInt(v[0].val, 10);
+    }
+  }
+  return v;
 };
 
 // Return (mostly?) nibbles
