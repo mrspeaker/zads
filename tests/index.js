@@ -8,6 +8,8 @@ import op_test from "./op_test.js";
 import lex_test from "./lex_test.js";
 import utils_test from "./utils_test.js";
 
+import "./parco.js";
+
 const tests = () =>
   [
     utils_test,

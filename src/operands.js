@@ -18,10 +18,11 @@ export const parseOperands = (s, symbols, eqs, base) => {
   const { stmt, bytes, type } = s;
 
   const lexed = stmt.operands.map(lex_operand);
-  const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
-  console.log("Lex:", stmt.operands.join(","), ...eqReplaced);
-  const encLex = eqReplaced.map((v) => parseLexedOperand(v));
-  console.log(encLex, "########");
+  // Eq is a Term... so don't replace yet?
+  //const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
+  //console.log("Lex:", stmt.operands.join(","), ...eqReplaced);
+  //const encLex = eqReplaced.map((v) => parseLexedOperand(v));
+  console.log("Lex:", lexed.join(",")); // "########");
 
   // This is replacing equates inside Expr(Expr,Expr).
   // Not needed if using LEXED

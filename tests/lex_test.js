@@ -31,8 +31,12 @@ const get_tok_symbol_num = () => {
 };
 const lex_expr = () => {
   const toks = lex_operand("0(255,12)");
+  const exp = [[lex_tokens.NumberLiteral, "0"]];
+  console.log(toks);
   // NumLit,LParen,NumLit,Comma,NumLit,RParen
-  return toks.length === 6;
+  return (
+    toks.length === 6 && toks[0].type === exp[0][0] && toks[0].val === exp[0][1]
+  );
 };
 const lex_plus = () => {
   const toks = lex_operand("screen+1");
