@@ -18,7 +18,7 @@ const apply = (f, ps) => (inp) => {
   return ok(f(...out), inp);
 };
 const map = (f, p) => (inp) => {
-  const r = parse(p, inp);
+  const r = p(inp);
   if (r.fail) return r;
   return ok(f(r.data), r.rest);
 };
@@ -49,20 +49,16 @@ const Int = (input) => {
   return fail("int", input);
 };
 
-const Alpha = (inp) => {
-  const m = /^[A-Za-z]/.exec(inp);
-  if (m !== null) {
+const Regex = (expr, label) => (inp) => {
+  const m = new RegExp(`^${expr.source}`).exec(inp);
+  if (m) {
     return ok(m[0], inp.slice(m[0].length));
   }
-  return fail("alpha", inp);
+  return fail(label || expr, inp);
 };
-const Digit = (inp) => {
-  const m = /^[0-9]/.exec(inp);
-  if (m !== null) {
-    return ok(m[0], inp.slice(m[0].length));
-  }
-  return fail("digit", inp);
-};
+
+const Alpha = Regex(/[a-zA-Z]/, "alpha");
+const Digit = map((v) => +v, Regex(/[0-9]/, "digit"));
 
 const plus = apply((a, _, b) => a + b, [Int, Str("+"), Int, Eof]);
 console.log("Plus:", plus("32+10"));
@@ -88,7 +84,9 @@ const Many = (p) => (inp) => {
     inp = r.rest;
     r = p(inp);
   }
-  return ok(out, r.rest);
+  // TODO: using "actual" from fail as "rest"... feels wrong!
+  // yeah, must be wrong - because could succeed if EOF is part of parser
+  return ok(out, r.actual);
 };
 
 const National = OneOf("@$#");
@@ -97,7 +95,9 @@ const Special = OneOf("+-,=.*()'/&");
 
 const SymName = map(
   ([first, rest]) => first + rest.join(""),
-  And(Alpha, Many(Or(Alpha, Digit, National, Underscore, Special)))
+  And(Alpha, Many(Or(Alpha, Digit, National, Underscore)))
 );
 
-console.log(parse(SymName, "screen+1"));
+const firstBit = parse(SymName, "screen_1+1");
+const lastBit = parse(And(Ch("+"), Digit), firstBit.rest);
+console.log(firstBit, lastBit);
