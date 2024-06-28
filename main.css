@@ -167,3 +167,8 @@ select {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+/* hide sprite screen by default */
+#screen_sprite {
+    display: none;
+}

@@ -6,8 +6,9 @@
   <div id="board">
     <div class="controls">
       <div class="buttons">
-        <button id="btnRun">run</button>
-        <button id="btnAsm">assemble</button>
+        <button id="btnCode">code</button>
+        <button id="btnSprites">sprites</button>
+        |
         <span id="help">...</span>
       </div>
       <div class="psw">
@@ -18,8 +19,10 @@
         <span> pc:<input type="text" id="psw_pc" /></span>
       </div>
     </div>
-
-    <div class="boxes">
+    <div class="boxes" id="screen_sprite">
+      <div id="ed">sprite ed</div>
+    </div>
+    <div class="boxes" id="screen_code">
       <div id="srcbox">
         <textarea id="src" spellcheck="false"></textarea>
         <div class="boxbar">
@@ -64,7 +67,9 @@
       <div>
         <textarea id="emu" spellcheck="false"></textarea>
         <div class="boxbar">
-          <button id="btnRun1">run</button><button id="btnStop">stop</button
+          <button id="btnAsm">assemble</button>
+
+          <button id="btnRun">run</button><button id="btnStop">stop</button
           ><button id="btnStep">step</button>
         </div>
       </div>

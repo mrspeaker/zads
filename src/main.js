@@ -55,6 +55,15 @@ function bindUI(state, action) {
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
 
+  $click("#btnSprites", () => {
+    $("#screen_sprite").style.display = "grid";
+    $("#screen_code").style.display = "none";
+  });
+  $click("#btnCode", () => {
+    $("#screen_sprite").style.display = "none";
+    $("#screen_code").style.display = "grid";
+  });
+
   $click("#btnDumMem", () => {
     dumBG(state);
     action("NOP");
@@ -110,8 +119,9 @@ function bindUI(state, action) {
     .sort((a, b) => (a.mn < b.mn ? -1 : 1))
     .map(
       ({ mn, desc, name }) =>
-        `<span data-desc="${desc ?? "???"}"><strong>${mn}</strong> ${name ??
-          ""}</span>`
+        `<span data-desc="${desc ?? "???"}"><strong>${mn}</strong> ${
+          name ?? ""
+        }</span>`
     )
     .join(" - ");
   $on("#docs", "click", (e) => {
@@ -152,8 +162,6 @@ function bindUI(state, action) {
 
   $click("#btnRun", () => action("RUN"));
   $("#mem").addEventListener("change", (e) => updateMem(e.target.value), false);
-
-  $click("#btnRun1", () => action("RUN"));
   $click("#btnStop", () => action("STOP"));
   $click("#btnStep", () => action("STEP"));
 }

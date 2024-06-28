@@ -4,13 +4,17 @@
 
 An instruction is one, two, or three halfwords in length and must be located in storage on a halfword boundary. Each instruction is in one of 26 basic formats: E, I, RI, RIE, RIL, RIS, RR, RRE, RRF, RRR, RRS, RS, RSI, RSL, RSY, RX, RXE, RXF, RXY, S, SI, SIL, SIY, SS, SSE, and SSF, with two variations of RI, RIL, RS, RSY, and RXY, three of RRF, and five of RIE and SS.
 
+The two most significant bits of the first halfword determines the length of instruction.
+
 *** RI Format
 Denotes a register-and-immediate operation and an extended op-code field.
 
-| 0      | 8  | 12   | 16 | 31 |
-|--------+----+------+----+----|
-| Opcode | R1 | OpCd | I2 |    |
-| Opcode | M1 | OpCd | I2 |    |
+#+begin_src sh
+| 0             |   8   |    12    |  16 | 31 |
+|----------+----+-------+----+----|
+| Opcode | R1 | OpCd |  I2  |      |
+| Opcode | M1| OpCd |  I2  |      |
+#+end_src
 
 *** RR Format
 Denotes a register-and-register operation.
