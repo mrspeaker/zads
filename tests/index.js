@@ -12,25 +12,31 @@ import "./parco.js";
 
 const tests = () =>
   [
-    utils_test,
-    bytes_test,
-    assemble_test,
-    disassemble_test,
-    op_test,
-    base_displace_test,
-    lex_test,
-  ].map((tests) =>
+    [utils_test, "utils"],
+    [bytes_test, "bytes"],
+    [assemble_test, "assembler"],
+    [disassemble_test, "disassembler"],
+    [op_test, "ops"],
+    [base_displace_test, "addressing"],
+    [lex_test, "lexing"],
+  ].map(([tests, title]) => [
     tests.reduce((ac, f) => {
       const name = f.name;
       const passed = !!f();
       ac.push({ name, passed });
       return ac;
-    }, [])
-  );
+    }, []),
+    title,
+  ]);
 
 function main() {
-  tests().forEach((group) => {
+  tests().forEach(([group, title]) => {
     const grpdiv = document.createElement("div");
+    const div_title = document.createElement("div");
+    div_title.innerText = title;
+    div_title.classList.add("group_title");
+    grpdiv.appendChild(div_title);
+
     group.map(({ name, passed }) => {
       const div = document.createElement("div");
       div.innerHTML = `<span class="${passed ? "ok " : "fail"}">${
