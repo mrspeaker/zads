@@ -115,6 +115,13 @@ function bindUI(state, action) {
     }
   });
 
+  $on("#psw_pc", "change", (e) => {
+    const v = parseInt(e.target.value, 16);
+    if (!isNaN(v)) {
+      action("PSW_SET", v);
+    }
+  });
+
   $("#mns").innerHTML = Object.values(ops)
     .sort((a, b) => (a.mn < b.mn ? -1 : 1))
     .map(
