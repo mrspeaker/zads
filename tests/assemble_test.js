@@ -15,11 +15,12 @@ const expand_literals_test = () => {
 
 const assemble_stmt_test = () => {
   const env = { pc: 0, stmts: [] };
-  const stmt = { mn: "LR", label: "" };
+  const stmt = { mn: "LR", label: "", operands: ["1", "2"] };
 
   //{"pc":0,"stmts":[],"symbols":{},"equates":{},"base":15,"base_addr":0}
   //{"label":"","mn":"l","operands":["1","a1"],"comment":"load register"}
   assembleStatement(env, stmt);
+  console.log("assembled:", JSON.stringify(env));
   return false;
 };
 
