@@ -52,6 +52,8 @@ function bindUI(state, action) {
   editor($("#mem"), (text) => updateMem(text));
   editor($("#dis"), (text) => updateDis(text));
 
+  $click("#fs", () => toggleFullscreen());
+
   $click("#btnSprites", () => {
     $("#screen_sprite").style.display = "grid";
     $("#screen_code").style.display = "none";
@@ -191,5 +193,19 @@ function dumBG(state, action) {
 
       mem[scrbase + j * vic.cols + i] = v > 0.6 ? 11 : v > 0.4 ? 6 : 0;
     }
+  }
+}
+
+function toggleFullscreen() {
+  let elem = document.querySelector("#screen");
+
+  if (!document.fullscreenElement) {
+    elem.requestFullscreen().catch((err) => {
+      alert(
+        `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`
+      );
+    });
+  } else {
+    document.exitFullscreen();
   }
 }
