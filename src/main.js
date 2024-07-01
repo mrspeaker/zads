@@ -7,17 +7,7 @@ import { editor } from "./textarea.js";
 import { get_help_text } from "./help.js";
 import { pal_to_hex, updateVic } from "./vic.js";
 import { ops } from "./ops.js";
-
-const key_handler = (dom) => {
-  const isDown = {};
-  dom.addEventListener("keydown", ({ which }) => {
-    isDown[which] = true;
-  });
-  dom.addEventListener("keyup", ({ which }) => (isDown[which] = false));
-  return {
-    down: (key) => isDown[key],
-  };
-};
+import { key_handler, gamepad_handler } from "./input.js";
 
 const state = mk_state();
 const action = asyncHandler(actionReducer(state, render));
@@ -25,23 +15,30 @@ const action = asyncHandler(actionReducer(state, render));
 (async function main(state, action) {
   bindUI(state, action);
 
+  // make the screen pretty
   dumColors();
+
+  // bind inputs
   const keys = key_handler(document.body);
+  const pad = gamepad_handler(window);
+
+  // load from storage
   action("STORAGE_LOAD");
   if (!state.selected) {
     action("PROG_LOAD", "mark6");
   }
 
+  // let's go...
   function update() {
     if (!state.machine.psw.halt) {
       for (let i = 0; i < state.cyclesPerFrame; i++) {
         action("STEP");
       }
       updateVic(state.machine.vic, state.machine.mem, {
-        left: keys.down(37),
-        right: keys.down(39),
-        up: keys.down(38),
-        down: keys.down(40),
+        left: keys.down(37) || pad.left(),
+        right: keys.down(39) || pad.right(),
+        up: keys.down(38) || pad.up(),
+        down: keys.down(40) || pad.down(),
       });
       render(state);
     }
