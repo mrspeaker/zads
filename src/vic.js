@@ -1,19 +1,23 @@
 import { chunk } from "./utils.js";
 
-export const vic_regs = {
-  BG_COL: 0,
-  FG_COL: 4,
-  SPR1_COL: 8,
-  SPR2_COL: 12,
-  SPR1_X: 16,
-  SPR1_Y: 20,
-  SPR2_X: 24,
-  SPR2_Y: 28,
-  KEY_LEFT: 32,
-  KEY_RIGHT: 36,
-  KEY_UP: 40,
-  KEY_DOWN: 44,
-};
+const DWORD = 4;
+
+export const vic_regs = Object.fromEntries(
+  Object.entries({
+    BG_COL: 0,
+    FG_COL: 1,
+    SPR1_COL: 2,
+    SPR2_COL: 3,
+    SPR1_X: 4,
+    SPR1_Y: 5,
+    SPR2_X: 6,
+    SPR2_Y: 7,
+    KEY_LEFT: 8,
+    KEY_RIGHT: 9,
+    KEY_UP: 10,
+    KEY_DOWN: 11,
+  }).map(([k, v]) => [k, v * DWORD])
+);
 
 export function mk_vic(cols = 320, rows = 240) {
   return {

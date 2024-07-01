@@ -170,11 +170,17 @@ const expandEquates = (stmts, eqs) => {
 };
 
 const expandMacros = (ac, stmt) => {
-  // TODO: expand any macros!
   switch (stmt.mn.toLowerCase()) {
+    case "test":
+      {
+        console.log("test macro");
+        ac.push(mk_stmt_toks("", "LR", ["0", 42], ""));
+      }
+      break;
     case "asmdreg":
       {
-        console.log("ASMDREG");
+        console.log("ASMDREG macro");
+        // R1 = 1, R2 = 1... R15 = 15
         const dcs = [...Array(16)]
           .fill(0)
           .map((_, i) => mk_stmt_toks(`R${i}`, "equ", [i + ""], ""));

@@ -22,7 +22,7 @@ export const parseOperands = (s, symbols, eqs, base) => {
   //const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
   //console.log("Lex:", stmt.operands.join(","), ...eqReplaced);
   //const encLex = eqReplaced.map((v) => parseLexedOperand(v));
-  console.log("Lex:", lexed.join(",")); // "########");
+  //console.log("Lex:", lexed.join(",")); // "########");
 
   // This is replacing equates inside Expr(Expr,Expr).
   // Not needed if using LEXED
@@ -148,7 +148,10 @@ const parseTerm = (expr) => {
   EBCDIC character set.
   */
 
-const TAlpha = [["a", "z"], ["A", "Z"]];
+const TAlpha = [
+  ["a", "z"],
+  ["A", "Z"],
+];
 const TDigit = "0123456789";
 const TNational = "@$#";
 const TUnderscore = "_";
