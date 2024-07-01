@@ -25,13 +25,15 @@ const map = (f, p) => (inp) => {
 
 const id = (...res) => res;
 const And = (...ps) => apply(id, ps);
-const Or = (...ps) => (inp) => {
-  for (const p of ps) {
-    const r = p(inp);
-    if (!r.fail) return r;
-  }
-  return fail("Or", inp);
-};
+const Or =
+  (...ps) =>
+  (inp) => {
+    for (const p of ps) {
+      const r = p(inp);
+      if (!r.fail) return r;
+    }
+    return fail("Or", inp);
+  };
 
 const Ch = (ch) => (inp) =>
   inp[0] === ch ? ok(ch, inp.slice(1)) : fail(`'${ch}'`, inp[0]);
@@ -61,11 +63,11 @@ const Alpha = Regex(/[a-zA-Z]/, "alpha");
 const Digit = map((v) => +v, Regex(/[0-9]/, "digit"));
 
 const plus = apply((a, _, b) => a + b, [Int, Str("+"), Int, Eof]);
-console.log("Plus:", plus("32+10"));
-console.log(
-  "OR:",
-  parse(Or(And(Str("wor"), Str("ms")), Str("world")), "world")
-);
+//console.log("Plus:", plus("32+10"));
+//console.log(
+//  "OR:",
+//  parse(Or(And(Str("wor"), Str("ms")), Str("world")), "world")
+//);
 
 const OneOf = (chs) => (inp) => {
   const m = new RegExp(`^[${chs}]`).exec(inp);
@@ -100,4 +102,4 @@ const SymName = map(
 
 const firstBit = parse(SymName, "screen_1+1");
 const lastBit = parse(And(Ch("+"), Digit), firstBit.rest);
-console.log(firstBit, lastBit);
+//console.log(firstBit, lastBit);

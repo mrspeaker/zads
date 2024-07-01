@@ -465,8 +465,6 @@ export const ops = {
     code: [0x89],
     len: 4,
     f: (ops, regs, mem) => {
-      console.log("sifff op", ops, "reg", regs, "mem", mem);
-
       // TODO: for sure wrong. Doesn't set carry, and I forgot how the ops worked,
       // For SURE wrong: first RS type instruction! And no carry.
       const [r1, r3, b2, da, db, dc] = ops;
