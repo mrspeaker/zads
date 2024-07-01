@@ -84,6 +84,14 @@ function bindUI(state, action) {
     ).innerHTML = `<span>&nbsp;<span title="${desc}" style="color:var(--highlight-warm)">${mn}</span> [${type}] ${form} ${link}</span>`;
   });
 
+  $on("#mem", "selectionchange", (e) => {
+    const { selectionStart } = e.target;
+    // TODO: move to reducer+render
+    const byte = Math.ceil(selectionStart / 3);
+    $("#mem_cur").innerText =
+      "0x" + byte.toString(16).toUpperCase() + " (" + byte + ")";
+  });
+
   $on("#programs", "change", (e) => {
     action("PROGRAM_SELECT", e.target.value);
   });
