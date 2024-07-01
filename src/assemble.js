@@ -11,7 +11,7 @@ import {
 export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
   const stmtTokens = asmTxt
     .split("\n")
-    .filter((v) => !!v.trim() && v[0] !== "*")
+    .filter((v) => !!v.trim() && v[0] !== "*") // Remove blank lines and comments
     .map(tokenize);
 
   // OPERATIONS
@@ -102,8 +102,8 @@ const addData = (env, stmt) => {
   return d;
 };
 
-const tokenize = (line) => {
-  const tok = line.split(" ").reduce((ac, el, i) => {
+export const tokenize = (line) => {
+  const tok = line.split(/\s+/g).reduce((ac, el, i) => {
     if (i === 0 || el !== "") {
       ac.push(el);
     }

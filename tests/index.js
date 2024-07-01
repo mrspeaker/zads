@@ -4,6 +4,7 @@ import bytes_test from "./bytes_test.js";
 import base_displace_test from "./base_displace_test.js";
 import assemble_test from "./assemble_test.js";
 import disassemble_test from "./disassemble_test.js";
+import operands_test from "./operands_test.js";
 import op_test from "./op_test.js";
 import lex_test from "./lex_test.js";
 import utils_test from "./utils_test.js";
@@ -16,6 +17,7 @@ const tests = () =>
     [bytes_test, "bytes"],
     [assemble_test, "assembler"],
     [disassemble_test, "disassembler"],
+    [operands_test, "operands"],
     [op_test, "ops"],
     [base_displace_test, "addressing"],
     [lex_test, "lexing"],

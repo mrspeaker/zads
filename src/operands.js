@@ -221,7 +221,7 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
     }[type] || [];
   const oidx = otype[idx];
   if (type && type !== "DC" && (!otype || !oidx)) {
-    console.warn("What's this operand?", type, o, idx, mn);
+    console.warn("What's this operand?", type, o, idx, mn, symbols);
   }
   switch (oidx) {
     case "R":

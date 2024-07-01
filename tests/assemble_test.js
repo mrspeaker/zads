@@ -1,4 +1,4 @@
-import { assembleStatement } from "../src/assemble.js";
+import { assembleStatement, tokenize } from "../src/assemble.js";
 import { expandLiterals, LITERAL_GEN_PREFIX } from "../src/operands.js";
 const expand_literals_test = () => {
   const stmt = { operands: ["=f'1'"] };
@@ -13,6 +13,27 @@ const expand_literals_test = () => {
   );
 };
 
+const tokenize_line_test_1 = () => {
+  const toks = tokenize("label mn op1,op2 comment is here");
+  return (
+    toks.label == "label" &&
+    toks.mn == "mn" &&
+    toks.operands.length &&
+    toks.comment == "comment is here"
+  );
+};
+
+const tokenize_line_test_2 = () => {
+  // Check that skipping label works
+  const toks = tokenize(" mn op1,op2 comment is here");
+  return (
+    toks.label == "" &&
+    toks.mn == "mn" &&
+    toks.operands.length &&
+    toks.comment == "comment is here"
+  );
+};
+
 const assemble_stmt_test = () => {
   const env = { pc: 0, stmts: [] };
   const stmt = { mn: "LR", label: "", operands: ["1", "2"] };
@@ -24,4 +45,9 @@ const assemble_stmt_test = () => {
   return false;
 };
 
-export default [expand_literals_test, assemble_stmt_test];
+export default [
+  expand_literals_test,
+  assemble_stmt_test,
+  tokenize_line_test_1,
+  tokenize_line_test_2,
+];
