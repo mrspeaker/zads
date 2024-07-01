@@ -148,7 +148,7 @@ const actionReducer = (s, render) => (type, value) => {
         }
       }
       break;
-    case "PSW_SET":
+    case "PSW_PC_SET":
       {
         const v = parseInt(value, 10);
         if (!isNaN(v)) {
@@ -156,6 +156,10 @@ const actionReducer = (s, render) => (type, value) => {
         }
       }
       break;
+    case "PSW_PC_RESET": {
+      s.machine.psw.pc = 0;
+      s.program.code_txt = [];
+    }
     default:
       console.log("Unhandled ", type);
   }

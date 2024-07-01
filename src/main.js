@@ -106,7 +106,6 @@ function bindUI(state, action) {
       action("PROGRAM_DELETE");
     }
   });
-
   $("#cycles").value = state.cyclesPerFrame;
   $on("#cycles", "change", (e) => {
     const v = parseInt(e.target.value, 10);
@@ -114,11 +113,14 @@ function bindUI(state, action) {
       action("CYCLES_SET", v);
     }
   });
+  $click("#btnResetPC", () => {
+    action("PSW_PC_RESET", 0);
+  });
 
   $on("#psw_pc", "change", (e) => {
     const v = parseInt(e.target.value, 16);
     if (!isNaN(v)) {
-      action("PSW_SET", v);
+      action("PSW_PC_SET", v);
     }
   });
 
