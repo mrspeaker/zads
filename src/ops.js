@@ -460,7 +460,34 @@ export const ops = {
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",
   },
-  0x90: { mn: "STM", code: [0x90], len: 4, f: nop, type: "RS" },
+  0x89: {
+    mn: "SLL",
+    code: [0x89],
+    len: 4,
+    f: (ops, regs, mem) => {
+      console.log("sifff op", ops, "reg", regs, "mem", mem);
+
+      // TODO: for sure wrong. Doesn't set carry, and I forgot how the ops worked,
+      // For SURE wrong: first RS type instruction! And no carry.
+      const [r1, r3, b2, da, db, dc] = ops;
+      const ptr = base_displace_regs(regs, 0, b2, da, db, dc);
+      const shift_amount = memval(mem, ptr);
+      regset(regs[ops[0]], regval(regs[ops[0]]) << shift_amount);
+    },
+    type: "RS",
+    name: "shift left logical",
+    form: "OP R1,R3,D2(B2)",
+    form_int: "OPOP R1 R3 B2 D2D2D2",
+  },
+  0x90: {
+    mn: "STM",
+    code: [0x90],
+    len: 4,
+    f: () => {
+      console.warn("no STM impl");
+    },
+    type: "RS",
+  },
   0x91: {
     mn: "TM",
     code: [0x91],

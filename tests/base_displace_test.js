@@ -11,6 +11,11 @@ const base_no_idx = () => {
   return arrEq(o, [0, 2, 0, 6, 4]);
 };
 
+const base_just_displace = () => {
+  const o = parseBaseDisplace("100", 15, {});
+  return arrEq(o, [0, 0, 0, 6, 4]);
+};
+
 const base_symbol = () => {
   const o = parseBaseDisplace("a1", 15, { a1: { pc: 100 } });
   return arrEq(o, [0, 15, 0, 6, 4]);

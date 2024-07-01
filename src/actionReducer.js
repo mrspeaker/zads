@@ -156,10 +156,12 @@ const actionReducer = (s, render) => (type, value) => {
         }
       }
       break;
-    case "PSW_PC_RESET": {
-      s.machine.psw.pc = 0;
-      s.program.code_txt = [];
-    }
+    case "PSW_PC_RESET":
+      {
+        s.machine.psw.pc = 0;
+        s.program.code_txt = [];
+      }
+      break;
     default:
       console.log("Unhandled ", type);
   }

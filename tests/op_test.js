@@ -155,6 +155,22 @@ const op_xor_zero_rr = () => {
   return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
 };
 
+const op_sll = () => {
+  const env = mk_env([0, 0b0000_0001]);
+  env.mem[6] = 2;
+  const obj = [code("SLL")[0], 0x10, 0x00, 0x03]; // 3  = 3 bytes before 6 (cause wonky 4byte)
+  step(obj, env);
+  return regval(env.regs[1]) == 0b00000100;
+};
+
+const op_sll_overflow = () => {
+  const env = mk_env([0b0000_0001, 0b0100_0000]);
+  env.mem[6] = 2; //below, 3  = 3 bytes before 6 (cause wonky 4byte)
+  const obj = [code("SLL")[0], 0x10, 0x00, 0x3]; // shift left 2 places, overflow byte
+  step(obj, env);
+  return regval(env.regs[1]) == 0b0001_0000_0000;
+};
+
 const op_stc = () => {
   const env = mk_env([0, 0x000000ff]);
   const obj = [code("STC")[0], 0x10, 0x00, 0x00];
@@ -190,5 +206,7 @@ export default [
   op_xor_rr,
   op_xor_zero_rr,
   op_ic,
+  op_sll,
+  op_sll_overflow,
   op_stc,
 ];

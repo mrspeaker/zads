@@ -19,9 +19,12 @@ export const delay = (time) => new Promise((res) => setTimeout(res, time));
 export const arrEq = (a1, a2) =>
   a1.length === a2.length && a1.every((a, i) => a === a2[i]);
 
-const zeros = [...Array(16)].fill(0).join("");
+const zeros = [...Array(32)].fill(0).join("");
 export const toHex = (v, pad = 2) =>
   ((pad ? zeros : "") + (v || "").toString(16)).slice(-pad);
+
+export const toBin = (v, pad = 32) =>
+  ((pad ? zeros : "") + (v || "").toString(2)).slice(-pad);
 
 const _e2a = {
   64: " ",

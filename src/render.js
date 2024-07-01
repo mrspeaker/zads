@@ -1,7 +1,7 @@
 import { disassemble } from "./disassemble.js";
 import { vic_regs, pal_to_rgb, pal_to_hex } from "./vic.js";
 
-import { $, toHex, formatObjRecord } from "./utils.js";
+import { $, toHex, formatObjRecord, toBin } from "./utils.js";
 import { memval, to_nibs, bytes_to_fw } from "./bytes.js";
 
 function render(state) {
@@ -26,7 +26,15 @@ function render(state) {
     const { regs, mem, psw, vic } = machine;
     $("#regs").value = [...regs]
       .map(bytes_to_fw)
-      .map((v, i) => (i % 16 < 10 ? " " : "") + (i % 16) + ": " + toHex(v, 8))
+      .map(
+        (v, i) =>
+          (i % 16 < 10 ? " " : "") +
+          (i % 16) +
+          ": " +
+          toHex(v, 8) +
+          " ... " +
+          toBin(v)
+      )
       .join("\n");
     $("#mem").value = mem
       .map((m) => toHex(m))

@@ -52,6 +52,7 @@ export const parseOperands = (s, symbols, eqs, base) => {
   switch (type) {
     case "RR":
     case "RX":
+    case "RS":
       bytes.operands.push(...enc[0], ...enc[1]);
       break;
     case "RI":
@@ -208,6 +209,10 @@ const parseLexedOperand = (v) => {
 
 // Return (mostly?) nibbles
 const parseOperand = (o, symbols, base, type, idx, mn) => {
+  if (!type) {
+    throw new Error("Err parseOperand: no type", o);
+  }
+
   if (type === "DC") {
     return parseImmediate(o);
   }
@@ -215,6 +220,7 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
     {
       RR: ["R", "R"],
       RX: ["R", "X"],
+      RS: ["R", "S"],
       SI: ["S", "I"],
       SS: ["I", "X", "X"],
       RI: ["R", "I"],
