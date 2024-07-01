@@ -33,6 +33,6 @@ export const gamepad_handler = (win) => {
     up: () => gp?.axes[1] < -sens,
     down: () => gp?.axes[1] > sens,
     a: () => gp?.buttons[0].pressed,
-    b: () => {},
+    b: () => gp?.buttons[1].pressed,
   };
 };

@@ -39,6 +39,8 @@ const action = asyncHandler(actionReducer(state, render));
         right: keys.down(39) || pad.right(),
         up: keys.down(38) || pad.up(),
         down: keys.down(40) || pad.down(),
+        fire: keys.down(90) || pad.a(),
+        fire_2: keys.down(88) || pad.b(),
       });
       render(state);
     }

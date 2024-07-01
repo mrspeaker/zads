@@ -27,7 +27,15 @@ down     ch    3,244(,15)
          be    done
          ahi   2,1           
          
-done    st    1,216(,15)     store x
+done     ds    0
+         ch    3,248(,15)
+         be    no_fire
+         l     4,col
+         ahi   4,1
+         st    4,col
+
+no_fire ds     0
+        st    1,216(,15)     store x
         a     1,xo
         st    2,220(,15)     store y
         a     2,yo
@@ -45,6 +53,3 @@ xo       dc    f'12'
 yo       dc    f'9'
          end   sprite
     
-
-
-0-------------------

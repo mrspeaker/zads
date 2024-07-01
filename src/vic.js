@@ -16,6 +16,8 @@ export const vic_regs = Object.fromEntries(
     KEY_RIGHT: 9,
     KEY_UP: 10,
     KEY_DOWN: 11,
+    KEY_FIRE: 12,
+    KEY_FIRE_2: 13,
   }).map(([k, v]) => [k, v * DWORD])
 );
 
@@ -31,6 +33,8 @@ export function mk_vic(cols = 320, rows = 240) {
       right: false,
       up: false,
       down: false,
+      fire: false,
+      fire_2: false,
     },
   };
 }
@@ -43,12 +47,16 @@ export function updateVic(vic, mem, input) {
   keys.left = input.left;
   keys.up = input.up;
   keys.down = input.down;
+  keys.fire = input.fire;
+  keys.fire_2 = input.fire_2;
 
   // WRITE
   mem[offset + vic_regs.KEY_LEFT + 3] = keys.left ? 1 : 0;
   mem[offset + vic_regs.KEY_RIGHT + 3] = keys.right ? 1 : 0;
   mem[offset + vic_regs.KEY_UP + 3] = keys.up ? 1 : 0;
   mem[offset + vic_regs.KEY_DOWN + 3] = keys.down ? 1 : 0;
+  mem[offset + vic_regs.KEY_FIRE + 3] = keys.fire ? 1 : 0;
+  mem[offset + vic_regs.KEY_FIRE_2 + 3] = keys.fire2 ? 1 : 0;
 
   return vic;
 }
