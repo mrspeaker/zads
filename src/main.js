@@ -87,9 +87,16 @@ function bindUI(state, action) {
   $on("#mem", "selectionchange", (e) => {
     const { selectionStart } = e.target;
     // TODO: move to reducer+render
-    const byte = Math.ceil(selectionStart / 3);
-    $("#mem_cur").innerText =
-      "0x" + byte.toString(16).toUpperCase() + " (" + byte + ")";
+    const byte = Math.floor(selectionStart / 3);
+
+    $("#mem_cur").innerText = `0x${byte
+      .toString(16)
+      .toUpperCase()}(${byte}): 0x${state.machine.mem[byte]
+      .toString(16)
+      .toUpperCase()
+      .padStart(2, 0)} ${state.machine.mem[byte]} ${state.machine.mem[byte]
+      .toString(2)
+      .padStart(8, 0)}`;
   });
 
   $on("#programs", "change", (e) => {

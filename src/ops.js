@@ -474,6 +474,8 @@ export const ops = {
     },
     type: "RS",
     name: "shift left logical",
+    desc: "shift left",
+    pdf: "?",
     form: "OP R1,R3,D2(B2)",
     form_int: "OPOP R1 R3 B2 D2D2D2",
   },

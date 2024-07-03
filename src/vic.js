@@ -56,7 +56,7 @@ export function updateVic(vic, mem, input) {
   mem[offset + vic_regs.KEY_UP + 3] = keys.up ? 1 : 0;
   mem[offset + vic_regs.KEY_DOWN + 3] = keys.down ? 1 : 0;
   mem[offset + vic_regs.KEY_FIRE + 3] = keys.fire ? 1 : 0;
-  mem[offset + vic_regs.KEY_FIRE_2 + 3] = keys.fire2 ? 1 : 0;
+  mem[offset + vic_regs.KEY_FIRE_2 + 3] = keys.fire_2 ? 1 : 0;
 
   return vic;
 }
