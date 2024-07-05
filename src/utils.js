@@ -10,7 +10,7 @@ export const chunk = (arr, size) =>
   );
 
 export const $ = (sel) => document.querySelector(sel);
-export const $$ = (sel) => document.querySelectorAll(sel);
+export const $$ = (sel) => [...document.querySelectorAll(sel)];
 export const $click = (sel, f) => $(sel).addEventListener("click", f);
 export const $on = (sel, ev, f) => $(sel).addEventListener(ev, f);
 

@@ -1,6 +1,8 @@
 @font-face {
   font-family: "vga";
-  src: url("res/Web437_IBM_VGA_8x16.woff") format("woff");
+  /*src: url("res/Web437_IBM_VGA_8x16-2x.woff") format("woff");*/
+  src: url("res/WebPlus_Cordata_PPC-21.woff") format("woff");
+
 }
 
 html,
@@ -12,11 +14,11 @@ body {
   --background-color: #fdfff4;
   --text-color: #000;
   --status-bar: rgba(225, 226, 217, 0.7);
-  --highlight-warm: #c4c; /*#eaa49c;*/
-  --highlight-cool: #afe; /*#b4e3d1*/
+  --highlight-warm: #E06F8B;
+  --highlight-cool: #B2DCEF;
 
   --background-color: #222;
-  --text-color: #eaa49c; /*#b4e3c9;*/
+  --text-color: #eaa49c;
   --text-color-unselected: #999;
   --status-bar: #333;
 }
@@ -78,9 +80,14 @@ textarea {
 }
 
 button {
-  background-color: var(--highlight-cool);
+  background-color: #5d5f55;
   border: 0;
   cursor: pointer;
+  border-left: 1px solid #888;
+  border-top: 1px solid #888;
+}
+button:hover {
+    background-color:var(--highlight-cool);
 }
 .Controls button:last-child {
   background-color: var(--highlight-warm);
@@ -179,4 +186,8 @@ select {
     height: 6px;
     background-color: #f00;
     border-radius: 3px;
+}
+
+.blinkn {
+    color: var(--highlight-cool);
 }

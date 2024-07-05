@@ -28,6 +28,10 @@ const action = asyncHandler(actionReducer(state, render));
     action("PROG_LOAD", "mark6");
   }
 
+  let cur_but = -1;
+  let but_timer = 0;
+  const $buttons = $$("button,input");
+
   // let's go...
   function update() {
     if (!state.machine.psw.halt) {
@@ -46,6 +50,16 @@ const action = asyncHandler(actionReducer(state, render));
         fire_2: keys.down(88) || pad.b(),
       });
       render(state);
+
+      // dum lights
+      but_timer = (but_timer + 1) % 5;
+      if (but_timer == 0) {
+        if (cur_but > -1) {
+          $buttons[cur_but].classList.remove("blinkn");
+        }
+        cur_but = (cur_but + 1) % $buttons.length;
+        $buttons[cur_but].classList.add("blinkn");
+      }
     }
     requestAnimationFrame(update);
   }
