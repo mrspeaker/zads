@@ -12,6 +12,7 @@ export const mk_state = () => ({
   programs: {},
   selected: null,
   cyclesPerFrame: 2,
+  sprites: {},
 });
 
 const mk_machine = () => ({
