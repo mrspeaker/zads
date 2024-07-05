@@ -12,7 +12,21 @@ export const mk_state = () => ({
   programs: {},
   selected: null,
   cyclesPerFrame: 2,
-  sprites: {},
+  sprites: {
+    cur_sprite: 0,
+    spr_w: 16,
+    spr_h: 16,
+    sprite_data: Array(16)
+      .fill(0)
+      .map(() =>
+        Array(16 * 16)
+          .fill(0)
+          .map(() => (Math.random() * 16) | 0)
+      ),
+    map_w: 16,
+    map_h: 16,
+    map_data: Array(16 * 16).fill((Math.random() * 16) | 0),
+  },
 });
 
 const mk_machine = () => ({
