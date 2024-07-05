@@ -71,11 +71,21 @@ const actionReducer = (s, render) => (type, value) => {
       s.zads.showObjBytes = !s.zads.showObjBytes;
       break;
     case "STOP":
-      s.machine.psw.halt = true;
+      {
+        // TODO/doing : note! messing around with this being a "run to cursor"
+        // button. If you select an address in #dis, and run - will run to taht
+        // breakpoint. Hitting run again resets, but hitting stop will continue.
+        const stopped = s.machine.psw.halt;
+        if (!stopped) {
+          s.machine.psw.halt = true;
+          break;
+        }
+        s.machine.psw.halt = false;
+      }
       break;
     case "RUN":
       if (!s.machine.psw.halt) {
-        s.machine.psw.halt = true;
+        s.machine.psw.halt = true; // toggle run
         break;
       }
       memset(s.program.code, s.machine.mem, 0);
@@ -87,7 +97,12 @@ const actionReducer = (s, render) => (type, value) => {
       break;
     case "STEP":
       {
-        //const code_txt = step(s.program.code, s.machine);
+        if (s.program.breakpoint === s.machine.psw.pc && !s.program.broke) {
+          s.machine.psw.halt = true;
+          s.program.broke = true;
+          break;
+        }
+        s.program.broke = false;
         const code_txt = step(s.machine.mem, s.machine);
         s.program.code_txt = [code_txt, ...s.program.code_txt.slice(0, 25)];
         if (!s.machine.psw.halt) do_render = false;

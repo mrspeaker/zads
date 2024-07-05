@@ -33,6 +33,9 @@ const action = asyncHandler(actionReducer(state, render));
     if (!state.machine.psw.halt) {
       for (let i = 0; i < state.cyclesPerFrame; i++) {
         action("STEP");
+        if (state.machine.psw.halt) {
+          break;
+        }
       }
       updateVic(state.machine.vic, state.machine.mem, {
         left: keys.down(37) || pad.left(),
@@ -97,6 +100,13 @@ function bindUI(state, action) {
       .padStart(2, 0)} ${state.machine.mem[byte]} ${state.machine.mem[byte]
       .toString(2)
       .padStart(8, 0)}`;
+  });
+
+  $on("#dis", "selectionchange", (e) => {
+    const { selectionStart, selectionEnd } = e.target;
+    const txt = e.target.value.substring(selectionStart, selectionEnd);
+    const val = parseInt(txt, 16);
+    state.program.breakpoint = isNaN(val) ? null : val;
   });
 
   $on("#programs", "change", (e) => {

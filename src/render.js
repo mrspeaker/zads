@@ -20,6 +20,8 @@ function render(state) {
       : obj.map(formatObjRecord).join("\n\n");
     $("#emu").value = code_txt?.join("\n");
     $("#dis").value = disassemble(code, symbols, showObjBytes).join("\n");
+
+    $("#btnStop").innerText = machine.psw.halt ? "continue" : "stop";
   }
 
   if (machine) {

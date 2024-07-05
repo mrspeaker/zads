@@ -172,3 +172,11 @@ select {
 #screen_sprite {
     display: none;
 }
+
+#tick_led {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: #f00;
+    border-radius: 3px;
+}

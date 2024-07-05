@@ -34,4 +34,6 @@ export const mk_program = () => ({
   code_txt: [],
   symbols: {},
   addressing: { base: 15, base_addr: 0 },
+  breakpoint: null,
+  broke: false,
 });
