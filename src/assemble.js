@@ -195,7 +195,7 @@ const expandMacros = (ac, stmt) => {
 
 // Ensure data is placed on halfword boundary
 const checkBoundaryPadding = (env) => {
-  if (env.pc % 4 !== 0) {
+  if (env.pc % 2 !== 0) {
     const padding = [0, 0];
     addData(env, mk_stmt_toks("", "DC", padding, ""));
     env.pc += padding.length;
