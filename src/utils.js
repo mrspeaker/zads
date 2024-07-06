@@ -11,8 +11,13 @@ export const chunk = (arr, size) =>
 
 export const $ = (sel) => document.querySelector(sel);
 export const $$ = (sel) => [...document.querySelectorAll(sel)];
-export const $click = (sel, f) => $(sel).addEventListener("click", f);
-export const $on = (sel, ev, f) => $(sel).addEventListener(ev, f);
+const $node = (obj) => (obj instanceof Node ? obj : $(obj));
+export const $click = (sel, f) => $node(sel).addEventListener("click", f);
+export const $on = (sel, ev, f) => $node(sel).addEventListener(ev, f);
+export const $get_ev_pos = (ev) => {
+  const { left, top } = ev.target.getBoundingClientRect();
+  return { x: Math.floor(ev.clientX - left), y: Math.floor(ev.clientY - top) };
+};
 
 export const delay = (time) => new Promise((res) => setTimeout(res, time));
 

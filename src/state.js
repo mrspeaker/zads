@@ -22,11 +22,13 @@ export const mk_state = () => ({
       .map(() =>
         Array(16 * 16)
           .fill(0)
-          .map(() => (Math.random() * 3) | 0)
+          .map(() => Math.max(0, ((Math.random() * 20) | 0) - 16))
       ),
     map_w: 16,
     map_h: 16,
-    map_data: Array(16 * 16).fill((Math.random() * 16) | 0),
+    map: Array(16 * 16)
+      .fill(0)
+      .map(() => (Math.random() * 16) | 0),
   },
 });
 

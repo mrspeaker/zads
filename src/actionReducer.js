@@ -5,6 +5,7 @@ import { mk_program_from_obj } from "./program.js";
 import { memset, regset } from "./bytes.js";
 import { mk_program } from "./state.js";
 import { chunk } from "./utils.js";
+import { actionSpriteReducer } from "./actionSpriteReducer.js";
 
 const save = async (progs) => {
   if (!window.localStorage) return;
@@ -15,8 +16,16 @@ const saveSettings = async (settings) => {
   localStorage.setItem("settings", JSON.stringify(settings));
 };
 
-const actionReducer = (s, render) => (type, value) => {
+const saveSprites = async (sprites) => {
+  if (!window.localStorage) return;
+  localStorage.setItem("sprites", JSON.stringify(sprites));
+};
+
+const actionReducer = (s, render, sprite_render) => (type, value) => {
   console.log("Action", type);
+
+  // Just mutating sprites. Soz.
+  const do_render_sprites = actionSpriteReducer(s.sprites, type, value);
   let do_render = true;
   switch (type) {
     case "PROG_LOADED":
@@ -178,9 +187,13 @@ const actionReducer = (s, render) => (type, value) => {
       }
       break;
     default:
-      console.log("Unhandled ", type);
+      !do_render_sprites && console.log("Unhandled ", type);
   }
   do_render && render(s);
+  if (do_render_sprites) {
+    saveSprites(s.sprites);
+    sprite_render(s.sprites);
+  }
   return s;
 };
 

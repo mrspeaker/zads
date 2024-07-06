@@ -1,4 +1,5 @@
 import render from "./render.js";
+import { mk_render_sprites } from "./render_sprites.js";
 import actionReducer from "./actionReducer.js";
 import asyncHandler from "./asyncHandler.js";
 import { mk_state } from "./state.js";
@@ -9,7 +10,8 @@ import { ui_code } from "./ui_code.js";
 import { ui_sprites } from "./ui_sprites.js";
 
 const state = mk_state();
-const action = asyncHandler(actionReducer(state, render));
+const render_sprites = mk_render_sprites();
+const action = asyncHandler(actionReducer(state, render, render_sprites));
 
 (async function main(state, action) {
   ui_code(state, action);

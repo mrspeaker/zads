@@ -1,13 +1,15 @@
 import { load_prog, mk_program_from_obj } from "./program.js";
 import defaultPrograms from "./defaultPrograms.js";
 
-const tryerr = (f) => async (...args) => {
-  try {
-    return [null, await f(...args)];
-  } catch (err) {
-    return [err, []];
-  }
-};
+const tryerr =
+  (f) =>
+  async (...args) => {
+    try {
+      return [null, await f(...args)];
+    } catch (err) {
+      return [err, []];
+    }
+  };
 
 const asyncHandler = (action) => async (type, value) => {
   switch (type) {
@@ -35,7 +37,10 @@ const asyncHandler = (action) => async (type, value) => {
           action("PROGRAM_SELECT", settings.selected);
         }
 
-        // TODO: store settings. current.
+        const sprite_data = JSON.parse(window.localStorage.getItem("sprites"));
+        if (sprite_data) {
+          action("SET_SPRITES", sprite_data);
+        }
       }
       break;
 
