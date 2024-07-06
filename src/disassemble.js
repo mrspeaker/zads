@@ -2,6 +2,13 @@ import { get_op } from "./ops.js";
 import { toHex, chunk } from "./utils.js";
 import { to_nibs, from_nibs } from "./bytes.js";
 
+/**
+ * Disassembles all object code into readable line
+ * @param {number[]} obj program object code array
+ * @param {object} symbol symbol table
+ * @param {bool} showBytes show mnemonics or byte
+ * @returns {string[]} disassembled listing
+ */
 export function disassemble(code, symbols, showBytes) {
   let psw = 0;
   const output = [];
@@ -18,7 +25,15 @@ export function disassemble(code, symbols, showBytes) {
   return output;
 }
 
-function disassemble_line(psw, obj, symbol, showBytes) {
+/**
+ * Disassembles next object code instruction into readable line
+ * @param {number} psw program counter
+ * @param {number[]} obj program object code array
+ * @param {object} symbol symbol table
+ * @param {bool} showBytes show mnemonics or byte
+ * @returns {[number, string]} psw and disassembled line
+ */
+export function disassemble_line(psw, obj, symbol, showBytes) {
   let txt = "";
   const op = get_op(obj, psw);
   const pc_loc = toHex(psw) + ": ";
