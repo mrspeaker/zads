@@ -52,7 +52,7 @@ function render(state) {
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
 
-    renderScreen(mem, vic);
+    renderScreen(mem, vic, state.sprites);
     renderMemViz(mem);
 
     $("#btnRun").className = psw.halt ? "ok" : "fail";
@@ -88,14 +88,29 @@ const drawPixel = (x, y, c, img, cols) => {
   }
 };
 
-const drawSprite = (sprNum, data, cols, mval) => {
+const drawPixel1 = (x, y, w, c, img) => {
+  const pixelsPerLine = w;
+  const datasPerLine = pixelsPerLine * 4;
+  const yoff = y * datasPerLine;
+  img[yoff + x * 4] = c[0];
+  img[yoff + x * 4 + 1] = c[1];
+  img[yoff + x * 4 + 2] = c[2];
+  img[yoff + x * 4 + 3] = 255;
+};
+
+const drawSprite = (sprNum, data, cols, mval, sprites, cur_sprite) => {
   const x = mval(vic_regs["SPR" + sprNum + "_X"]);
   const y = mval(vic_regs["SPR" + sprNum + "_Y"]);
   const col = pal_to_rgb(mval(vic_regs["SPR" + sprNum + "_COL"]));
-  drawPixel(x, y, col, data, cols);
-  drawPixel(x + 1, y, col, data, cols);
-  drawPixel(x, y + 1, col, data, cols);
-  drawPixel(x + 1, y + 1, col, data, cols);
+  const spr = sprites.sprite_data[cur_sprite];
+  for (let j = 0; j < 16; j++) {
+    for (let i = 0; i < 16; i++) {
+      const idx = j * sprites.spr_w + i;
+      const pix = spr[idx];
+      const col = pal_to_rgb(pix);
+      drawPixel1(x + i, y + j, cols, col, data);
+    }
+  }
 };
 
 const drawChar = (x, y, ch, img, cols) => {
@@ -115,7 +130,7 @@ const drawChar = (x, y, ch, img, cols) => {
   }
 };
 
-function renderScreen(mem, vic) {
+function renderScreen(mem, vic, sprites) {
   const { base, screen, rows, cols } = vic;
   const mval = (offset) => memval(mem, base + offset);
 
@@ -137,8 +152,8 @@ function renderScreen(mem, vic) {
     }
   }
 
-  drawSprite(1, data, cols, mval);
-  drawSprite(2, data, cols, mval);
+  drawSprite(1, data, 256, mval, sprites, 0);
+  drawSprite(2, data, 256, mval, sprites, 1);
   c.putImageData(imgData, 0, 0);
 }
 
