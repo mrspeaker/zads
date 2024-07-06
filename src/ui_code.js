@@ -4,9 +4,57 @@ import { ops } from "./ops.js";
 import { get_help_text } from "./help.js";
 
 export function ui_code(state, action) {
-  editor($("#src"), (text) => action("ASSEMBLE_SRC", text));
-  editor($("#mem"), (text) => updateMem(text));
-  editor($("#dis"), (text) => updateDis(text));
+  // Source code panel
+  editor(
+    $("#src"),
+    // On save
+    (text) => action("ASSEMBLE_SRC", text),
+    // On selection change
+    (txt, start, end) => {
+      // TODO: move to reducer+render
+      const help = get_help_text(txt);
+      if (!help) return;
+      const { mn, desc, type, form, pdf } = help;
+      const link = pdf ? `<a href="#">${pdf}<a>` : "";
+      $(
+        "#help"
+      ).innerHTML = `<span>&nbsp;<span title="${desc}" style="color:var(--highlight-warm)">${mn}</span> [${type}] ${form} ${link}</span>`;
+    }
+  );
+
+  // Memory dump panel
+  editor(
+    $("#mem"),
+    // save
+    (text) => updateMem(text),
+    // on selection change
+    (txt, start) => {
+      const byte = Math.floor(start / 3);
+      if (byte < 0 || byte > state.machine.mem.length) {
+        return;
+      }
+      const hex_byte = byte.toString(16).toUpperCase();
+      const val = state.machine.mem[byte];
+      const hex = val.toString(16).toUpperCase().padStart(2, 0);
+      const bin = val.toString(2).padStart(8, 0);
+      $(
+        "#mem_cur"
+      ).innerText = `0x${hex_byte} (${byte}): 0x${hex} ${val} ${bin}`;
+    },
+    // no tabs plz
+    false
+  );
+  $("#mem").addEventListener("change", (e) => updateMem(e.target.value), false);
+
+  // Disassembly panel
+  editor(
+    $("#dis"),
+    (text) => updateDis(text),
+    (txt) => {
+      const val = parseInt(txt, 16);
+      state.program.breakpoint = isNaN(val) ? null : val;
+    }
+  );
 
   $click("#fs", () => toggleFullscreen());
 
@@ -26,42 +74,6 @@ export function ui_code(state, action) {
   $click("#btnDumMem", () => {
     dumBG(state);
     action("NOP");
-  });
-
-  $on("#src", "selectionchange", (e) => {
-    const area = e.target;
-    const { selectionStart, selectionEnd, selectionDirection } = area;
-    const txt = e.target.value.substring(selectionStart, selectionEnd);
-    // TODO: move to reducer+render
-    const help = get_help_text(txt);
-    if (!help) return;
-    const { mn, desc, type, form, pdf } = help;
-    const link = pdf ? `<a href="#">${pdf}<a>` : "";
-    $(
-      "#help"
-    ).innerHTML = `<span>&nbsp;<span title="${desc}" style="color:var(--highlight-warm)">${mn}</span> [${type}] ${form} ${link}</span>`;
-  });
-
-  $on("#mem", "selectionchange", (e) => {
-    const { selectionStart } = e.target;
-    // TODO: move to reducer+render
-    const byte = Math.floor(selectionStart / 3);
-    if (byte < 0 || byte > state.machine.mem.length) {
-      return;
-    }
-    const hex_byte = byte.toString(16).toUpperCase();
-    const val = state.machine.mem[byte];
-    const hex = val.toString(16).toUpperCase().padStart(2, 0);
-    const bin = val.toString(2).padStart(8, 0);
-
-    $("#mem_cur").innerText = `0x${hex_byte} (${byte}): 0x${hex} ${val} ${bin}`;
-  });
-
-  $on("#dis", "selectionchange", (e) => {
-    const { selectionStart, selectionEnd } = e.target;
-    const txt = e.target.value.substring(selectionStart, selectionEnd);
-    const val = parseInt(txt, 16);
-    state.program.breakpoint = isNaN(val) ? null : val;
   });
 
   $on("#programs", "change", (e) => {
@@ -135,6 +147,7 @@ export function ui_code(state, action) {
 
     action("UPDATE_OBJ", { code });
   };
+
   const updateMem = (txt) => {
     const data = txt
       .trim()
@@ -151,7 +164,6 @@ export function ui_code(state, action) {
   };
 
   $click("#btnRun", () => action("RUN"));
-  $("#mem").addEventListener("change", (e) => updateMem(e.target.value), false);
   $click("#btnStop", () => action("STOP"));
   $click("#btnStep", () => action("STEP"));
 }

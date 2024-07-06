@@ -11,6 +11,16 @@ const mk_env = (regvals = [0], mem = 32) => ({
   psw: { pc: 0, conditionCode: 0 },
 });
 
+const op_nul = () => {
+  const env = mk_env();
+  const obj = [0x00];
+
+  env.psw.halt = false;
+  step(obj, env);
+  // Ensure halts on null op
+  return env.psw.halt;
+};
+
 const op_lr = () => {
   const env = mk_env([10, LIFE]);
   const obj = [...code("LR"), 0x01];
@@ -187,6 +197,7 @@ const op_ic = () => {
 };
 
 export default [
+  op_nul,
   op_lr,
   op_l,
   op_cr,
