@@ -46,7 +46,7 @@ export function disassemble_line(psw, obj, symbol, showBytes) {
 
     if (showBytes) {
       const operands_nibbles = chunk(opers, 2).map(from_nibs);
-      const op1op2 = op.code[0] > 0xff ? op.code[0] >> 4 : op.code[0];
+      const op1op2 = op.code > 0xff ? op.code >> 4 : op.code;
       txt =
         pc_loc +
         [op1op2, ...operands_nibbles].map((v) => toHex(v, 2)).join(",");

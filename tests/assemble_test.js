@@ -35,18 +35,19 @@ const tokenize_line_test_2 = () => {
 };
 
 const assemble_stmt_test = () => {
-  const env = { pc: 0, stmts: [] };
-  const stmt = { mn: "LR", label: "", operands: ["1", "2"] };
+  const env = { pc: 0, stmts: [], symbols: {} };
+  const stmt = { mn: "LR", label: "test", operands: ["1", "2"] };
 
-  //{"pc":0,"stmts":[],"symbols":{},"equates":{},"base":15,"base_addr":0}
-  //{"label":"","mn":"l","operands":["1","a1"],"comment":"load register"}
   assembleStatement(env, stmt);
-  return false;
+
+  const symbols_ok = env.symbols.test?.pc === 0;
+  const stmt_ok = env.stmts[0]?.bytes.op_code[0] === 0x18;
+  return symbols_ok && stmt_ok;
 };
 
 export default [
   expand_literals_test,
-  assemble_stmt_test,
   tokenize_line_test_1,
   tokenize_line_test_2,
+  assemble_stmt_test,
 ];

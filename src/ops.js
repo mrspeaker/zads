@@ -59,16 +59,16 @@ export const nop = () => {};
 export const ops = {
   0x00: {
     mn: "HALT",
-    code: [0x00],
+    code: 0x00,
     len: 2,
     f: (_, regs, mem, psw) => {
       psw.halt = true;
     },
   },
-  0x05: { mn: "BALR", code: [0x05], len: 2, f: nop },
+  0x05: { mn: "BALR", code: 0x05, len: 2, f: nop },
   0x07: {
     mn: "BCR",
-    code: [0x07],
+    code: 0x07,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       if (r1 === 15 && r2 === 14) {
@@ -82,11 +82,11 @@ export const ops = {
     form: "OP M1,R1",
     form_int: "OPOP M1 R1",
   },
-  0x0b: { mn: "BSM", code: [0x0b], len: 2, f: nop },
-  0x0d: { mn: "BSR", code: [0x0d], len: 2, f: nop },
+  0x0b: { mn: "BSM", code: 0x0b, len: 2, f: nop },
+  0x0d: { mn: "BSR", code: 0x0d, len: 2, f: nop },
   0x14: {
     mn: "NR",
-    code: [0x14],
+    code: 0x14,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -104,7 +104,7 @@ export const ops = {
   },
   0x16: {
     mn: "OR",
-    code: [0x16],
+    code: 0x16,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -122,7 +122,7 @@ export const ops = {
   },
   0x17: {
     mn: "XR",
-    code: [0x17],
+    code: 0x17,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -140,7 +140,7 @@ export const ops = {
   },
   0x18: {
     mn: "LR",
-    code: [0x18],
+    code: 0x18,
     len: 2,
     f: ([r1, r2], regs) => memset(regs[r2], regs[r1]),
     name: "load",
@@ -152,7 +152,7 @@ export const ops = {
   },
   0x19: {
     mn: "CR",
-    code: [0x19],
+    code: 0x19,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -173,7 +173,7 @@ export const ops = {
   },
   0x1a: {
     mn: "AR",
-    code: [0x1a],
+    code: 0x1a,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = regval(regs[r1]);
@@ -191,7 +191,7 @@ export const ops = {
   },
   0x1b: {
     mn: "SR",
-    code: [0x1b],
+    code: 0x1b,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = regval(regs[r1]);
@@ -209,7 +209,7 @@ export const ops = {
   },
   0x1c: {
     mn: "MR",
-    code: [0x1c],
+    code: 0x1c,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -232,7 +232,7 @@ export const ops = {
 
   0x1d: {
     mn: "DR",
-    code: [0x1d],
+    code: 0x1d,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
       const a = bytes_to_fw(regs[r1]);
@@ -257,7 +257,7 @@ export const ops = {
   //LA R1,D2(X2,B2) [RX-a]
   0x41: {
     mn: "LA",
-    code: [0x41],
+    code: 0x41,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -273,7 +273,7 @@ export const ops = {
 
   0x42: {
     mn: "STC",
-    code: [0x42],
+    code: 0x42,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -289,7 +289,7 @@ export const ops = {
 
   0x43: {
     mn: "IC",
-    code: [0x43],
+    code: 0x43,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -305,7 +305,7 @@ export const ops = {
 
   0x46: {
     mn: "BCT",
-    code: [0x46],
+    code: 0x46,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -324,7 +324,7 @@ export const ops = {
   },
   0x47: {
     mn: "BC",
-    code: [0x47],
+    code: 0x47,
     len: 4,
     f: ([m1, x2, b2, da, db, dc], regs, mem, psw) => {
       const cc = [8, 4, 2, 1][psw.conditionCode];
@@ -341,7 +341,7 @@ export const ops = {
   },
   0x49: {
     mn: "CH",
-    code: [0x49],
+    code: 0x49,
     name: "compare",
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
@@ -364,7 +364,7 @@ export const ops = {
   },
   0x50: {
     mn: "ST",
-    code: [0x50],
+    code: 0x50,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace(regs[x2], regs[b2], da, db, dc);
@@ -379,7 +379,7 @@ export const ops = {
   },
   0x58: {
     mn: "L",
-    code: [0x58],
+    code: 0x58,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -393,7 +393,7 @@ export const ops = {
   },
   0x5a: {
     mn: "A",
-    code: [0x5a],
+    code: 0x5a,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -412,7 +412,7 @@ export const ops = {
   },
   0x5b: {
     mn: "S",
-    code: [0x5b],
+    code: 0x5b,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -431,7 +431,7 @@ export const ops = {
   },
   0x5c: {
     mn: "M",
-    code: [0x5c],
+    code: 0x5c,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -450,7 +450,7 @@ export const ops = {
   },
   0x5d: {
     mn: "D",
-    code: [0x5d],
+    code: 0x5d,
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -476,7 +476,7 @@ export const ops = {
   },
   0x89: {
     mn: "SLL",
-    code: [0x89],
+    code: 0x89,
     len: 4,
     f: (ops, regs, mem) => {
       // TODO: for sure wrong. Doesn't set carry, and I forgot how the ops worked,
@@ -495,7 +495,7 @@ export const ops = {
   },
   0x90: {
     mn: "STM",
-    code: [0x90],
+    code: 0x90,
     len: 4,
     f: () => {
       console.warn("no STM impl");
@@ -504,7 +504,7 @@ export const ops = {
   },
   0x91: {
     mn: "TM",
-    code: [0x91],
+    code: 0x91,
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs) => {
       const val = from_nibs([i1, i2]);
@@ -527,7 +527,7 @@ export const ops = {
   },
   0x92: {
     mn: "MVI",
-    code: [0x92],
+    code: 0x92,
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem) => {
       const val = from_nibs([i1, i2]);
@@ -543,7 +543,7 @@ export const ops = {
   },
   0x94: {
     mn: "NI",
-    code: [0x94],
+    code: 0x94,
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
@@ -563,7 +563,7 @@ export const ops = {
   },
   0x96: {
     mn: "OI",
-    code: [0x96],
+    code: 0x96,
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
@@ -583,7 +583,7 @@ export const ops = {
   },
   0x97: {
     mn: "XI",
-    code: [0x97],
+    code: 0x97,
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
@@ -603,7 +603,7 @@ export const ops = {
   },
   0x98: {
     mn: "LM",
-    code: [0x98],
+    code: 0x98,
     len: 4,
     f: (ops, regs, mem) => {
       // Erm, check this logic. Looks real bad.
@@ -626,7 +626,7 @@ export const ops = {
   },
   0xc20d: {
     mn: "CFI",
-    code: [0xc20d],
+    code: 0xc20d,
     len: 4,
     f: ([...args], regs, mem, psw) => {
       /*      const a = regval(regs[r1]);
@@ -645,10 +645,10 @@ export const ops = {
     form_int: "OPOP R1 OP I2I2I2I2I2I2I2I2",
   },
 
-  0xd7: { mn: "XC", code: [0xd7], len: 6, f: nop },
+  0xd7: { mn: "XC", code: 0xd7, len: 6, f: nop },
   0xd2: {
     mn: "MVC",
-    code: [0xd2],
+    code: 0xd2,
     len: 12,
     f: ([i1, i2, b1, da, db, dc], regs) => {
       const val = from_nibs([i1, i2]);
@@ -664,7 +664,7 @@ export const ops = {
   },
   0xa7a: {
     mn: "AHI",
-    code: [0xa7a], // TODO: codes should just be hex, not bytes. (or, nibbles if not hex!)
+    code: 0xa7a,
     len: 4,
     f: ([r1, _op3, i2a, i2b, i2c, i2d], regs, mem, psw) => {
       const a = regval(regs[r1]);
@@ -691,9 +691,10 @@ export const ops = {
 export const op_by_mn = Object.values(ops).reduce((ac, op) => {
   const { mn, code } = op;
   // Convert multi-byte ops to decimal (single bytes too)
-  ac[mn] = code.reduce(
+  /*ac[mn] = code.reduce(
     (ac, el, i) => ac + (el << (8 * (code.length - 1 - i))),
     0
-  );
+    );*/
+  ac[mn] = code;
   return ac;
 }, {});
