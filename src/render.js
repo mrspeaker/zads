@@ -18,8 +18,10 @@ function render(state) {
     $("#obj").value = showObjBytes
       ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
       : obj.map(formatObjRecord).join("\n\n");
-    $("#emu").value = code_txt?.join("\n");
-    $("#dis").value = disassemble(code, symbols, showObjBytes).join("\n");
+    $("#emu").value = code_txt.length ? code_txt.join("\n") : "Welcome to zads";
+    $("#dis").value = code.length
+      ? disassemble(code, symbols, showObjBytes).join("\n")
+      : "no code for disassembly";
 
     $("#btnStop").innerText = machine.psw.halt ? "continue" : "stop";
   }
@@ -34,13 +36,14 @@ function render(state) {
           (i % 16) +
           ": " +
           toHex(v, 8) +
-          " ... " +
+          " " +
           toBin(v)
       )
       .join("\n");
     $("#mem").value = mem
       .map((m) => toHex(m))
-      .map((v) => (v === "00" ? "__" : v));
+      .map((v) => (v === "00" ? "__" : v))
+      .join(" ");
     $("#psw_cc").value = psw.conditionCode;
     $("#psw_pc").value = toHex(psw.pc);
 

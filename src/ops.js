@@ -51,6 +51,14 @@ const jump = (addr, psw) => {
 
 export const nop = () => {};
 export const ops = {
+  0x00: {
+    mn: "HALT",
+    code: [0x00],
+    len: 2,
+    f: (_, regs, mem, psw) => {
+      psw.halt = true;
+    },
+  },
   0x05: { mn: "BALR", code: [0x05], len: 2, f: nop },
   0x07: {
     mn: "BCR",

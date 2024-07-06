@@ -19,6 +19,10 @@ export function step(obj, env) {
   const { regs, mem, psw } = env;
   const oldpc = psw.pc;
   const op = get_op(obj, psw.pc++);
+  if (op === 0) {
+    psw.halt = true;
+    return "NUL";
+  }
   if (!op) {
     console.log("op?", psw.pc, "(", obj[psw.pc], ")");
     return toHex(psw.pc - 1) + ":??? " + obj[psw.pc];

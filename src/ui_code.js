@@ -10,13 +10,17 @@ export function ui_code(state, action) {
 
   $click("#fs", () => toggleFullscreen());
 
-  $click("#btnSprites", () => {
+  $click("#btnSprites", (e) => {
     $("#screen_sprite").style.display = "grid";
     $("#screen_code").style.display = "none";
+    e.target.classList.add("ok");
+    $("#btnCode").classList.remove("ok");
   });
-  $click("#btnCode", () => {
+  $click("#btnCode", (e) => {
     $("#screen_sprite").style.display = "none";
     $("#screen_code").style.display = "grid";
+    e.target.classList.add("ok");
+    $("#btnSprites").classList.remove("ok");
   });
 
   $click("#btnDumMem", () => {
@@ -134,7 +138,7 @@ export function ui_code(state, action) {
   const updateMem = (txt) => {
     const data = txt
       .trim()
-      .split(",")
+      .split(" ")
       .map((v, i) => {
         const val = v === "__" ? 0 : parseInt(v, 16);
         if (isNaN(val)) {
