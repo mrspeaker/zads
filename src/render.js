@@ -15,13 +15,18 @@ function render(state) {
     const { goff, obj, src, code_txt, code, symbols } = program;
     $("#format").innerText = goff ? "GOFF" : "OBJ";
     $("#src").value = src;
-    $("#obj").value = showObjBytes
-      ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
-      : obj.map(formatObjRecord).join("\n\n");
-    $("#emu").value = code_txt.length ? code_txt.join("\n") : "Welcome to zads";
+
+    $("#obj").value = obj.length
+      ? showObjBytes
+        ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
+        : obj.map(formatObjRecord).join("\n\n")
+      : "[object code not loaded]";
+    $("#emu").value = code_txt.length
+      ? code_txt.join("\n")
+      : "zads VM v" + zads.version;
     $("#dis").value = code.length
       ? disassemble(code, symbols, showObjBytes).join("\n")
-      : "no code for disassembly";
+      : "[no code for disassembly]";
 
     $("#btnStop").innerText = machine.psw.halt ? "continue" : "stop";
   }

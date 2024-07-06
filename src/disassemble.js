@@ -28,6 +28,7 @@ function line(psw, obj, symbol, showBytes) {
       .slice(psw + 1, psw + len)
       .map((v) => to_nibs(v))
       .flat();
+
     if (showBytes) {
       const op_nibbles = chunk(opers, 2).map(from_nibs);
       // TODO: something wrong when updating AHI op
@@ -35,7 +36,13 @@ function line(psw, obj, symbol, showBytes) {
       txt =
         pc_loc + [op.code[0], ...op_nibbles].map((v) => toHex(v, 2)).join(",");
     } else {
-      txt = pc_loc + mn + " " + opers.join(".");
+      txt =
+        pc_loc +
+        mn.padEnd(3, " ") +
+        " " +
+        chunk(opers, 2)
+          .map((ch) => ch.join("."))
+          .join(" ");
     }
     psw += len;
   } else {

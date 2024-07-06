@@ -188,6 +188,10 @@ select {
     border-radius: 3px;
 }
 
+#help {
+    padding-top: 2px;
+}
+
 .blinkn {
     color: var(--highlight-cool);
 }

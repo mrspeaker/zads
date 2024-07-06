@@ -6,6 +6,7 @@ export const mk_regs = (num) => [...Array(num)].fill(0).map(() => [0, 0, 0, 0]);
 export const mk_state = () => ({
   zads: {
     showObjBytes: false,
+    version: "0.1.1",
   },
   machine: mk_machine(),
   program: null,
@@ -21,7 +22,7 @@ export const mk_state = () => ({
       .map(() =>
         Array(16 * 16)
           .fill(0)
-          .map(() => (Math.random() * 16) | 0)
+          .map(() => (Math.random() * 3) | 0)
       ),
     map_w: 16,
     map_h: 16,
