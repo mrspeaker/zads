@@ -10,21 +10,27 @@ import {
   mem_to_reg,
 } from "./bytes.js";
 
+/**
+ * Gets op code details from object code byte/s at psw
+ * @param {number[]} obj program object code array
+ * @param {number} psw program counter
+ * @returns {object} op code details
+ */
 export const get_op = (obj, psw) => {
   const b1 = obj[psw];
   let op = ops[b1];
   if (!op) {
     if (ext_ops[b1]) {
-      // read extra nibble
+      // read extra nibble (eg AHI instruction)
       const b2 = obj[psw + 1] & 0x0f;
-      op = ops[(b1 << 8) + b2];
+      op = ops[(b1 << 4) + b2];
     }
   }
   return op;
 };
 
 const ext_ops = {
-  0xa7: true,
+  0xa7: true, // eg 0xa7a: AHI
 };
 
 const addAndCC = (a, b) => {
@@ -656,11 +662,11 @@ export const ops = {
     form: "OP D1(L1,B1),D2(B2)",
     form_int: "OPOP L1L1 B1 D1D1D1 B2 D2D2D2",
   },
-  0xa70a: {
+  0xa7a: {
     mn: "AHI",
-    code: [0xa7, 0x0a],
+    code: [0xa7a], // TODO: codes should just be hex, not bytes. (or, nibbles if not hex!)
     len: 4,
-    f: ([r1, , i2a, i2b, i2c, i2d], regs, mem, psw) => {
+    f: ([r1, _op3, i2a, i2b, i2c, i2d], regs, mem, psw) => {
       const a = regval(regs[r1]);
       // propagate sign:
       const b = bytes_to_fw([

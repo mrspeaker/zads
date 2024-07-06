@@ -1,5 +1,5 @@
 import { step } from "../src/emulate.js";
-import { ops, op_by_mn } from "../src/ops.js";
+import { ops, op_by_mn, get_op } from "../src/ops.js";
 import { regval, fw_to_bytes, memset } from "../src/bytes.js";
 import { mk_mem } from "../src/state.js";
 
@@ -10,6 +10,21 @@ const mk_env = (regvals = [0], mem = 32) => ({
   mem: mk_mem(mem),
   psw: { pc: 0, conditionCode: 0 },
 });
+
+const get_op_rr = () => {
+  const obj = [0x18, 0x12]; // LR 1,2
+  const psw = 0;
+  const op = get_op(obj, psw);
+  return op && op.mn == "LR";
+};
+
+const get_op_ri = () => {
+  // RI format: op1, op2, r1, op3, i1-i4
+  const obj = [0xa7, 0x1a, 0x00, 0x01]; // AHI 1, 1
+  const psw = 0;
+  const op = get_op(obj, psw);
+  return op && op.mn === "AHI";
+};
 
 const op_nul = () => {
   const env = mk_env();
@@ -197,6 +212,8 @@ const op_ic = () => {
 };
 
 export default [
+  get_op_rr,
+  get_op_ri,
   op_nul,
   op_lr,
   op_l,

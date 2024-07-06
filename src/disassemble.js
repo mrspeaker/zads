@@ -11,14 +11,14 @@ export function disassemble(code, symbols, showBytes) {
   }, {});
   while (psw < code.length) {
     const symbol = symloc[psw];
-    let [newPsw, txt] = line(psw, code, symbol, showBytes);
+    let [newPsw, txt] = disassemble_line(psw, code, symbol, showBytes);
     output.push(txt);
     psw = newPsw;
   }
   return output;
 }
 
-function line(psw, obj, symbol, showBytes) {
+function disassemble_line(psw, obj, symbol, showBytes) {
   let txt = "";
   const op = get_op(obj, psw);
   const pc_loc = toHex(psw) + ": ";
@@ -30,11 +30,11 @@ function line(psw, obj, symbol, showBytes) {
       .flat();
 
     if (showBytes) {
-      const op_nibbles = chunk(opers, 2).map(from_nibs);
-      // TODO: something wrong when updating AHI op
-      // (load prg, hit update-obj see diff
+      const operands_nibbles = chunk(opers, 2).map(from_nibs);
+      const op1op2 = op.code[0] > 0xff ? op.code[0] >> 4 : op.code[0];
       txt =
-        pc_loc + [op.code[0], ...op_nibbles].map((v) => toHex(v, 2)).join(",");
+        pc_loc +
+        [op1op2, ...operands_nibbles].map((v) => toHex(v, 2)).join(",");
     } else {
       txt =
         pc_loc +

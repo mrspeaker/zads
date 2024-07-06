@@ -57,8 +57,12 @@ export const parseOperands = (s, symbols, eqs, base) => {
       break;
     case "RI":
       {
+        // op1, op2,   r1, op3, i1, i2, i3, i4
+        //eg: AHI: 'A', '7', r1, 'A', i1, i2, i3, i4
         // extract extra opcode byte
-        const extra = ops[bytes.op_code[0]].code[1];
+        const extra = bytes.op_code[0] & 0xf; // op3
+        bytes.op_code[0] >>= 4; // op1, op2
+        console.log("now?", bytes.op_code, extra);
         bytes.operands.push(...enc[0], extra, ...enc[1]);
       }
       break;
@@ -136,7 +140,6 @@ const parseExpression = (v) => {
 };
 
 const parseTerm = (expr) => {
-  console.log("oh hai", expr);
   return expr;
 };
 

@@ -33,6 +33,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
       base_addr: null,
     }
   );
+
   extraSymbolsF && extraSymbolsF(symbols);
 
   // OPERANDS
