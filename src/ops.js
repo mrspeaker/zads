@@ -649,11 +649,15 @@ export const ops = {
   0xd2: {
     mn: "MVC",
     code: 0xd2,
-    len: 12,
-    f: ([i1, i2, b1, da, db, dc], regs) => {
-      const val = from_nibs([i1, i2]);
-      const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
-      console.warn("no mvc", val, ptr);
+    len: 6,
+    f: ([l1, l2, b1, da, db, dc, b2, d2a, d2b, d2c], regs, mem) => {
+      const len = from_nibs([l1, l2]);
+      const addr1 = base_displace_regs(regs, 0, b1, da, db, dc);
+      const addr2 = base_displace_regs(regs, 0, b2, d2a, d2b, d2c);
+      // Copy memory
+      for (let i = 0; i < len; i++) {
+        mem[addr1 + i] = mem[addr2 + i];
+      }
     },
     name: "move",
     desc: "The second operand is placed at the first-operand location. Each operand is processed left to right. When the operands overlap, the result is obtained as if the operands were processed one byte at a time and each result byte were stored immedi- ately after fetching the necessary operand byte.",

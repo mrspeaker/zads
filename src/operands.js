@@ -1,6 +1,6 @@
-import { ops } from "./ops.js";
 import { to_nibs } from "./bytes.js";
-import { parseImmediate, parseBaseDisplace } from "./assemble.js";
+import { parseImmediate } from "./assemble.js";
+import { parseBaseDisplace } from "./addressing.js";
 import { lex_operand, lex_tokens } from "./operand_lex.js";
 
 export const tokenizeOperands = (ops) => {
@@ -14,9 +14,16 @@ export const tokenizeOperands = (ops) => {
 // _before_ assebmbling the statement. Sould be LTORG
 //  console.log("Literals:", expanded.lits);
 
+/**
+ * Converts text operands to nibbles for passeing to Op functions
+ * @param {object} s statememt object
+ * @param {object} symbols symbol table
+ * @param {array} equs equates?
+ * @param {number} base base for addressing?
+ * @returns {string[]} disassembled listing
+ */
 export const parseOperands = (s, symbols, eqs, base) => {
   const { stmt, bytes, type } = s;
-
   const lexed = stmt.operands.map(lex_operand);
   // Eq is a Term... so don't replace yet?
   //const eqReplaced = lexed.map((v) => replaceEqs(v, eqs));
@@ -71,7 +78,7 @@ export const parseOperands = (s, symbols, eqs, base) => {
       break;
     case "SS":
       // L1L1 B1 D1D1D1 B2 D2D2D2
-      console.log("eg MVC. TODO!");
+      bytes.operands.push(...enc[0], ...enc[1]);
       break;
     case "DC":
     case undefined:
@@ -198,7 +205,6 @@ const parseLexedOperand = (v) => {
   */
   const exprs = parseExpression(v);
   const terms = exprs.map(parseTerm);
-  console.log("dones", terms);
 
   if (v.length === 1) {
     // if numlit, parse it.
@@ -209,7 +215,17 @@ const parseLexedOperand = (v) => {
   return v;
 };
 
-// Return (mostly?) nibbles
+/**
+ * Parses the object code for operands into nibbles for an individual statement.
+ * [This is bad - get rid of it and do operands for each instruction type properly.]
+ * @param {number[]} obj operands as bytes
+ * @param {object} symbol symbol table
+ * @param {number} base base for addressing?
+ * @param {string} type type of instruction (RS, RX etc)
+ * @param {number} idx index of the operand in the list
+ * @param {string} mn mnemonic of the current instruction
+ * @returns {string[]} disassembled listing
+ */
 const parseOperand = (o, symbols, base, type, idx, mn) => {
   if (!type) {
     throw new Error("Err parseOperand: no type", o);
@@ -224,13 +240,33 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
       RX: ["R", "X"],
       RS: ["R", "S"],
       SI: ["S", "I"],
-      SS: ["I", "X", "X"],
+      SS: ["X", "X"],
       RI: ["R", "I"],
     }[type] || [];
   const oidx = otype[idx];
   if (type && type !== "DC" && (!otype || !oidx)) {
     console.warn("What's this operand?", type, o, idx, mn, symbols);
   }
+  if (type === "SS") {
+    // HACK! manually doing this. don't think you can guess the operand types for all
+    // instruction types! Redo this whole function!
+    // ... For now, let's assume all SS types are SS-1 with Implied Addresses.
+    // eg: S1(N1),S2
+
+    if (idx === 0) {
+      // S1(N1)
+      const [s1, n1] = o.split("(");
+      const bd = parseBaseDisplace(s1, base, symbols);
+      const addr = bd.slice(1); // no index
+      const len = parseInt(n1);
+      return [...to_nibs(len), ...addr];
+    }
+    // S2
+    const bd = parseBaseDisplace(o, base, symbols);
+    const addr = bd.slice(1); // no index
+    return addr;
+  }
+
   switch (oidx) {
     case "R":
       // One number? Correct? Should not be over 15 anyway.

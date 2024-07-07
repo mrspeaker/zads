@@ -140,6 +140,9 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
             symbols["screen"] = {
               pc: s.machine.vic.base + s.machine.vic.screen,
             };
+            symbols["maps"] = {
+              pc: s.machine.vic.base + s.machine.vic.maps,
+            };
           }
         );
 
@@ -156,6 +159,10 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         }, []);
         s.program = mk_program_from_obj(s.program.obj, value);
         memset(s.program.code, s.machine.mem, 0);
+
+        // set the maps
+        memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
+
         s.machine.psw.pc = 0;
 
         s.program.symbols = symbols;

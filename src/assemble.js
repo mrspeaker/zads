@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { to_nibs, from_nibs, fw_to_bytes } from "./bytes.js";
+import { from_nibs, fw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 import {
   parseOperands,
@@ -34,6 +34,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
     }
   );
 
+  // Add in extra symbols for the zads environment (eg, VIC)
   extraSymbolsF && extraSymbolsF(symbols);
 
   // OPERANDS
@@ -294,25 +295,6 @@ export const parseImmediate = (v) => {
   }
 
   return [parseInt(v, 10)];
-};
-
-export const parseBaseDisplace = (o, base, symbols) => {
-  const INDEX = 0;
-  const bdregex = /([\d\w]+)\(([\d\w]*),([\d\w]+)\)/g;
-  const matches = [...o.matchAll(bdregex)].flat();
-  if (matches.length === 4) {
-    //base disp
-    const [, disp, index, base] = matches;
-    const mindex = parseInt(index, 10) || 0;
-    const mbase = parseInt(base, 10) || 0;
-    const mdisp = parseInt(disp, 10) || 0;
-    return [mindex, mbase, ...to_nibs(mdisp, 3)];
-  } else if (symbols[o.toLowerCase()]) {
-    return [INDEX, base, ...to_nibs(symbols[o.toLowerCase()].pc, 3)];
-  } else {
-    console.warn("Missing symbol:", o);
-  }
-  return [INDEX, base, 0, 0, 0];
 };
 
 const expandDataStatements = (s) => {

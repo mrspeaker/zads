@@ -28,6 +28,7 @@ export function mk_vic(cols = 320, rows = 240) {
     base: 200,
     regs: 0,
     screen: 100, // Will be end of reg address + 1
+    maps: 356, // screens +256
     keys: {
       left: false,
       right: false,

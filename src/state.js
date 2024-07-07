@@ -18,7 +18,7 @@ export const mk_state = () => ({
     cur_colour: 0,
     spr_w: 16,
     spr_h: 16,
-    sprite_data: Array(16)
+    sprite_data: Array(16 * 16)
       .fill(0)
       .map(() =>
         Array(16 * 16)

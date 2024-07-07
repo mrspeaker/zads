@@ -2,6 +2,12 @@ import { get_op } from "./ops.js";
 import { toHex } from "./utils.js";
 import { to_nibs, regset } from "./bytes.js";
 
+/**
+ * Runs object code in a given environment
+ * @param {number[]} obj program object code array
+ * @param {object} env evironment to run the program
+ * @returns {string} string containing program execution (for debugging)
+ */
 export function run(obj, env) {
   env.psw.pc = 0;
   // TODO: need to relocate prg.
@@ -15,6 +21,12 @@ export function run(obj, env) {
   return exe_txt;
 }
 
+/**
+ * Runs a single step of object code in a given environment
+ * @param {number[]} obj program object code array
+ * @param {object} env evironment to run the program
+ * @returns {string} string containing step execution (for debugging)
+ */
 export function step(obj, env) {
   const { regs, mem, psw } = env;
   const oldpc = psw.pc;

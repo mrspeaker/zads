@@ -137,7 +137,11 @@ function renderScreen(mem, vic, sprites) {
     for (let x = 0; x < 16; x++) {
       const idx = y * 16 + x;
       const v = mem[(scrmem + idx) % mem.length];
-      drawTile(x * 16, y * 16, image_data, sprites.sprite_data[v + 1]);
+      if (v < 0 || v > sprites.sprite_data.length) {
+        console.log("bad value:", v);
+        continue;
+      }
+      drawTile(x * 16, y * 16, image_data, sprites.sprite_data[v]);
     }
   }
 

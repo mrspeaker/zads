@@ -66,7 +66,10 @@ function init_tiles(state, action) {
 
   $click(ctx.canvas, (e) => {
     const { x, y } = $get_ev_pos(e);
-    action("SELECT_SPRITE", ((x / w) * 16) | 0);
+    const ty = ((y / h) * 16) | 0;
+    const tx = ((x / w) * 16) | 0;
+
+    action("SELECT_SPRITE", ty * 16 + tx);
   });
 }
 
