@@ -16,12 +16,13 @@ export const mk_state = () => ({
   sprites: {
     cur_sprite: 0,
     cur_colour: 0,
-    spr_w: 16,
-    spr_h: 16,
-    sprite_data: Array(16 * 16)
+    pen_size: 1,
+    spr_w: 8,
+    spr_h: 8,
+    sprite_data: Array(8 * 8)
       .fill(0)
       .map(() =>
-        Array(16 * 16)
+        Array(8 * 8)
           .fill(0)
           .map(() => Math.max(0, ((Math.random() * 20) | 0) - 16))
       ),
@@ -29,7 +30,7 @@ export const mk_state = () => ({
     map_h: 16,
     map: Array(16 * 16)
       .fill(0)
-      .map(() => (Math.random() * 16) | 0),
+      .map(() => (Math.random() * 64) | 0),
   },
 });
 

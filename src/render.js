@@ -100,10 +100,9 @@ const drawPixel1 = (x, y, w, c, img) => {
 const drawSprite = (sprNum, data, cols, mval, sprites, cur_sprite) => {
   const x = mval(vic_regs["SPR" + sprNum + "_X"]);
   const y = mval(vic_regs["SPR" + sprNum + "_Y"]);
-  const col = pal_to_rgb(mval(vic_regs["SPR" + sprNum + "_COL"]));
   const spr = sprites.sprite_data[cur_sprite];
-  for (let j = 0; j < 16; j++) {
-    for (let i = 0; i < 16; i++) {
+  for (let j = 0; j < sprites.spr_h; j++) {
+    for (let i = 0; i < sprites.spr_w; i++) {
       const idx = j * sprites.spr_w + i;
       const pix = spr[idx];
       const col = pal_to_rgb(pix);
@@ -113,16 +112,17 @@ const drawSprite = (sprNum, data, cols, mval, sprites, cur_sprite) => {
 };
 
 const drawTile = (x, y, img, sprite_data) => {
-  for (let j = 0; j < 16; j++) {
-    for (let i = 0; i < 16; i++) {
-      const col = pal_to_rgb(sprite_data[j * 16 + i]);
-      drawPixel1(x + i, y + j, 256, col, img);
+  for (let j = 0; j < 8; j++) {
+    for (let i = 0; i < 8; i++) {
+      const col = pal_to_rgb(sprite_data[j * 8 + i]);
+      drawPixel1(x + i, y + j, 128, col, img);
     }
   }
 };
 
 function renderScreen(mem, vic, sprites) {
   const { base, screen, rows, cols } = vic;
+  const { map_w, map_h, spr_w, spr_h } = sprites;
   const mval = (offset) => memval(mem, base + offset);
 
   const c = $("#screen").getContext("2d");
@@ -133,20 +133,20 @@ function renderScreen(mem, vic, sprites) {
   const scrmem = base + screen;
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
   const { data: image_data } = imgData;
-  for (let y = 0; y < 16; y++) {
-    for (let x = 0; x < 16; x++) {
-      const idx = y * 16 + x;
+  for (let y = 0; y < map_h; y++) {
+    for (let x = 0; x < map_w; x++) {
+      const idx = y * map_w + x;
       const v = mem[(scrmem + idx) % mem.length];
       if (v < 0 || v > sprites.sprite_data.length) {
         console.log("bad value:", v);
         continue;
       }
-      drawTile(x * 16, y * 16, image_data, sprites.sprite_data[v]);
+      drawTile(x * spr_w, y * spr_h, image_data, sprites.sprite_data[v]);
     }
   }
 
-  mval(vic_regs.SPR1_ON) && drawSprite(1, image_data, 256, mval, sprites, 0);
-  mval(vic_regs.SPR2_ON) && drawSprite(2, image_data, 256, mval, sprites, 1);
+  mval(vic_regs.SPR1_ON) && drawSprite(1, image_data, 128, mval, sprites, 0);
+  mval(vic_regs.SPR2_ON) && drawSprite(2, image_data, 128, mval, sprites, 1);
   c.putImageData(imgData, 0, 0);
 }
 

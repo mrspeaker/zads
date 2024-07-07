@@ -18,6 +18,9 @@ export const actionSpriteReducer = (s, type, value) => {
     case "SET_COLOUR":
       s.cur_colour = value;
       break;
+    case "SET_MAP_TILE":
+      s.map[value] = s.cur_sprite;
+      break;
     default:
       dirty = false;
   }

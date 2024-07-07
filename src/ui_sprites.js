@@ -5,12 +5,62 @@ export function ui_sprites(state, action) {
   init_tile(state, action);
   init_palette(state, action);
   init_tiles(state, action);
+  init_map(state, action);
+}
+
+function $mouse_draw(canvas, tw_, th_, scale, onDraw) {
+  const w = canvas.width * scale;
+  const h = canvas.height * scale;
+
+  const tw = tw_ * scale;
+  const th = th_ * scale;
+
+  // hack for firefox clientx.
+  // get_ev_pos uses clientX, which is reporting
+  // a size + 1 when going off right edge in firefox.
+  const max_tx = ((w / tw) | 0) - 1;
+
+  const get_tile = (e) => {
+    const { x, y } = $get_ev_pos(e);
+    const tx = ((x / w) * tw_) | 0;
+    const ty = ((y / h) * th_) | 0;
+    console.log("txx", x, w, tw);
+    return { tx: Math.min(tx, max_tx), ty };
+  };
+
+  let is_down = false;
+  let last_x = -1;
+  let last_y = -1;
+  let init_tx = -1;
+  let init_ty = -1;
+  $on(canvas, "mousedown", (e) => {
+    is_down = true;
+    const { tx, ty } = get_tile(e);
+    init_tx = tx;
+    init_ty = ty;
+  });
+
+  $on(canvas, "mouseup", (e) => {
+    is_down = false;
+    const { tx, ty } = get_tile(e);
+    if (init_tx == tx && init_ty === ty) {
+      onDraw(tx, ty);
+    }
+  });
+
+  $on(canvas, "mousemove", (e) => {
+    if (!is_down) return;
+    const { tx, ty } = get_tile(e);
+    if (tx !== last_x || ty !== last_y) {
+      last_x = tx;
+      last_y = ty;
+      onDraw(tx, ty);
+    }
+  });
 }
 
 function init_tile(state, action) {
   let ctx = $("#tile_canvas").getContext("2d");
-  let w = ctx.canvas.width;
-  let h = ctx.canvas.height;
 
   const draw_pixel = (tx, ty) => {
     const { sprite_data, cur_sprite, cur_colour, spr_w } = state;
@@ -20,57 +70,18 @@ function init_tile(state, action) {
     action("TILE_UPDATE", [...spr]);
   };
 
-  const get_tile = (e) => {
-    const { spr_w, spr_h } = state;
-    const { x, y } = $get_ev_pos(e);
-    const tx = ((x / w) * spr_w) | 0;
-    const ty = ((y / h) * spr_h) | 0;
-    return { tx, ty };
-  };
-
-  let is_down = false;
-  let last_x = -1;
-  let last_y = -1;
-  let init_tx = -1;
-  let init_ty = -1;
-  $on(ctx.canvas, "mousedown", (e) => {
-    is_down = true;
-    const { tx, ty } = get_tile(e);
-    init_tx = tx;
-    init_ty = ty;
-  });
-
-  $on(ctx.canvas, "mouseup", (e) => {
-    is_down = false;
-    const { tx, ty } = get_tile(e);
-    if (init_tx == tx && init_ty === ty) {
-      draw_pixel(tx, ty);
-    }
-  });
-
-  $on(ctx.canvas, "mousemove", (e) => {
-    if (!is_down) return;
-    const { tx, ty } = get_tile(e);
-    if (tx !== last_x || ty !== last_y) {
-      last_x = tx;
-      last_y = ty;
-      draw_pixel(tx, ty);
-    }
-  });
+  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, 4, draw_pixel);
 }
 
 function init_tiles(state, action) {
   let ctx = $("#tiles_canvas").getContext("2d");
-  let w = ctx.canvas.width;
-  let h = ctx.canvas.height;
 
-  $click(ctx.canvas, (e) => {
-    const { x, y } = $get_ev_pos(e);
-    const ty = ((y / h) * 16) | 0;
-    const tx = ((x / w) * 16) | 0;
+  const select_tile = (tx, ty) => {
+    const idx = ty * state.spr_w + tx;
+    action("SELECT_SPRITE", idx);
+  };
 
-    action("SELECT_SPRITE", ty * 16 + tx);
-  });
+  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, 4, select_tile);
 }
 
 function init_palette(state, action) {
@@ -87,4 +98,15 @@ function init_palette(state, action) {
     });
     pal.appendChild(d);
   });
+}
+
+function init_map(state, action) {
+  let ctx = $("#map_canvas").getContext("2d");
+
+  const draw_tile = (tx, ty) => {
+    const idx = ty * state.map_w + tx;
+    action("SET_MAP_TILE", idx);
+  };
+
+  $mouse_draw(ctx.canvas, state.map_w, state.map_h, 2, draw_tile);
 }

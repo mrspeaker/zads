@@ -204,3 +204,16 @@ select {
 .selected_pal {
     border:2px dotted orange;
 }
+
+#tile_canvas {
+    width: 256px;
+    image-rendering: crisp-edges;
+}
+#tiles_canvas {
+    width: 256px;
+    image-rendering: crisp-edges;
+}
+#map_canvas {
+    width: 256px;
+    image-rendering: crisp-edges;
+}
