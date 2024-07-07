@@ -8,24 +8,25 @@ export function ui_sprites(state, action) {
   init_map(state, action);
 }
 
-function $mouse_draw(canvas, tw_, th_, scale, onDraw) {
+function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
   const w = canvas.width * scale;
   const h = canvas.height * scale;
 
   const tw = tw_ * scale;
-  const th = th_ * scale;
+  //const th = th_ * scale;
 
   // hack for firefox clientx.
   // get_ev_pos uses clientX, which is reporting
   // a size + 1 when going off right edge in firefox.
-  const max_tx = ((w / tw) | 0) - 1;
+  const max_tx = canvas.width / tw_;
+  console.log("max", max_tx, canvas.width, tw_);
 
   const get_tile = (e) => {
     const { x, y } = $get_ev_pos(e);
-    const tx = ((x / w) * tw_) | 0;
-    const ty = ((y / h) * th_) | 0;
+    const tx = ((x / w) * rows) | 0;
+    const ty = ((y / h) * rows) | 0;
     console.log("txx", x, w, tw);
-    return { tx: Math.min(tx, max_tx), ty };
+    return { tx: tx, ty };
   };
 
   let is_down = false;
@@ -70,7 +71,7 @@ function init_tile(state, action) {
     action("TILE_UPDATE", [...spr]);
   };
 
-  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, 4, draw_pixel);
+  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.spr_w, 4, draw_pixel);
 }
 
 function init_tiles(state, action) {
@@ -81,7 +82,14 @@ function init_tiles(state, action) {
     action("SELECT_SPRITE", idx);
   };
 
-  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, 4, select_tile);
+  $mouse_draw(
+    ctx.canvas,
+    state.spr_w,
+    state.spr_h,
+    state.spr_w,
+    4,
+    select_tile
+  );
 }
 
 function init_palette(state, action) {
@@ -108,5 +116,5 @@ function init_map(state, action) {
     action("SET_MAP_TILE", idx);
   };
 
-  $mouse_draw(ctx.canvas, state.map_w, state.map_h, 2, draw_tile);
+  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.map_w, 2, draw_tile);
 }
