@@ -10,6 +10,7 @@ export const mk_render_sprites = () => {
     render_tile(ctx_tile, state);
     render_tiles(ctx_tiles, state);
     render_map(ctx_map, state);
+    render_ui(state);
   };
 };
 
@@ -72,4 +73,8 @@ function render_map(ctx, state) {
       draw_sprite(map[j * map_w + i], i * spr_w, j * spr_h);
     }
   }
+}
+
+function render_ui(state) {
+  $("#chk_map_obj").checked = state.use_maps;
 }

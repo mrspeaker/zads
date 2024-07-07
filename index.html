@@ -20,27 +20,7 @@
         <span> pc:<input type="text" id="psw_pc" /></span>
       </div>
     </div>
-    <div class="boxes" id="screen_sprite">
-      <div id="tile">
-        <div>
-          <div>sprite</div>
-          <canvas id="tile_canvas" width="64" height="64"></canvas>
-          <div id="palette"></div>
-        </div>
-      </div>
-      <div id="tiles">
-        <div>
-          <div>sprites</div>
-          <canvas id="tiles_canvas" width="64" height="64"></canvas>
-        </div>
-      </div>
-      <div id="map">
-        <div>
-          <div>map</div>
-          <canvas id="map_canvas" width="128" height="128"></canvas>
-        </div>
-      </div>
-    </div>
+    <!-- code screen -->
     <div class="boxes" id="screen_code">
       <div id="srcbox">
         <textarea id="src" spellcheck="false"></textarea>
@@ -102,6 +82,56 @@
           <div id="desc"></div>
         </div>
         <div class="boxbar">bar</div>
+      </div>
+    </div>
+
+    <!-- sprite screen -->
+    <div class="boxes" id="screen_sprite">
+      <div id="tile">
+        <div>
+          <div>sprite</div>
+          <canvas id="tile_canvas" width="64" height="64"></canvas>
+          <div id="palette"></div>
+          <div id="pen_size">
+            <div id="pen1">1</div>
+            <div id="pen2">2</div>
+            <div id="spr_copy">copy</div>
+            <div id="spr_paste">paste</div>
+          </div>
+        </div>
+      </div>
+      <div id="tiles">
+        <div>
+          <div>sprites</div>
+          <canvas id="tiles_canvas" width="64" height="64"></canvas>
+        </div>
+      </div>
+      <div id="map">
+        <div>
+          <div>map</div>
+          <canvas id="map_canvas" width="128" height="128"></canvas>
+        </div>
+        <div class="boxbar">
+          <input id="chk_map_obj" type="checkbox" /> inject map into obj?
+        </div>
+      </div>
+      <div>
+        <div></div>
+        <div class="boxbar">..</div>
+      </div>
+      <div>
+        <div></div>
+        <div class="boxbar">..</div>
+      </div>
+      <div>
+        <textarea>
+symbols and mappings
+
+        vic: sprite mappings
+        screen: start of video
+        maps: location of mam data</textarea
+        >
+        <div class="boxbar">..</div>
       </div>
     </div>
   </div>

@@ -6,6 +6,7 @@ export function ui_sprites(state, action) {
   init_palette(state, action);
   init_tiles(state, action);
   init_map(state, action);
+  init_pen(state, action);
 }
 
 function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
@@ -19,13 +20,11 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
   // get_ev_pos uses clientX, which is reporting
   // a size + 1 when going off right edge in firefox.
   const max_tx = canvas.width / tw_;
-  console.log("max", max_tx, canvas.width, tw_);
 
   const get_tile = (e) => {
     const { x, y } = $get_ev_pos(e);
     const tx = ((x / w) * rows) | 0;
     const ty = ((y / h) * rows) | 0;
-    console.log("txx", x, w, tw);
     return { tx: tx, ty };
   };
 
@@ -63,11 +62,29 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
 function init_tile(state, action) {
   let ctx = $("#tile_canvas").getContext("2d");
 
+  const pens = [
+    [[0, 0]],
+    [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+  ];
+
   const draw_pixel = (tx, ty) => {
-    const { sprite_data, cur_sprite, cur_colour, spr_w } = state;
+    const { sprite_data, cur_sprite, cur_colour, spr_w, spr_h, pen_size } =
+      state;
     const spr = sprite_data[cur_sprite];
-    const idx = ty * spr_w + tx;
-    spr[idx] = cur_colour;
+
+    pens[pen_size].forEach(([xo, yo]) => {
+      const txo = tx + xo;
+      const tyo = ty + yo;
+      if (txo < 0 || txo > spr_w - 1) return;
+      if (tyo < 0 || tyo > spr_h - 1) return;
+      const idx = tyo * spr_w + txo;
+      spr[idx] = cur_colour;
+    });
     action("TILE_UPDATE", [...spr]);
   };
 
@@ -117,4 +134,14 @@ function init_map(state, action) {
   };
 
   $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.map_w, 2, draw_tile);
+}
+
+function init_pen(state, action) {
+  $click("#pen1", () => action("SET_PEN", 0));
+  $click("#pen2", () => action("SET_PEN", 1));
+  $click("#spr_copy", () => action("SPRITE_COPY"));
+  $click("#spr_paste", () => action("SPRITE_PASTE"));
+  $click("#chk_map_obj", (e) => {
+    action("MAP_INJECT", e.target.checked);
+  });
 }

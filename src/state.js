@@ -14,9 +14,11 @@ export const mk_state = () => ({
   selected: null,
   cyclesPerFrame: 2,
   sprites: {
+    use_maps: false,
     cur_sprite: 0,
     cur_colour: 0,
     pen_size: 1,
+    copy_buf: [],
     spr_w: 8,
     spr_h: 8,
     sprite_data: Array(8 * 8)

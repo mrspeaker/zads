@@ -196,24 +196,40 @@ select {
     color: var(--highlight-cool);
 }
 
+#palette{
+    width:80px;
+    display:inline-block
+}
 .pal {
     display: inline-block;
-    width: 40px;
-    height: 40px;
+    width: 20px;
+    height: 20px;
 }
 .selected_pal {
     border:2px dotted orange;
 }
 
+#pen_size {
+}
+#pen_size > div {
+    display: inline-block;
+    width: 50px;
+    height: 20px;
+    border: 1px solid #fff;
+    text-align: center;
+}
+
+
+#screen_sprite canvas {
+    image-rendering: crisp-edges;
+    cursor: crosshair;
+}
 #tile_canvas {
     width: 256px;
-    image-rendering: crisp-edges;
 }
 #tiles_canvas {
     width: 256px;
-    image-rendering: crisp-edges;
 }
 #map_canvas {
     width: 256px;
-    image-rendering: crisp-edges;
 }
