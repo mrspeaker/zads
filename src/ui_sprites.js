@@ -1,7 +1,10 @@
-import { $, $click, $on, $get_ev_pos } from "./utils.js";
+import { $, $click, $on, $get_ev_pos, $div } from "./utils.js";
+import { pal_hex } from "./vic.js";
 
 export function ui_sprites(state, action) {
   init_tile(state, action);
+  init_palette(state, action);
+  init_tiles(state, action);
 }
 
 function init_tile(state, action) {
@@ -10,10 +13,10 @@ function init_tile(state, action) {
   let h = ctx.canvas.height;
 
   const draw_pixel = (tx, ty) => {
-    const { sprite_data, cur_sprite, spr_w } = state;
+    const { sprite_data, cur_sprite, cur_colour, spr_w } = state;
     const spr = sprite_data[cur_sprite];
     const idx = ty * spr_w + tx;
-    spr[idx] = spr[idx] ? 0 : 1;
+    spr[idx] = cur_colour;
     action("TILE_UPDATE", [...spr]);
   };
 
@@ -53,5 +56,32 @@ function init_tile(state, action) {
       last_y = ty;
       draw_pixel(tx, ty);
     }
+  });
+}
+
+function init_tiles(state, action) {
+  let ctx = $("#tiles_canvas").getContext("2d");
+  let w = ctx.canvas.width;
+  let h = ctx.canvas.height;
+
+  $click(ctx.canvas, (e) => {
+    const { x, y } = $get_ev_pos(e);
+    action("SELECT_SPRITE", ((x / w) * 16) | 0);
+  });
+}
+
+function init_palette(state, action) {
+  const pal = $("#palette");
+  pal_hex.forEach((p, i) => {
+    const d = $div();
+    d.classList.add("pal");
+    d.style.backgroundColor = p;
+    $click(d, () => {
+      action("SET_COLOUR", i);
+      // render
+      $(".selected_pal")?.classList.remove("selected_pal");
+      d.classList.add("selected_pal");
+    });
+    pal.appendChild(d);
   });
 }

@@ -12,6 +12,12 @@ export const actionSpriteReducer = (s, type, value) => {
     case "TILE_UPDATE":
       s.sprite_data[s.cur_sprite] = value;
       break;
+    case "SELECT_SPRITE":
+      s.cur_sprite = value;
+      break;
+    case "SET_COLOUR":
+      s.cur_colour = value;
+      break;
     default:
       dirty = false;
   }

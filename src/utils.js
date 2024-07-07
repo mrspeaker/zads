@@ -18,6 +18,10 @@ export const $get_ev_pos = (ev) => {
   const { left, top } = ev.target.getBoundingClientRect();
   return { x: Math.floor(ev.clientX - left), y: Math.floor(ev.clientY - top) };
 };
+export const $div = () => {
+  const d = document.createElement("div");
+  return d;
+};
 
 export const delay = (time) => new Promise((res) => setTimeout(res, time));
 

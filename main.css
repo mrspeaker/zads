@@ -195,3 +195,12 @@ select {
 .blinkn {
     color: var(--highlight-cool);
 }
+
+.pal {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+.selected_pal {
+    border:2px dotted orange;
+}

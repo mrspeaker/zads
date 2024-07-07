@@ -180,6 +180,17 @@ const op_and_zero_rr = () => {
   return regval(env.regs[0]) == 0b00000000 && env.psw.conditionCode === 0;
 };
 
+const op_mvi_boundary = () => {
+  const env = mk_env([0x00]);
+  env.mem[0] = 0x1;
+  env.mem[1] = 0x0;
+  const imm = 0x02;
+  const obj = [code("MVI"), imm, 0x00, 0x01];
+  step(obj, env);
+  // Make sure mvi only affects 1 byte
+  return env.mem[0] === 0x1 && env.mem[1] === 0x02;
+};
+
 const op_xor = () => {
   const env = mk_env();
   env.mem[0] = 0b10111101;
@@ -251,6 +262,7 @@ export default [
   op_ahi_add1,
   op_ahi_add_ff,
   op_ahi_sub1,
+  op_mvi_boundary,
   op_ori,
   op_ori_zero,
   op_or_rr,

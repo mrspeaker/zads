@@ -89,8 +89,7 @@ const drawPixel = (x, y, c, img, cols) => {
 };
 
 const drawPixel1 = (x, y, w, c, img) => {
-  const pixelsPerLine = w;
-  const datasPerLine = pixelsPerLine * 4;
+  const datasPerLine = w * 4;
   const yoff = y * datasPerLine;
   img[yoff + x * 4] = c[0];
   img[yoff + x * 4 + 1] = c[1];
@@ -113,19 +112,11 @@ const drawSprite = (sprNum, data, cols, mval, sprites, cur_sprite) => {
   }
 };
 
-const drawChar = (x, y, ch, img, cols) => {
-  const xx = x * 8;
-  const yy = y * 8;
-  const pixelsPerLine = cols * 8;
-  const datasPerLine = pixelsPerLine * 4;
-  for (let j = 0; j < 8; j++) {
-    const yoff = (yy + j) * datasPerLine;
-    for (let i = 0; i < 8; i++) {
-      const v = (i + j) % 2 === 0 ? 255 : 0;
-      img[yoff + (xx + i) * 4] = (Math.random() * 255) | 0;
-      img[yoff + (xx + i) * 4 + 1] = v;
-      img[yoff + (xx + i) * 4 + 2] = v;
-      img[yoff + (xx + i) * 4 + 3] = v;
+const drawTile = (x, y, img, sprite_data) => {
+  for (let j = 0; j < 16; j++) {
+    for (let i = 0; i < 16; i++) {
+      const col = pal_to_rgb(sprite_data[j * 16 + i]);
+      drawPixel1(x + i, y + j, 256, col, img);
     }
   }
 };
@@ -141,19 +132,17 @@ function renderScreen(mem, vic, sprites) {
 
   const scrmem = base + screen;
   const imgData = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
-  const { data } = imgData;
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      const idx = y * cols + x;
+  const { data: image_data } = imgData;
+  for (let y = 0; y < 16; y++) {
+    for (let x = 0; x < 16; x++) {
+      const idx = y * 16 + x;
       const v = mem[(scrmem + idx) % mem.length];
-      const col = pal_to_rgb(v % 16);
-      drawPixel(x, y, col, data, cols);
-      if (v == 0x06) drawChar(x, y, v, data, cols);
+      drawTile(x * 16, y * 16, image_data, sprites.sprite_data[v + 1]);
     }
   }
 
-  drawSprite(1, data, 256, mval, sprites, 0);
-  drawSprite(2, data, 256, mval, sprites, 1);
+  mval(vic_regs.SPR1_ON) && drawSprite(1, image_data, 256, mval, sprites, 0);
+  mval(vic_regs.SPR2_ON) && drawSprite(2, image_data, 256, mval, sprites, 1);
   c.putImageData(imgData, 0, 0);
 }
 

@@ -6,8 +6,8 @@ export const vic_regs = Object.fromEntries(
   Object.entries({
     BG_COL: 0,
     FG_COL: 1,
-    SPR1_COL: 2,
-    SPR2_COL: 3,
+    SPR1_ON: 2,
+    SPR2_ON: 3,
     SPR1_X: 4,
     SPR1_Y: 5,
     SPR2_X: 6,
@@ -121,7 +121,7 @@ const pal_hex_64b = [
   "#bda791",
 ];
 
-const pal_hex = pal_hex_c64;
+export const pal_hex = pal_hex_c64;
 const pal_rgb = pal_hex.map((v) =>
   chunk(v.split("").slice(1), 2).map((v) => parseInt(v.join(""), 16))
 );
