@@ -75,7 +75,6 @@ function dumColors() {
     c = c % 16;
     if (c === 0) c = 9;
 
-    console.log(c);
     t.style.color = pal_to_hex(c);
   });
   $("#docs").style.color = pal_to_hex(3);
