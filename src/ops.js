@@ -348,6 +348,7 @@ export const ops = {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const rval = bytes_to_fw(regs[r1]);
       const sval = memval(mem, ptr); // NOPE! This is Full word, not half.
+      /// BZZZT! These condition codes are wrong.
       if (rval === sval) {
         psw.conditionCode = 0;
       } else if (rval < sval) {

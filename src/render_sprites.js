@@ -77,4 +77,5 @@ function render_map(ctx, state) {
 
 function render_ui(state) {
   $("#chk_map_obj").checked = state.use_maps;
+  $("#cur_sprite").innerText = state.cur_sprite;
 }

@@ -1,6 +1,6 @@
 import { ops, op_by_mn } from "./ops.js";
 import { chunk, eb2code } from "./utils.js";
-import { from_nibs, fw_to_bytes } from "./bytes.js";
+import { from_nibs, fw_to_bytes, hw_to_bytes } from "./bytes.js";
 import { ops_extended } from "./ops_extended.js";
 import {
   parseOperands,
@@ -280,6 +280,8 @@ export const parseImmediate = (v) => {
         return [parseInt(num, 16)];
       case "c":
         return [eb2code(rest[0])];
+      case "h":
+        return hw_to_bytes(parseInt(num, 10));
       case "f":
         return fw_to_bytes(parseInt(num, 10));
 

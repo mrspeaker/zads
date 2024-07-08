@@ -55,6 +55,8 @@ export const parseOperands = (s, symbols, eqs, base) => {
     parseOperand(o, symbols, base, type, i, stmt.mn)
   );
 
+  if (!enc[0]) console.log("no", stmt);
+
   // Re-org operands depending on operation.
   switch (type) {
     case "RR":

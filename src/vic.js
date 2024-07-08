@@ -1,24 +1,27 @@
 import { chunk } from "./utils.js";
 
-const DWORD = 4;
-
 export const vic_regs = Object.fromEntries(
   Object.entries({
-    BG_COL: 0,
-    FG_COL: 1,
-    SPR1_IDX: 2,
-    SPR2_IDX: 3,
-    SPR1_X: 4,
-    SPR1_Y: 5,
-    SPR2_X: 6,
-    SPR2_Y: 7,
-    KEY_LEFT: 8,
-    KEY_RIGHT: 9,
-    KEY_UP: 10,
-    KEY_DOWN: 11,
-    KEY_FIRE: 12,
-    KEY_FIRE_2: 13,
-  }).map(([k, v]) => [k, v * DWORD])
+    TIME: 0,
+    SPR0_IDX: 2,
+    SPR1_IDX: 3,
+    SPR2_IDX: 4,
+    SPR3_IDX: 5,
+    SPR0_X: 6,
+    SPR0_Y: 7,
+    SPR1_X: 8,
+    SPR1_Y: 9,
+    SPR2_X: 10,
+    SPR2_Y: 11,
+    SPR3_X: 12,
+    SPR3_Y: 13,
+    KEY_LEFT: 14,
+    KEY_RIGHT: 15,
+    KEY_UP: 16,
+    KEY_DOWN: 17,
+    KEY_FIRE: 18,
+    KEY_FIRE_2: 19,
+  })
 );
 
 export function mk_vic(cols = 320, rows = 240) {
@@ -52,12 +55,12 @@ export function updateVic(vic, mem, input) {
   keys.fire_2 = input.fire_2;
 
   // WRITE
-  mem[offset + vic_regs.KEY_LEFT + 3] = keys.left ? 1 : 0;
-  mem[offset + vic_regs.KEY_RIGHT + 3] = keys.right ? 1 : 0;
-  mem[offset + vic_regs.KEY_UP + 3] = keys.up ? 1 : 0;
-  mem[offset + vic_regs.KEY_DOWN + 3] = keys.down ? 1 : 0;
-  mem[offset + vic_regs.KEY_FIRE + 3] = keys.fire ? 1 : 0;
-  mem[offset + vic_regs.KEY_FIRE_2 + 3] = keys.fire_2 ? 1 : 0;
+  mem[offset + vic_regs.KEY_LEFT] = keys.left ? 1 : 0;
+  mem[offset + vic_regs.KEY_RIGHT] = keys.right ? 1 : 0;
+  mem[offset + vic_regs.KEY_UP] = keys.up ? 1 : 0;
+  mem[offset + vic_regs.KEY_DOWN] = keys.down ? 1 : 0;
+  mem[offset + vic_regs.KEY_FIRE] = keys.fire ? 1 : 0;
+  mem[offset + vic_regs.KEY_FIRE_2] = keys.fire_2 ? 1 : 0;
 
   return vic;
 }

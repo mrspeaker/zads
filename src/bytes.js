@@ -22,6 +22,11 @@ export const fw_to_bytes = (num) => [
   (num & 0x000000ff) >> 0,
 ];
 
+export const hw_to_bytes = (num) => [
+  (num & 0x0000ff00) >> 8,
+  (num & 0x000000ff) >> 0,
+];
+
 export const bytes_eq = (bytes, mem, offset = 0) =>
   bytes.every((b, i) => mem[offset + i] === b);
 

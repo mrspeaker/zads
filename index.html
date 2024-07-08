@@ -114,7 +114,7 @@
         <div>
           <div>sprite set</div>
           <canvas id="tiles_canvas" width="64" height="64"></canvas>
-          <div>sprite <span>0</span></div>
+          <div>sprite <span id="cur_sprite">.</span></div>
         </div>
       </div>
       <div id="map">
@@ -122,7 +122,8 @@
           <div>tile map</div>
           <canvas id="map_canvas" width="128" height="128"></canvas>
           <div>
-            <input id="chk_map_obj" type="checkbox" />inject map into obj?
+            <button id="clear_map">clear</button>
+            <input id="chk_map_obj" type="checkbox" />inject data
           </div>
         </div>
         <div class="boxbar"></div>

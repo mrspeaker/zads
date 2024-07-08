@@ -37,7 +37,7 @@ export function disassemble_line(psw, obj, symbol, showBytes) {
   let txt = "";
   const op = get_op(obj, psw);
   const pc_loc = toHex(psw) + ": ";
-  if (op) {
+  if (op && op.mn !== "HALT") {
     const { mn, len } = op;
     const opers = obj
       .slice(psw + 1, psw + len)

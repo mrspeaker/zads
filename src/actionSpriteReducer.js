@@ -37,6 +37,9 @@ export const actionSpriteReducer = (s, type, value) => {
     case "MAP_INJECT":
       s.use_maps = value;
       break;
+    case "MAP_CLEAR":
+      s.map.forEach((_, i) => (s.map[i] = s.cur_sprite));
+      break;
     default:
       dirty = false;
   }

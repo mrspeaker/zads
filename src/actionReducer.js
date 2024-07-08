@@ -6,6 +6,7 @@ import { memset, regset } from "./bytes.js";
 import { mk_program } from "./state.js";
 import { chunk } from "./utils.js";
 import { actionSpriteReducer } from "./actionSpriteReducer.js";
+import { vic_regs } from "./vic.js";
 
 const save = async (progs) => {
   if (!window.localStorage) return;
@@ -134,15 +135,31 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
             eqs.EX_EQU = "10";
           },
           (symbols) => {
-            symbols["vic"] = {
-              pc: s.machine.vic.base + s.machine.vic.regs,
-            };
-            symbols["screen"] = {
-              pc: s.machine.vic.base + s.machine.vic.screen,
-            };
-            symbols["maps"] = {
-              pc: s.machine.vic.base + s.machine.vic.maps,
-            };
+            // Inject screen and prite symbols
+            const { base, regs, screen, maps } = s.machine.vic;
+            const vic = base + regs;
+            symbols["vic"] = { pc: vic };
+            symbols["screen"] = { pc: base + screen, len: 4 };
+            symbols["maps"] = { pc: base + maps, len: 4 };
+            symbols["time"] = { pc: vic + 0, len: 2 };
+            for (let i = 0; i < s.sprites.num_sprites; i++) {
+              const sym = `spr${i}_`;
+              ["idx", "x", "y"].forEach((suf) => {
+                symbols[sym + suf] = {
+                  pc: vic + vic_regs[(sym + suf).toUpperCase()],
+                  len: 1,
+                };
+              });
+            }
+            ["left", "right", "up", "down", "fire", "fire_2"].forEach(
+              (k, i) => {
+                const key = "key_" + k;
+                symbols[key] = {
+                  pc: vic + vic_regs[key.toUpperCase()],
+                  len: 1,
+                };
+              }
+            );
           }
         );
 

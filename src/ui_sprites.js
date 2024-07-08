@@ -135,6 +135,7 @@ function init_pen(state, action) {
   $click("#pen2", () => action("SET_PEN", 1));
   $click("#spr_copy", () => action("SPRITE_COPY"));
   $click("#spr_paste", () => action("SPRITE_PASTE"));
+  $click("#clear_map", () => action("MAP_CLEAR"));
   $click("#chk_map_obj", (e) => {
     action("MAP_INJECT", e.target.checked);
   });
