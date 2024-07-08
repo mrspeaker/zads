@@ -20,6 +20,7 @@
         <span> pc:<input type="text" id="psw_pc" /></span>
       </div>
     </div>
+
     <!-- code screen -->
     <div class="boxes" id="screen_code">
       <div id="srcbox">
@@ -89,31 +90,33 @@
     <div class="boxes" id="screen_sprite">
       <div id="tile">
         <div>
-          <div>sprite</div>
+          <div>sprite creator</div>
           <canvas id="tile_canvas" width="64" height="64"></canvas>
           <div id="palette"></div>
           <div id="pen_size">
-            <div id="pen1">1</div>
-            <div id="pen2">2</div>
-            <div id="spr_copy">copy</div>
-            <div id="spr_paste">paste</div>
+            <button id="pen1">1px</button>
+            <button id="pen2">2px</button>
+            <button id="spr_copy">copy</button>
+            <button id="spr_paste">paste</button>
           </div>
         </div>
       </div>
       <div id="tiles">
         <div>
-          <div>sprites</div>
+          <div>sprite set</div>
           <canvas id="tiles_canvas" width="64" height="64"></canvas>
+          <div>sprite <span>0</span></div>
         </div>
       </div>
       <div id="map">
         <div>
-          <div>map</div>
+          <div>tile map</div>
           <canvas id="map_canvas" width="128" height="128"></canvas>
+          <div>
+            <input id="chk_map_obj" type="checkbox" />inject map into obj?
+          </div>
         </div>
-        <div class="boxbar">
-          <input id="chk_map_obj" type="checkbox" />inject map into obj?
-        </div>
+        <div class="boxbar"></div>
       </div>
       <div>
         <div></div>

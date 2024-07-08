@@ -437,7 +437,6 @@ export const ops = {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const a = regval(regs[r1]);
       const b = memval(mem, ptr);
-      //const { res, cc } = addAndCC(a, -b);
       regset(regs[r1], a * b);
       //psw.conditionCode = cc;
     },
@@ -479,8 +478,7 @@ export const ops = {
     code: 0x89,
     len: 4,
     f: (ops, regs, mem) => {
-      // TODO: for sure wrong. Doesn't set carry, and I forgot how the ops worked,
-      // For SURE wrong: first RS type instruction! And no carry.
+      // TODO: no CC set
       const [r1, r3, b2, da, db, dc] = ops;
       const ptr = base_displace_regs(regs, 0, b2, da, db, dc);
       const shift_amount = memval(mem, ptr);
@@ -550,7 +548,7 @@ export const ops = {
       const a = mem[ptr];
       const val = from_nibs([i1, i2]);
       const and_val = a & val;
-      // cc: 0 === zero, 1 === not zero\
+      // cc: 0 === zero, 1 === not zero
       psw.conditionCode = and_val === 0 ? 0 : 1;
       mem[ptr] = and_val;
     },
@@ -590,7 +588,7 @@ export const ops = {
       const a = mem[ptr];
       const val = from_nibs([i1, i2]);
       const xor_val = a ^ val;
-      // cc: 0 === zero, 1 === not zero\
+      // cc: 0 === zero, 1 === not zero
       psw.conditionCode = xor_val === 0 ? 0 : 1;
       mem[ptr] = xor_val;
     },

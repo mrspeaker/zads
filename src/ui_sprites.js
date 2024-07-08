@@ -14,12 +14,6 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
   const h = canvas.height * scale;
 
   const tw = tw_ * scale;
-  //const th = th_ * scale;
-
-  // hack for firefox clientx.
-  // get_ev_pos uses clientX, which is reporting
-  // a size + 1 when going off right edge in firefox.
-  const max_tx = canvas.width / tw_;
 
   const get_tile = (e) => {
     const { x, y } = $get_ev_pos(e);

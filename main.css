@@ -1,8 +1,11 @@
 @font-face {
   font-family: "vga";
-  /*src: url("res/Web437_IBM_VGA_8x16-2x.woff") format("woff");*/
-  src: url("res/WebPlus_Cordata_PPC-21.woff") format("woff");
-
+  /*
+    src: url("res/Web437_IBM_VGA_8x16-2x.woff") format("woff");
+    src: url("res/Web437_RM_Nimbus-2y.woff") format("woff");
+    src: url("res/Web437_Tandy1K-I_200L-2y.woff") format("woff");
+  ;*/
+  src: url("res/Web437_ATI_8x14.woff") format("woff");
 }
 
 html,
@@ -21,6 +24,11 @@ body {
   --text-color: #eaa49c;
   --text-color-unselected: #999;
   --status-bar: #333;
+
+  --c64-light-blue: #44bbff;
+  --c64-light-green: #aaff66;
+  --c64-pink: #ff7777;
+  --c64-orange: #dd8855;
 }
 
 .ok {
@@ -140,6 +148,10 @@ textarea:focus {
   color: var(--text-color);
 }
 
+#mem {
+    cursor: pointer;
+}
+
 select {
   border: 0;
   background-color: var(--highlight-warm);
@@ -197,7 +209,7 @@ select {
 }
 
 #palette{
-    width:80px;
+    width:42px;
     display:inline-block
 }
 .pal {
@@ -219,17 +231,29 @@ select {
     text-align: center;
 }
 
-
 #screen_sprite canvas {
     image-rendering: crisp-edges;
     cursor: crosshair;
+    border: 2px solid #333;
+    border-radius: 6px;
 }
 #tile_canvas {
     width: 256px;
 }
 #tiles_canvas {
     width: 256px;
+    cursor: pointer !important;
 }
 #map_canvas {
     width: 256px;
+}
+
+#map > div,
+#tiles > div,
+#tile > div {
+    text-align: center;
+}
+#tile .boxbar {
+    text-align: left;
+    margin-top: 2em;
 }

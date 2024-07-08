@@ -136,8 +136,8 @@ function renderScreen(mem, vic, sprites) {
   for (let y = 0; y < map_h; y++) {
     for (let x = 0; x < map_w; x++) {
       const idx = y * map_w + x;
-      const v = mem[(scrmem + idx) % mem.length];
-      if (v < 0 || v > sprites.sprite_data.length) {
+      const v = mem[(scrmem + idx) % mem.length] % sprites.sprite_data.length;
+      if (v < 0) {
         console.log("bad value:", v);
         continue;
       }

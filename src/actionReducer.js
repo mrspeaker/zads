@@ -162,7 +162,6 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         memset(s.program.code, s.machine.mem, 0);
 
         // set the maps
-        console.log("ohhhh", s.sprites.use_maps);
         if (s.sprites.use_maps) {
           memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
         }

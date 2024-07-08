@@ -15,7 +15,7 @@ export const tokenizeOperands = (ops) => {
 //  console.log("Literals:", expanded.lits);
 
 /**
- * Converts text operands to nibbles for passeing to Op functions
+ * Converts text operands to nibbles for passing to Op functions
  * @param {object} s statememt object
  * @param {object} symbols symbol table
  * @param {array} equs equates?
@@ -259,7 +259,7 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
       const bd = parseBaseDisplace(s1, base, symbols);
       const addr = bd.slice(1); // no index
       const len = parseInt(n1);
-      return [...to_nibs(len), ...addr];
+      return [...to_nibs(len, 4), ...addr];
     }
     // S2
     const bd = parseBaseDisplace(o, base, symbols);
