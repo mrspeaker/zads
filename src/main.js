@@ -30,8 +30,8 @@ const action = asyncHandler(actionReducer(state, render, render_sprites));
     action("PROG_LOAD", "mark6");
   }
 
-  let cur_but = -1;
-  let but_timer = 0;
+  let blinkn_cur_but = -1; // for
+  let blinkn_but_timer = 0;
   const $buttons = $$("button,input");
 
   // let's go...
@@ -54,13 +54,13 @@ const action = asyncHandler(actionReducer(state, render, render_sprites));
       render(state);
 
       // dum lights
-      but_timer = (but_timer + 1) % 5;
-      if (but_timer == 0) {
-        if (cur_but > -1) {
-          $buttons[cur_but].classList.remove("blinkn");
+      blinkn_but_timer = (blinkn_but_timer + 1) % 5;
+      if (blinkn_but_timer == 0) {
+        if (blinkn_cur_but > -1) {
+          $buttons[blinkn_cur_but].classList.remove("blinkn");
         }
-        cur_but = (cur_but + 1) % $buttons.length;
-        $buttons[cur_but].classList.add("blinkn");
+        blinkn_cur_but = (blinkn_cur_but + 1) % $buttons.length;
+        $buttons[blinkn_cur_but].classList.add("blinkn");
       }
     }
     requestAnimationFrame(update);
@@ -71,9 +71,9 @@ const action = asyncHandler(actionReducer(state, render, render_sprites));
 function dumColors() {
   $$("textarea").forEach((t, i) => {
     let c = ((i * 3) % 16) + 14;
-    if (i === 1) c = 9;
+    if (i === 1) c = 9; // make src bright
     c = c % 16;
-    if (c === 0) c = 9;
+    if (c === 0) c = 9; // no black text
 
     t.style.color = pal_to_hex(c);
   });

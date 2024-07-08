@@ -97,10 +97,10 @@ const drawPixel1 = (x, y, w, c, img) => {
   img[yoff + x * 4 + 3] = 255;
 };
 
-const drawSprite = (sprNum, data, cols, mval, sprites, cur_sprite) => {
+const drawSprite = (sprNum, data, cols, mval, sprites, sprite_tile) => {
   const x = mval(vic_regs["SPR" + sprNum + "_X"]);
   const y = mval(vic_regs["SPR" + sprNum + "_Y"]);
-  const spr = sprites.sprite_data[cur_sprite];
+  const spr = sprites.sprite_data[sprite_tile % sprites.sprite_data.length];
   for (let j = 0; j < sprites.spr_h; j++) {
     for (let i = 0; i < sprites.spr_w; i++) {
       const idx = j * sprites.spr_w + i;
@@ -145,8 +145,11 @@ function renderScreen(mem, vic, sprites) {
     }
   }
 
-  mval(vic_regs.SPR1_ON) && drawSprite(1, image_data, 128, mval, sprites, 0);
-  mval(vic_regs.SPR2_ON) && drawSprite(2, image_data, 128, mval, sprites, 1);
+  for (let i = 0; i < sprites.num_sprites; i++) {
+    const idx = mval(vic_regs[`SPR${i + 1}_IDX`]);
+    idx && drawSprite(1, image_data, 128, mval, sprites, idx);
+  }
+  // mval(vic_regs.SPR2_IDX) && drawSprite(2, image_data, 128, mval, sprites, 1);
   c.putImageData(imgData, 0, 0);
 }
 

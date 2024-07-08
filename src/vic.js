@@ -6,8 +6,8 @@ export const vic_regs = Object.fromEntries(
   Object.entries({
     BG_COL: 0,
     FG_COL: 1,
-    SPR1_ON: 2,
-    SPR2_ON: 3,
+    SPR1_IDX: 2,
+    SPR2_IDX: 3,
     SPR1_X: 4,
     SPR1_Y: 5,
     SPR2_X: 6,
