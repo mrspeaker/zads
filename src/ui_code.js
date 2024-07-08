@@ -58,6 +58,18 @@ export function ui_code(state, action) {
 
   $click("#fs", () => toggleFullscreen());
 
+  $on("#fontPicker", "change", (e) => {
+    e.target.value &&
+      new FontFace("vga", `url("res/${e.target.value}.woff") format("woff")`)
+        .load()
+        .then((f) => {
+          document.fonts.add(f);
+        })
+        .catch((e) => {
+          console.log("error loading font", e);
+        });
+  });
+
   $click("#btnSprites", (e) => {
     $("#screen_sprite").style.display = "grid";
     $("#screen_code").style.display = "none";

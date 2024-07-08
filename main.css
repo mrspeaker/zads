@@ -1,11 +1,6 @@
 @font-face {
   font-family: "vga";
-  /*
-    src: url("res/Web437_IBM_VGA_8x16-2x.woff") format("woff");
-    src: url("res/Web437_RM_Nimbus-2y.woff") format("woff");
-    src: url("res/Web437_Tandy1K-I_200L-2y.woff") format("woff");
-  ;*/
-  src: url("res/Web437_ATI_8x14.woff") format("woff");
+  src: url("res/WebPlus_Cordata_PPC-21.woff") format("woff");
 }
 
 html,
@@ -257,3 +252,5 @@ select {
     text-align: left;
     margin-top: 2em;
 }
+
+#fs { cursor: pointer }
