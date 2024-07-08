@@ -21,7 +21,6 @@ const saveSprites = async (sprites) => {
   localStorage.setItem("sprites", JSON.stringify(sprites));
 };
 
-let init_render = true;
 const actionReducer = (s, render, sprite_render) => (type, value) => {
   console.log("Action", type);
 
@@ -200,8 +199,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
       !do_render_sprites && console.log("Unhandled ", type);
   }
   do_render && render(s);
-  if (init_render || do_render_sprites) {
-    init_render = false;
+  if (do_render_sprites) {
     saveSprites(s.sprites);
     sprite_render(s.sprites);
   }

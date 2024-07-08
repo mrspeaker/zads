@@ -38,6 +38,7 @@ const asyncHandler = (action) => async (type, value) => {
         }
 
         const sprite_data = JSON.parse(window.localStorage.getItem("sprites"));
+        console.log("FUUUUUUUUUU", sprite_data);
         if (sprite_data) {
           action("SET_SPRITES", sprite_data);
         }
