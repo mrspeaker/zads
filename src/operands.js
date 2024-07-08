@@ -259,7 +259,7 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
       const bd = parseBaseDisplace(s1, base, symbols);
       const addr = bd.slice(1); // no index
       const len = parseInt(n1);
-      return [...to_nibs(len, 4), ...addr];
+      return [...to_nibs(len, 2), ...addr];
     }
     // S2
     const bd = parseBaseDisplace(o, base, symbols);
