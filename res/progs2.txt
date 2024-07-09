@@ -1,0 +1,6 @@
+1: lr
+
+         l     1,a1          load register
+         bcr   b'1111',14    return to caller
+a1       dc    f'42'
+

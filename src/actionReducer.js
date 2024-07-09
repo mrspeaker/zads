@@ -197,6 +197,9 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         s.program.stmts = stmts;
       }
       break;
+    case "REG_SET":
+      regset(s.machine.regs[value.reg], value.val);
+      break;
     case "CYCLES_SET":
       {
         const v = parseInt(value, 10);

@@ -56,6 +56,23 @@ export function ui_code(state, action) {
     }
   );
 
+  // Registers
+  editor(
+    $("#regs"),
+    (text) => {
+      console.log(text);
+    },
+    (txt) => {
+      const reg_num = parseInt(txt, 10);
+      if (!isNaN(reg_num)) {
+        const val = parseInt(prompt("Set R" + reg_num + " to:"), 10);
+        if (!isNaN(val) && val > 0 && val < 16) {
+          action("REG_SET", { reg: reg_num, val });
+        }
+      }
+    }
+  );
+
   $click("#fs", () => toggleFullscreen());
 
   $on("#fontPicker", "change", (e) => {
