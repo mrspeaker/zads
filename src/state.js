@@ -3,6 +3,12 @@ import { mk_vic } from "./vic.js";
 export const mk_mem = (size) => [...Array(size)].fill(0);
 export const mk_regs = (num) => [...Array(num)].fill(0).map(() => [0, 0, 0, 0]);
 
+const dot_sprite = [
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 15, 15, 12, 0, 0, 0,
+  0, 15, 12, 12, 11, 0, 0, 0, 0, 15, 12, 12, 11, 0, 0, 0, 0, 12, 11, 11, 11, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+];
+
 export const mk_state = () => ({
   zads: {
     showObjBytes: false,
@@ -24,16 +30,10 @@ export const mk_state = () => ({
     spr_h: 8,
     sprite_data: Array(8 * 8)
       .fill(0)
-      .map(() =>
-        Array(8 * 8)
-          .fill(0)
-          .map(() => Math.max(0, ((Math.random() * 20) | 0) - 16))
-      ),
+      .map((_, i) => (i === 1 ? dot_sprite.slice() : Array(8 * 8).fill(0))),
     map_w: 16,
     map_h: 16,
-    map: Array(16 * 16)
-      .fill(0)
-      .map(() => (Math.random() * 64) | 0),
+    map: Array(16 * 16).fill(0),
   },
 });
 
