@@ -171,7 +171,8 @@ select {
   text-align: right;
 }
 #screens {
-  position: absolute;
+    position: absolute;
+    width: 85%;
 }
 #screens canvas {
   background-color: #444;
