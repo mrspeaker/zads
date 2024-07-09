@@ -64,9 +64,10 @@ export function ui_code(state, action) {
     },
     (txt) => {
       const reg_num = parseInt(txt, 10);
-      if (!isNaN(reg_num)) {
-        const val = parseInt(prompt("Set R" + reg_num + " to:"), 10);
-        if (!isNaN(val) && val > 0 && val < 16) {
+      if (!isNaN(reg_num) && reg_num > 0 && reg_num < 16) {
+        const inp = prompt("Set R" + reg_num + " to:").trim();
+        const val = parseInt(inp, 10);
+        if (!isNaN(val)) {
           action("REG_SET", { reg: reg_num, val });
         }
       }
