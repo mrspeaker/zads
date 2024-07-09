@@ -166,6 +166,13 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
           }
         );
 
+        // Reset the machine (TODO: move this to function. It's duplicated)
+        s.machine.psw.pc = 0;
+        s.machine.psw.conditionCode = 0;
+        s.machine.regs.forEach((r) => regset(r, 0));
+        s.machine.mem = s.machine.mem.fill(0);
+
+        // Dump code to memory
         const code_bytes = [
           ...bytes
             .filter((s) => !["ds"].includes(s.stmt.mn.toLowerCase()))
@@ -184,11 +191,6 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         if (s.sprites.use_maps) {
           memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
         }
-        // Reset the machine
-        s.machine.psw.pc = 0;
-        s.machine.psw.conditionCode = 0;
-        s.machine.regs.forEach((r) => regset(r, 0));
-
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;
         s.program.addressing.base_addr = addressing.base_addr;
