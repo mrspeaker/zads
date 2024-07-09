@@ -31,8 +31,24 @@ export const get_op = (obj, psw) => {
 
 const ext_ops = {
   0xa7: true, // eg 0xa7a: AHI
+  0xc2: true, // eg 0xc2d: CFI
 };
 
+// TODO: unit test (that 0xf000... looks suspicous)
+const getCC = (a, b) => {
+  let cc = 0;
+  let c = a - b;
+  if (c === 0) {
+    cc = 0; // == 0
+  } else if (c < 0 || c > 0xf0000000) {
+    cc = 1; // < 0
+  } else {
+    cc = 2; // > 0;
+  }
+  return cc;
+};
+
+// TODO: unit test
 const addAndCC = (a, b) => {
   // TODO: handle overflow!
   const c = a + b;
@@ -623,18 +639,21 @@ export const ops = {
     form: "OP R1,R3,D2(B2)",
     form_int: "OPOP R1 R3 B2 D2D2D2",
   },
-  0xc20d: {
+  0xc2d: {
     mn: "CFI",
-    code: 0xc20d,
+    code: 0xc2d,
     len: 4,
-    f: ([...args], regs, mem, psw) => {
-      /*      const a = regval(regs[r1]);
-      const b = from_nibs([ia, ib, ic, id]);
-      const { res, cc } = addAndCC(a, b);
-      regset(regs[r1], res);
+    f: ([r1, _op3, i2a, i2b, i2c, i2d], regs, mem, psw) => {
+      const a = regval(regs[r1]);
+      // propagate sign: // WHAT?!
+      const b = bytes_to_fw([
+        from_nibs([i2a, i2a]),
+        from_nibs([i2a, i2a]),
+        from_nibs([i2a, i2b]),
+        from_nibs([i2c, i2d]),
+      ]);
+      const cc = getCC(a, b);
       psw.conditionCode = cc;
-      */
-      console.log("CFI args:", args);
     },
     name: "compare immediate",
     desc: "The first operand is compared with the second operand, and the result is indicated in the condition code.",

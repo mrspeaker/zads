@@ -2,6 +2,7 @@ import { step } from "../src/emulate.js";
 import { ops, op_by_mn, get_op } from "../src/ops.js";
 import {
   regval,
+  regset,
   fw_to_bytes,
   memset,
   to_nibs,
@@ -73,6 +74,40 @@ const op_cr = () => {
   const obj = [code("CR"), 0x01];
   step(obj, env);
   return env.psw.conditionCode === 1;
+};
+
+const op_ch = () => {
+  return false;
+};
+
+const op_cfi = () => {
+  const env = mk_env([0, 0x10]);
+  const op_code = to_nibs(code("CFI"), 3);
+  // RI format: OP1 OP2 R1 Op3 I1 I2 I3 I4
+  const obj = [
+    from_nibs([op_code[0], op_code[1]]),
+    from_nibs([R1, op_code[2]]),
+    0x00,
+    0x10,
+  ];
+
+  let ok = false;
+
+  step(obj, env);
+  ok = env.psw.conditionCode === 0;
+  // Try again with R1<I
+  env.psw.pc = 0;
+  regset(env.regs[1], 0x0f);
+  step(obj, env);
+  ok &= env.psw.conditionCode === 1;
+
+  // Try again with R1>I
+  env.psw.pc = 0;
+  regset(env.regs[1], 0x1f);
+  step(obj, env);
+  ok &= env.psw.conditionCode === 2;
+
+  return ok;
 };
 
 const op_ahi_add1 = () => {
@@ -262,6 +297,8 @@ export default [
   op_nul,
   op_lr,
   op_l,
+  op_cfi,
+  op_ch,
   op_cr,
   op_ahi_add1,
   op_ahi_add_ff,
