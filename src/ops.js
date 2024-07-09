@@ -87,6 +87,7 @@ export const ops = {
     code: 0x07,
     len: 2,
     f: ([r1, r2], regs, mem, psw) => {
+      // TODO: BCR
       if (r1 === 15 && r2 === 14) {
         // lol, just faking exit.
         // need to properly figure out exit
@@ -326,8 +327,9 @@ export const ops = {
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       const v = bytes_to_fw(regs[r1]);
-      regset(regs[r1], v - 1);
-      if (v !== 0) {
+      const dec = v - 1;
+      regset(regs[r1], dec);
+      if (dec !== 0) {
         jump(ptr - 3, psw); //(4bytes - 1)
       }
     },
