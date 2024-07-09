@@ -100,6 +100,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
       }
       memset(s.program.code, s.machine.mem, 0);
       s.machine.psw.pc = 0;
+      s.machine.psw.conditionCode = 0;
       s.machine.psw.halt = false;
       // TODO: need to relocate prg.
       regset(s.machine.regs[15], 0);
@@ -126,6 +127,8 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
     case "MEM_RESET":
       s.machine.mem = s.machine.mem.fill(0);
       s.machine.regs.forEach((r) => regset(r, 0));
+      s.program.code_txt = [];
+      s.program.obj = [];
       break;
     case "ASSEMBLE_SRC":
       {
@@ -183,6 +186,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         }
 
         s.machine.psw.pc = 0;
+        s.machine.psw.conditionCode = 0;
 
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;
@@ -209,6 +213,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
     case "PSW_PC_RESET":
       {
         s.machine.psw.pc = 0;
+        s.machine.psw.conditionCode = 0;
         s.program.code_txt = [];
       }
       break;

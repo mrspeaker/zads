@@ -46,5 +46,8 @@ export function step(obj, env) {
   f(opers, regs, mem, psw);
   psw.pc += num;
 
-  return toHex(oldpc) + ":" + mn + " " + opers.join(".");
+  return (
+    (toHex(oldpc) + ":" + mn + " " + opers.join(".")).padEnd(26, " ") +
+    psw.conditionCode.toString(2).padStart(2, "0")
+  );
 }
