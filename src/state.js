@@ -8,6 +8,23 @@ const dot_sprite = [
   0, 15, 12, 12, 11, 0, 0, 0, 0, 15, 12, 12, 11, 0, 0, 0, 0, 12, 11, 11, 11, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
+const char_sprite = [
+  0, 0, 14, 14, 14, 14, 0, 0, 0, 14, 14, 14, 14, 14, 12, 0, 14, 14, 0, 1, 14, 0,
+  1, 12, 14, 14, 1, 1, 14, 1, 1, 12, 14, 14, 14, 14, 14, 14, 12, 12, 14, 14, 14,
+  14, 14, 14, 12, 12, 14, 14, 14, 14, 14, 14, 12, 12, 14, 0, 14, 14, 0, 14, 12,
+  12,
+];
+const mk_sprite = (idx) => {
+  switch (idx) {
+    case 1:
+      return dot_sprite.slice();
+    case 2:
+      return char_sprite.slice();
+    default:
+      break;
+  }
+  return Array(8 * 8).fill(0);
+};
 
 export const mk_state = () => ({
   zads: {
@@ -30,7 +47,7 @@ export const mk_state = () => ({
     spr_h: 8,
     sprite_data: Array(8 * 8)
       .fill(0)
-      .map((_, i) => (i === 1 ? dot_sprite.slice() : Array(8 * 8).fill(0))),
+      .map((_, i) => mk_sprite(i)),
     map_w: 16,
     map_h: 16,
     map: Array(16 * 16).fill(0),
