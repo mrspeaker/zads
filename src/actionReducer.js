@@ -184,9 +184,10 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         if (s.sprites.use_maps) {
           memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
         }
-
+        // Reset the machine
         s.machine.psw.pc = 0;
         s.machine.psw.conditionCode = 0;
+        s.machine.regs.forEach((r) => regset(r, 0));
 
         s.program.symbols = symbols;
         s.program.addressing.base = addressing.base;

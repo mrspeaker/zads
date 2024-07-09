@@ -133,10 +133,14 @@ ball_y  dc     f'0'
 edge    dc     f'128'
 
 ----------------------------------
+*=== loop de loop =======
 
-loopdeloop
+         l     1,times
+loop     ds 0h
+         cfi   1,5    set cc
+         bct   1,loop
 
-         l     1,a1
-loop     bct   1,loop
          bcr   b'1111',14
-a1       dc    f'20'
+
+*========================
+times    dc    f'10'
