@@ -34,7 +34,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
     }
   );
 
-  // Add in extra symbols for the zads environment (eg, VIC)
+  // Add in extra symbols for the zardox environment (eg, VIC)
   extraSymbolsF && extraSymbolsF(symbols);
 
   // OPERANDS

@@ -23,7 +23,7 @@ function render(state) {
       : "[object code not loaded]";
     $("#emu").value = code_txt.length
       ? code_txt.join("\n")
-      : "zads VM v" + zads.version;
+      : "Zardox VM v" + zads.version;
     $("#dis").value = code.length
       ? disassemble(code, symbols, showObjBytes).join("\n")
       : "[no code for disassembly]";

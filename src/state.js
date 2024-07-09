@@ -6,7 +6,7 @@ export const mk_regs = (num) => [...Array(num)].fill(0).map(() => [0, 0, 0, 0]);
 export const mk_state = () => ({
   zads: {
     showObjBytes: false,
-    version: "0.1.1",
+    version: "0.1.2",
   },
   machine: mk_machine(),
   program: null,

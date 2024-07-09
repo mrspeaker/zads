@@ -240,7 +240,7 @@ select {
     cursor: pointer !important;
 }
 #map_canvas {
-    width: 256px;
+    width: 512px;
 }
 
 #map > div,

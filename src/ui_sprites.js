@@ -127,7 +127,7 @@ function init_map(state, action) {
     action("SET_MAP_TILE", idx);
   };
 
-  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.map_w, 2, draw_tile);
+  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.map_w, 4, draw_tile);
 }
 
 function init_pen(state, action) {
