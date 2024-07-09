@@ -1,6 +1,137 @@
-1: lr
+*====== Amazing program! =======
 
-         l     1,a1          load register
-         bcr   b'1111',14    return to caller
-a1       dc    f'42'
+        l    1,num  load num into R1
+        la   2,55
+        lr   3,1
 
+        bcr  b'1111',14
+
+num     dc   f'42'
+
+--- addresses my primary complaint of just wanting to load a register.
+
+2: ........ add in a loop ..............
+
+        l    1,num  
+loop    ds   0h
+        bct  1,loop   go to loop
+
+done    bcr  15,14  return
+
+num     dc   f'5'
+
+--- we can loop now, so we're turing complete.
+
+3: ........... condition code ..........
+
+        l    r1,num  load num into R1
+        la   r2,4    r2 = 4
+loop    ds   0h
+        cfi  r1,4
+        be   done
+
+        bct  r1,loop
+done    bcr  r15,r14  return
+
+        asmdreg
+
+num     dc   f'8'
+
+4: ......... output ...........
+
+        la   r2,screen
+
+        l    r1,num     
+loop    ds   0h
+        
+        mvi  0(r2),1
+        ahi  r2,1      screen += 1
+
+        bct  r1,loop
+        
+done    bcr  r15,r14  return
+
+        asmdreg
+
+num     dc   f'256'
+
+--- back to preso
+
+
+5: ...... keys .............
+
+*====== mem mapped io =======
+
+    mvi spr0_idx,2  set img for sprite 0
+    mvi spr0_x,60
+    mvi spr0_y,60
+    
+loop    ds 0h
+
+    ic  3,key_right
+    cfi 3,1
+    bne  no_move
+
+    ic  2,spr0_x
+    ahi 2,1
+    stc 2,spr0_x
+
+no_move ds 0h
+    b  loop
+
+
+6:
+ *====== mem mapped io =======
+
+    mvi spr0_idx,2  set img for sprite 0
+    mvi spr0_x,60
+    mvi spr0_y,60
+
+    mvi spr1_idx,8  baddie
+    mvi spr1_y,8
+
+    mvc screen(255),maps
+    
+loop    ds 0h
+
+    ic  4,spr0_x
+    ic  5,spr0_y
+
+    ic  3,key_right
+    cfi 3,1
+    bne no_r
+    ahi 4,1
+    b moved
+
+no_r ic 3,key_left
+    cfi 3,1
+    bne no_l
+    ahi 4,-1
+    b moved
+
+no_l ic 3,key_up
+    cfi 3,1
+    bne no_u
+    ahi 5,-1
+    b moved
+
+no_u ic 3,key_down
+    cfi 3,1
+    bne moved
+    ahi 5,1
+
+moved ds 0h
+    stc 4,spr0_x
+    stc 5,spr0_y
+
+    ic  3,spr1_x
+    ahi 3,1
+    ch  3,edge
+    bl  done
+    la  3,0
+done ds 0h
+    stc 3,spr1_x
+    
+    b  loop    
+ 
+edge dc f'128'
