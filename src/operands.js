@@ -280,6 +280,15 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
     }
     case "X":
     case "S": {
+      if (mn === "mvi") {
+        // TODO: remove me and also figure out how "index only" should work
+        // super hack for demo! transform "index only"  to "base only" eg: 0(2) -> 0(,2)
+        if (o.match(/\d+\(\d+\)/g)) {
+          const parts = o.split("(");
+          o = parts[0] + "(," + parts[1];
+        }
+      }
+
       return parseBaseDisplace(o, base, symbols);
     }
     default: {
