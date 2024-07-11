@@ -25,6 +25,8 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw, onMove, onOut) {
   let is_down = false;
   let last_x = -1;
   let last_y = -1;
+  let last_move_x = -1;
+  let last_move_y = -1;
   let init_tx = -1;
   let init_ty = -1;
 
@@ -49,11 +51,15 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw, onMove, onOut) {
 
   $on(canvas, "mousemove", (e) => {
     const { tx, ty } = get_tile(e);
-    if (tx !== last_x || ty !== last_y) {
+    if (is_down && (tx !== last_x || ty !== last_y)) {
       last_x = tx;
       last_y = ty;
+      onDraw(tx, ty);
+    }
+    if (tx !== last_move_x || ty !== last_move_y) {
       onMove && onMove(tx, ty);
-      is_down && onDraw(tx, ty);
+      last_move_x = tx;
+      last_move_y = tx;
     }
   });
 }
