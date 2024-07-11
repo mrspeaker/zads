@@ -27,7 +27,7 @@ const action = asyncHandler(actionReducer(state, render, render_sprites));
   // load from storage
   action("STORAGE_LOAD");
   if (!state.selected) {
-    action("PROG_LOAD", "mark6");
+    //  action("PROG_LOAD", "mark6");
   }
 
   let blinkn_cur_but = -1; // for
