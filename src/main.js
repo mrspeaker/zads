@@ -34,6 +34,10 @@ const action = asyncHandler(actionReducer(state, render, render_sprites));
   let blinkn_but_timer = 0;
   const $buttons = $$("button,input");
 
+  window.onerror = function (error, url, line) {
+    console.warn("ERR:" + error + ". " + url + " line:" + line);
+  };
+
   // let's go...
   function update() {
     if (!state.machine.psw.halt) {

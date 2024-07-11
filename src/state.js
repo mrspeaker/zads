@@ -30,6 +30,11 @@ export const mk_state = () => ({
   zads: {
     showObjBytes: false,
     version: "0.1.2",
+    console: [
+      "1. Select (or write) a program",
+      "2. Press 'assemble'",
+      "3. Press 'run'",
+    ],
   },
   machine: mk_machine(),
   program: null,

@@ -11,23 +11,24 @@ function render(state) {
   $("#btnUpdate").disabled = !showObjBytes;
   $("#hz").innerText = 60 * cyclesPerFrame;
 
+  $("#obj").value = zads.console.join("\n");
+
   if (program) {
     const { goff, obj, src, code_txt, code, symbols } = program;
     $("#format").innerText = goff ? "GOFF" : "OBJ";
     $("#src").value = src;
 
-    $("#obj").value = obj.length
+    /*$("#obj").value = obj.length
       ? showObjBytes
         ? obj.map((v) => v.map((vv) => toHex(vv))).join("\n")
         : obj.map(formatObjRecord).join("\n\n")
-      : "[object code not loaded]";
+      : "[object code not loaded]";*/
     $("#emu").value = code_txt.length
       ? code_txt.join("\n")
       : "Zardox VM v" + zads.version;
     $("#dis").value = code.length
       ? disassemble(code, symbols, showObjBytes).join("\n")
       : "[no code for disassembly]";
-
     $("#btnStop").innerText = machine.psw.halt ? "continue" : "stop";
   }
 

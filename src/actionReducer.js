@@ -40,6 +40,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         s.program = mk_program();
         s.program.src = s.programs[value];
         s.selected = value;
+        s.zads.console = ["loaded " + value];
       } else {
         s.selected = null;
       }
@@ -132,69 +133,82 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
       break;
     case "ASSEMBLE_SRC":
       {
-        const { stmts, bytes, symbols, addressing } = assemble(
-          value,
-          (eqs) => {
-            eqs.EX_EQU = "10";
-          },
-          (symbols) => {
-            // Inject screen and prite symbols
-            const { base, regs, screen, maps } = s.machine.vic;
-            const vic = base + regs;
-            symbols["vic"] = { pc: vic };
-            symbols["screen"] = { pc: base + screen, len: 4 };
-            symbols["maps"] = { pc: base + maps, len: 4 };
-            symbols["time"] = { pc: vic + 0, len: 2 };
-            for (let i = 0; i < s.sprites.num_sprites; i++) {
-              const sym = `spr${i}_`;
-              ["idx", "x", "y"].forEach((suf) => {
-                symbols[sym + suf] = {
-                  pc: vic + vic_regs[(sym + suf).toUpperCase()],
-                  len: 1,
-                };
-              });
-            }
-            ["left", "right", "up", "down", "fire", "fire_2"].forEach(
-              (k, i) => {
-                const key = "key_" + k;
-                symbols[key] = {
-                  pc: vic + vic_regs[key.toUpperCase()],
-                  len: 1,
-                };
+        try {
+          s.zads.console = ["assembling..."];
+          const { stmts, bytes, symbols, addressing } = assemble(
+            value,
+            (eqs) => {
+              eqs.EX_EQU = "10";
+            },
+            (symbols) => {
+              // Inject screen and prite symbols
+              const { base, regs, screen, maps } = s.machine.vic;
+              const vic = base + regs;
+              symbols["vic"] = { pc: vic };
+              symbols["screen"] = { pc: base + screen, len: 4 };
+              symbols["maps"] = { pc: base + maps, len: 4 };
+              symbols["time"] = { pc: vic + 0, len: 2 };
+              for (let i = 0; i < s.sprites.num_sprites; i++) {
+                const sym = `spr${i}_`;
+                ["idx", "x", "y"].forEach((suf) => {
+                  symbols[sym + suf] = {
+                    pc: vic + vic_regs[(sym + suf).toUpperCase()],
+                    len: 1,
+                  };
+                });
               }
-            );
+              ["left", "right", "up", "down", "fire", "fire_2"].forEach(
+                (k, i) => {
+                  const key = "key_" + k;
+                  symbols[key] = {
+                    pc: vic + vic_regs[key.toUpperCase()],
+                    len: 1,
+                  };
+                }
+              );
+            }
+          );
+
+          // Reset the machine (TODO: move this to function. It's duplicated)
+          s.machine.psw.pc = 0;
+          s.machine.psw.conditionCode = 0;
+          s.machine.regs.forEach((r) => regset(r, 0));
+          s.machine.mem = s.machine.mem.fill(0);
+
+          // Dump code to memory
+          const code_bytes = [
+            ...bytes
+              .filter((s) => !["ds"].includes(s.stmt.mn.toLowerCase()))
+              .map((s) => s.bytes.bytes),
+          ].flat();
+
+          /// break into segments
+          const ch = chunk(code_bytes, 64).map(bind);
+          s.program.obj = ch.reduce((ac, el) => {
+            return [...ac, ...el];
+          }, []);
+          s.program = mk_program_from_obj(s.program.obj, value);
+          memset(s.program.code, s.machine.mem, 0);
+
+          // set the maps
+          if (s.sprites.use_maps) {
+            memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
           }
-        );
-
-        // Reset the machine (TODO: move this to function. It's duplicated)
-        s.machine.psw.pc = 0;
-        s.machine.psw.conditionCode = 0;
-        s.machine.regs.forEach((r) => regset(r, 0));
-        s.machine.mem = s.machine.mem.fill(0);
-
-        // Dump code to memory
-        const code_bytes = [
-          ...bytes
-            .filter((s) => !["ds"].includes(s.stmt.mn.toLowerCase()))
-            .map((s) => s.bytes.bytes),
-        ].flat();
-
-        /// break into segments
-        const ch = chunk(code_bytes, 64).map(bind);
-        s.program.obj = ch.reduce((ac, el) => {
-          return [...ac, ...el];
-        }, []);
-        s.program = mk_program_from_obj(s.program.obj, value);
-        memset(s.program.code, s.machine.mem, 0);
-
-        // set the maps
-        if (s.sprites.use_maps) {
-          memset(s.sprites.map, s.machine.mem, symbols.maps.pc);
+          s.program.symbols = symbols;
+          s.program.addressing.base = addressing.base;
+          s.program.addressing.base_addr = addressing.base_addr;
+          s.program.stmts = stmts;
+          s.zads.console.push(
+            "done. ",
+            `${s.program.obj.reduce((ac, el) => ac + el.length, 0)} bytes ${
+              s.program.stmts.length
+            } stmts`
+          );
+        } catch (e) {
+          console.warn("error:", e);
+          s.zads.console.push("failed. Error in source.");
+          s.program.src = value;
         }
-        s.program.symbols = symbols;
-        s.program.addressing.base = addressing.base;
-        s.program.addressing.base_addr = addressing.base_addr;
-        s.program.stmts = stmts;
       }
       break;
     case "REG_SET":
