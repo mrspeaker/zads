@@ -43,8 +43,8 @@ export function step(obj, env) {
     .slice(psw.pc, psw.pc + num)
     .map((v) => to_nibs(v))
     .flat();
+  psw.pc += num; // inc should be during fetch cycle
   f(opers, regs, mem, psw);
-  psw.pc += num;
 
   return (
     (toHex(oldpc) + ": " + mn + " " + opers.join(".")).padEnd(26, " ") +
