@@ -86,16 +86,24 @@ export const ops = {
     mn: "BCR",
     code: 0x07,
     len: 2,
-    f: ([r1, r2], regs, mem, psw) => {
-      // TODO: BCR
-      if (r1 === 15 && r2 === 14) {
+    f: ([m1, r2], regs, mem, psw) => {
+      if (m1 === 15 && r2 === 14) {
         // lol, just faking exit.
         // need to properly figure out exit
         psw.halt = true;
+      } else {
+        if (r2 != 0) {
+          const cc = [8, 4, 2, 1][psw.conditionCode];
+          if (m1 & cc) {
+            jump(bytes_to_fw(regs[r2]), psw);
+          }
+        }
       }
-      // NOTE: when R2 is 0, op is performed without branching.
     },
+    name: "branch on condition register",
+    desc: "",
     type: "RR",
+    pdf: "7-29",
     form: "OP M1,R1",
     form_int: "OPOP M1 R1",
   },
@@ -109,7 +117,7 @@ export const ops = {
       regset(regs[r1], psw.pc);
       if (r2 !== 0) {
         // branch to r2
-        psw.pc = bytes_to_fw(regs[r2]);
+        jump(bytes_to_fw(regs[r2]), psw);
       }
     },
     name: "branch and save register",
@@ -399,6 +407,25 @@ export const ops = {
     form: "OP R1,D2(X2,B2)",
     form_int: "OPOP R1 X2 B2 D2D2D2",
   },
+  0x4d: {
+    mn: "BAS",
+    code: 0x4d,
+    name: "branch and save",
+    len: 4,
+    f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
+      const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
+      // store psw
+      regset(regs[r1], psw.pc);
+      // branch to r2
+      psw.pc = ptr;
+    },
+    type: "RX",
+    pdf: "7-27",
+    desc: "Information from the current PSW, including the updated instruction address, is saved as link information at the first-operand location. Subsequently, the instruction address in the PSW is replaced by the branch address.",
+    form: "OP R1,D2(X2,B2)",
+    form_int: "OPOP R1 X2 B2 D2D2D2",
+  },
+
   0x50: {
     mn: "ST",
     code: 0x50,

@@ -46,6 +46,9 @@ const op_nul = () => {
   return env.psw.halt;
 };
 
+const op_bc = () => false;
+const op_bcr = () => false;
+
 const op_lr = () => {
   const env = mk_env([10, LIFE]);
   const obj = [code("LR"), from_nibs([R0, R1])];
@@ -76,9 +79,7 @@ const op_cr = () => {
   return env.psw.conditionCode === 1;
 };
 
-const op_ch = () => {
-  return false;
-};
+const op_ch = () => false;
 
 const op_cfi = () => {
   const env = mk_env([0, 0x10]);
@@ -318,6 +319,8 @@ export default [
   op_nul,
   op_lr,
   op_l,
+  op_bc,
+  op_bcr,
   op_cfi,
   op_ch,
   op_cr,
