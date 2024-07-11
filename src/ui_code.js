@@ -129,6 +129,9 @@ export function ui_code(state, action) {
       action("PROGRAM_DELETE");
     }
   });
+  $click("#btnNewPgm", () => {
+    action("PROGRAM_NEW");
+  });
   $("#cycles").value = state.cyclesPerFrame;
   $on("#cycles", "change", (e) => {
     const v = parseInt(e.target.value, 10);

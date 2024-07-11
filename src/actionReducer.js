@@ -73,6 +73,14 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         save(s.programs);
       }
       break;
+
+    case "PROGRAM_NEW":
+      s.selected = null;
+      s.program = mk_program();
+      s.program.src = "";
+      s.zads.console = [];
+      break;
+
     case "UPDATE_OBJ":
       s.program.code = value.code;
       memset(s.program.code, s.machine.mem, 0);
