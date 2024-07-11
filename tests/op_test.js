@@ -48,6 +48,7 @@ const op_nul = () => {
 
 const op_bc = () => false;
 const op_bcr = () => false;
+const op_bct = () => false;
 
 const op_lr = () => {
   const env = mk_env([10, LIFE]);
@@ -321,6 +322,7 @@ export default [
   op_l,
   op_bc,
   op_bcr,
+  op_bct,
   op_cfi,
   op_ch,
   op_cr,

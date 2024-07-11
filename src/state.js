@@ -29,7 +29,7 @@ const mk_sprite = (idx) => {
 export const mk_state = () => ({
   zads: {
     showObjBytes: false,
-    version: "0.1.2",
+    version: "0.1.3",
     console: [
       "1. Select (or write) a program",
       "2. Press 'assemble'",

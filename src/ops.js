@@ -356,7 +356,7 @@ export const ops = {
       const dec = v - 1;
       regset(regs[r1], dec);
       if (dec !== 0) {
-        jump(ptr - 3, psw); //(4bytes - 1)
+        jump(ptr, psw);
       }
     },
     name: "branch on count",
@@ -374,7 +374,7 @@ export const ops = {
       const cc = [8, 4, 2, 1][psw.conditionCode];
       if (m1 & cc) {
         const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
-        jump(ptr - 3, psw);
+        jump(ptr, psw);
       }
     },
     type: "RX",
