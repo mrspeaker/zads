@@ -15,13 +15,28 @@ export const mk_render_sprites = () => {
 };
 
 function render_tile(ctx, state) {
-  const { sprite_data, spr_w, spr_h, cur_sprite } = state;
+  const { sprite_data, spr_w, spr_h, cur_sprite, cursor, pen_size } = state;
+  const size = pen_size + 1;
   const spr = sprite_data[cur_sprite];
+  let cx = -1;
+  let cy = -1;
   for (let j = 0; j < spr_h; j++) {
     for (let i = 0; i < spr_w; i++) {
-      ctx.fillStyle = pal_to_hex(spr[j * spr_h + i]);
+      const idx = j * spr_h + i;
+      ctx.fillStyle = pal_to_hex(spr[idx]);
       ctx.fillRect(i * spr_w, j * spr_h, spr_w, spr_h);
+
+      if (cursor === idx) {
+        cx = i * spr_w;
+        cy = j * spr_h;
+      }
     }
+  }
+  if (cx > -1) {
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = pal_to_hex(state.cur_colour);
+    ctx.fillRect(cx, cy, spr_w * size, spr_h * size);
+    ctx.globalAlpha = 1.0;
   }
 }
 
@@ -54,7 +69,7 @@ function render_tiles(ctx, state) {
 }
 
 function render_map(ctx, state) {
-  const { sprite_data, spr_w, spr_h, map, map_w, map_h } = state;
+  const { sprite_data, spr_w, spr_h, map, map_w, map_h, map_cursor } = state;
 
   ctx.fillStyle = "orange";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -70,7 +85,14 @@ function render_map(ctx, state) {
 
   for (let j = 0; j < map_h; j++) {
     for (let i = 0; i < map_w; i++) {
-      draw_sprite(map[j * map_w + i], i * spr_w, j * spr_h);
+      const idx = j * map_w + i;
+      draw_sprite(map[idx], i * spr_w, j * spr_h);
+
+      if (map_cursor === idx) {
+        ctx.globalAlpha = 0.75;
+        draw_sprite(state.cur_sprite, i * spr_w, j * spr_h);
+        ctx.globalAlpha = 1.0;
+      }
     }
   }
 }

@@ -9,7 +9,7 @@ export function ui_sprites(state, action) {
   init_pen(state, action);
 }
 
-function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
+function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw, onMove, onOut) {
   const w = canvas.width * scale;
   const h = canvas.height * scale;
 
@@ -27,6 +27,11 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
   let last_y = -1;
   let init_tx = -1;
   let init_ty = -1;
+
+  $on(canvas, "mouseout", (e) => {
+    onOut && onOut();
+  });
+
   $on(canvas, "mousedown", (e) => {
     is_down = true;
     const { tx, ty } = get_tile(e);
@@ -43,12 +48,12 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw) {
   });
 
   $on(canvas, "mousemove", (e) => {
-    if (!is_down) return;
     const { tx, ty } = get_tile(e);
     if (tx !== last_x || ty !== last_y) {
       last_x = tx;
       last_y = ty;
-      onDraw(tx, ty);
+      onMove && onMove(tx, ty);
+      is_down && onDraw(tx, ty);
     }
   });
 }
@@ -82,7 +87,23 @@ function init_tile(state, action) {
     action("TILE_UPDATE", [...spr]);
   };
 
-  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.spr_w, 4, draw_pixel);
+  const move_cursor = (tx, ty) => {
+    const idx = ty * state.spr_w + tx;
+    action("SET_SPRITE_CURSOR", idx);
+  };
+
+  const mouse_out = () => action("SET_SPRITE_CURSOR", null);
+
+  $mouse_draw(
+    ctx.canvas,
+    state.spr_w,
+    state.spr_h,
+    state.spr_w,
+    4,
+    draw_pixel,
+    move_cursor,
+    mouse_out
+  );
 }
 
 function init_tiles(state, action) {
@@ -127,7 +148,23 @@ function init_map(state, action) {
     action("SET_MAP_TILE", idx);
   };
 
-  $mouse_draw(ctx.canvas, state.spr_w, state.spr_h, state.map_w, 4, draw_tile);
+  const move_cursor = (tx, ty) => {
+    const idx = ty * state.map_w + tx;
+    action("SET_MAP_CURSOR", idx);
+  };
+
+  const mouse_out = () => action("SET_MAP_CURSOR", null);
+
+  $mouse_draw(
+    ctx.canvas,
+    state.spr_w,
+    state.spr_h,
+    state.map_w,
+    4,
+    draw_tile,
+    move_cursor,
+    mouse_out
+  );
 }
 
 function init_pen(state, action) {

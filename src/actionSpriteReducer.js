@@ -3,13 +3,18 @@ export const actionSpriteReducer = (s, type, value) => {
   let dirty = true;
   switch (type) {
     case "SPRITES_SCREEN":
-      dirty = true; //action just to init draw the sprite screen
+      //init draw the sprite screen
+      s.map_cursor = null;
+
       break;
     case "SET_SPRITES":
       // Copy loaded sprite data
       Object.entries(value).forEach(([k, v]) => {
         s[k] = v;
       });
+      break;
+    case "SET_SPRITE_CURSOR":
+      s.cursor = value;
       break;
     case "TILE_UPDATE":
       s.sprite_data[s.cur_sprite] = value;
@@ -41,6 +46,9 @@ export const actionSpriteReducer = (s, type, value) => {
       break;
     case "MAP_CLEAR":
       s.map.forEach((_, i) => (s.map[i] = s.cur_sprite));
+      break;
+    case "SET_MAP_CURSOR":
+      s.map_cursor = value;
       break;
     default:
       dirty = false;
