@@ -100,7 +100,25 @@ export const ops = {
     form_int: "OPOP M1 R1",
   },
   0x0b: { mn: "BSM", code: 0x0b, len: 2, f: nop },
-  0x0d: { mn: "BSR", code: 0x0d, len: 2, f: nop },
+  0x0d: {
+    mn: "BASR",
+    code: 0x0d,
+    len: 2,
+    f: ([r1, r2], regs, mem, psw) => {
+      // store psw
+      regset(regs[r1], psw.pc);
+      if (r2 !== 0) {
+        // branch to r2
+        psw.pc = bytes_to_fw(regs[r2]);
+      }
+    },
+    name: "branch and save register",
+    desc: "Information from the current PSW, including the updated instruction address, is saved as link information at the first-operand location. Subsequently, the instruction address in the PSW is replaced by the branch address.",
+    type: "RR",
+    pdf: "7-27",
+    form: "OP R1,R2",
+    form_int: "OPOP R1 R2",
+  },
   0x14: {
     mn: "NR",
     code: 0x14,
@@ -492,16 +510,32 @@ export const ops = {
     form: "OP R1,D2(X2,B2)",
     form_int: "OP R1 X2 B2 D2D2D2",
   },
+  0x88: {
+    mn: "SRL",
+    code: 0x88,
+    len: 4,
+    f: (ops, regs, mem) => {
+      const [r1, _, b2, da, db, dc] = ops;
+      const ptr = base_displace_regs(regs, 0, b2, da, db, dc);
+      const shift_amount = memval(mem, ptr);
+      regset(regs[r1], regval(regs[r1]) >> shift_amount);
+    },
+    type: "RS",
+    name: "shift left logical",
+    desc: "shift left",
+    pdf: "?",
+    form: "OP R1,R3,D2(B2)",
+    form_int: "OPOP R1 R3 B2 D2D2D2",
+  },
   0x89: {
     mn: "SLL",
     code: 0x89,
     len: 4,
     f: (ops, regs, mem) => {
-      // TODO: no CC set
-      const [r1, r3, b2, da, db, dc] = ops;
+      const [r1, _, b2, da, db, dc] = ops;
       const ptr = base_displace_regs(regs, 0, b2, da, db, dc);
       const shift_amount = memval(mem, ptr);
-      regset(regs[ops[0]], regval(regs[ops[0]]) << shift_amount);
+      regset(regs[r1], regval(regs[r1]) << shift_amount);
     },
     type: "RS",
     name: "shift left logical",

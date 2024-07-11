@@ -110,6 +110,19 @@ const op_cfi = () => {
   return ok;
 };
 
+const op_basr = () => {
+  /*const env = mk_env([10, LIFE]);
+  const obj = [code("LR"), from_nibs([R0, R1])];
+
+  step(obj, env);
+  const { regs, psw } = env;
+  const [r0, r1] = regs;
+  return (
+    regval(r1) === LIFE && regval(r0) === regval(r1) && psw.conditionCode === 0
+    );*/
+  return false;
+};
+
 const op_ahi_add1 = () => {
   const env = mk_env([0]);
   const op_code = to_nibs(code("AHI"), 3);
@@ -272,6 +285,14 @@ const op_sll_overflow = () => {
   return regval(env.regs[1]) == 0b0001_0000_0000;
 };
 
+const op_srl = () => {
+  const env = mk_env([0, 0b0000_0100]);
+  env.mem[6] = 2;
+  const obj = [code("SRL"), 0x10, 0x00, 0x03]; // 3  = 3 bytes before 6 (cause wonky 4byte)
+  step(obj, env);
+  return regval(env.regs[1]) == 0b00000001;
+};
+
 const op_stc = () => {
   const env = mk_env([0, 0x000000ff]);
   const obj = [code("STC"), 0x10, 0x00, 0x00];
@@ -303,6 +324,7 @@ export default [
   op_ahi_add1,
   op_ahi_add_ff,
   op_ahi_sub1,
+  op_basr,
   op_mvi,
   op_mvc,
   op_ori,
@@ -320,5 +342,6 @@ export default [
   op_ic,
   op_sll,
   op_sll_overflow,
+  op_srl,
   op_stc,
 ];
