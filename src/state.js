@@ -45,7 +45,7 @@ export const mk_state = () => ({
     num_sprites: 2,
     use_maps: true,
     cur_sprite: 0,
-    cur_colour: 0,
+    cur_colour: 1,
     pen_size: 1,
     copy_buf: [],
     spr_w: 8,
@@ -57,7 +57,7 @@ export const mk_state = () => ({
     map_h: 16,
     map: Array(16 * 16)
       .fill(0)
-      .map((v, i) => (i < 16 ? 1 : 0)),
+      .map((_, i) => (i < 16 ? 1 : 0)),
   },
 });
 

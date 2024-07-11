@@ -93,6 +93,7 @@ export function ui_code(state, action) {
     $("#screen_code").style.display = "none";
     e.target.classList.add("ok");
     $("#btnCode").classList.remove("ok");
+    action("SPRITES_SCREEN");
   });
   $click("#btnCode", (e) => {
     $("#screen_sprite").style.display = "none";
