@@ -59,7 +59,7 @@ function $mouse_draw(canvas, tw_, th_, rows, scale, onDraw, onMove, onOut) {
     if (tx !== last_move_x || ty !== last_move_y) {
       onMove && onMove(tx, ty);
       last_move_x = tx;
-      last_move_y = tx;
+      last_move_y = ty;
     }
   });
 }

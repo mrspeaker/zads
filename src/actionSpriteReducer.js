@@ -37,7 +37,6 @@ export const actionSpriteReducer = (s, type, value) => {
       break;
     case "SPRITE_PASTE":
       s.copy_buf.forEach((b, i) => {
-        console.log(b, i);
         s.sprite_data[s.cur_sprite][i] = b;
       });
       break;
