@@ -23,7 +23,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
   );
 
   // Extract opcodes and symbols
-  const { stmts, symbols, base, base_addr } = stmtsMnExts.reduce(
+  const { stmts, symbols, base, base_addr, err } = stmtsMnExts.reduce(
     assembleStatement,
     {
       pc: 0,
@@ -31,6 +31,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
       symbols: {},
       base: 15, // default to base reg 15. Is that correct?
       base_addr: null,
+      err: [],
     }
   );
 
@@ -39,7 +40,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
 
   // OPERANDS
   const parsedOperands = stmts.map((s) => {
-    return parseOperands(s, symbols, eqs, base);
+    return parseOperands(s, symbols, eqs, base, err);
   });
   const expandedData = parsedOperands.map(expandDataStatements);
 
@@ -54,6 +55,7 @@ export const assemble = (asmTxt, extraEqsF, extraSymbolsF) => {
       base,
       base_addr,
     },
+    err,
   };
 };
 
@@ -251,7 +253,7 @@ export const assembleStatement = (env, stmt) => {
     env.pc += bytes.length;
   } else {
     // ============= Unknown ============
-
+    env.err.push({ type: "W", msg: "unknown op " + mn });
     const lbltxt = label ? `[${label}]` : " ";
     label && (symbols[label_lc] = { pc: env.pc, len: 4 });
     console.log("miss:", mn, (operands ?? [" "]).join(","), lbltxt);

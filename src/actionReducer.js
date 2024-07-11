@@ -135,7 +135,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
       {
         try {
           s.zads.console = [`assembling... (${Date.now()})`];
-          const { stmts, bytes, symbols, addressing } = assemble(
+          const { stmts, bytes, symbols, addressing, err } = assemble(
             value,
             (eqs) => {
               eqs.EX_EQU = "10";
@@ -168,6 +168,11 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
               );
             }
           );
+          if (err.length) {
+            err
+              .reverse()
+              .forEach((e) => s.zads.console.push(e.type + ": " + e.msg));
+          }
 
           // Reset the machine (TODO: move this to function. It's duplicated)
           s.machine.psw.pc = 0;

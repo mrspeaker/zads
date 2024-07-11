@@ -20,9 +20,10 @@ export const tokenizeOperands = (ops) => {
  * @param {object} symbols symbol table
  * @param {array} equs equates?
  * @param {number} base base for addressing?
+ * @param {object} err error accumulator
  * @returns {string[]} disassembled listing
  */
-export const parseOperands = (s, symbols, eqs, base) => {
+export const parseOperands = (s, symbols, eqs, base, err) => {
   const { stmt, bytes, type } = s;
   const lexed = stmt.operands.map(lex_operand);
   // Eq is a Term... so don't replace yet?
@@ -52,43 +53,50 @@ export const parseOperands = (s, symbols, eqs, base) => {
 
   // Parse to bytes
   const enc = stmt.operands.map((o, i) =>
-    parseOperand(o, symbols, base, type, i, stmt.mn)
+    parseOperand(o, symbols, base, type, i, stmt.mn, err)
   );
 
   if (!enc[0]) console.log("no", stmt);
 
   // Re-org operands depending on operation.
-  switch (type) {
-    case "RR":
-    case "RX":
-    case "RS":
-      bytes.operands.push(...enc[0], ...enc[1]);
-      break;
-    case "RI":
-      {
-        // format: op1, op2, r1, op3, i1, i2, i3, i4
-        // eg: AHI: 'A', '7', r1, 'A', i1, i2, i3, i4
-        // extract extra opcode byte
-        const extra = bytes.op_code[0] & 0xf; // op3
-        bytes.op_code[0] >>= 4; // op1, op2
-        bytes.operands.push(...enc[0], extra, ...enc[1]);
-      }
-      break;
-    case "SI":
-      // I2I2 B1 D1D1D1
-      bytes.operands.push(...enc[1], ...enc[0].slice(1));
-      break;
-    case "SS":
-      // L1L1 B1 D1D1D1 B2 D2D2D2
-      bytes.operands.push(...enc[0], ...enc[1]);
-      break;
-    case "DC":
-    case undefined:
-      // Just dump the bytes
-      enc.forEach((bs) => bytes.operands.push(...bs));
-      break;
-    default:
-      console.log("not rr rx si...", type, enc);
+  try {
+    switch (type) {
+      case "RR":
+      case "RX":
+      case "RS":
+        bytes.operands.push(...enc[0], ...enc[1]);
+        break;
+      case "RI":
+        {
+          // format: op1, op2, r1, op3, i1, i2, i3, i4
+          // eg: AHI: 'A', '7', r1, 'A', i1, i2, i3, i4
+          // extract extra opcode byte
+          const extra = bytes.op_code[0] & 0xf; // op3
+          bytes.op_code[0] >>= 4; // op1, op2
+          bytes.operands.push(...enc[0], extra, ...enc[1]);
+        }
+        break;
+      case "SI":
+        // I2I2 B1 D1D1D1
+        bytes.operands.push(...enc[1], ...enc[0].slice(1));
+        break;
+      case "SS":
+        // L1L1 B1 D1D1D1 B2 D2D2D2
+        bytes.operands.push(...enc[0], ...enc[1]);
+        break;
+      case "DC":
+      case undefined:
+        // Just dump the bytes
+        enc.forEach((bs) => bytes.operands.push(...bs));
+        break;
+      default:
+        console.log("not rr rx si...", type, enc);
+    }
+  } catch (e) {
+    err.push({
+      type: "E",
+      msg: `op err: ${stmt.mn} ${stmt.operands.join(",")}`,
+    });
   }
   return s;
 };
@@ -226,9 +234,10 @@ const parseLexedOperand = (v) => {
  * @param {string} type type of instruction (RS, RX etc)
  * @param {number} idx index of the operand in the list
  * @param {string} mn mnemonic of the current instruction
+ * @param {object} err error accumulator
  * @returns {string[]} disassembled listing
  */
-const parseOperand = (o, symbols, base, type, idx, mn) => {
+const parseOperand = (o, symbols, base, type, idx, mn, err) => {
   if (!type) {
     throw new Error("Err parseOperand: no type", o);
   }
@@ -258,13 +267,13 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
     if (idx === 0) {
       // S1(N1)
       const [s1, n1] = o.split("(");
-      const bd = parseBaseDisplace(s1, base, symbols);
+      const bd = parseBaseDisplace(s1, base, symbols, err);
       const addr = bd.slice(1); // no index
       const len = parseInt(n1);
       return [...to_nibs(len, 2), ...addr];
     }
     // S2
-    const bd = parseBaseDisplace(o, base, symbols);
+    const bd = parseBaseDisplace(o, base, symbols, err);
     const addr = bd.slice(1); // no index
     return addr;
   }
@@ -289,7 +298,7 @@ const parseOperand = (o, symbols, base, type, idx, mn) => {
         }
       }
 
-      return parseBaseDisplace(o, base, symbols);
+      return parseBaseDisplace(o, base, symbols, err);
     }
     default: {
       console.warn("unhandeld mn?", oidx, otype, type);

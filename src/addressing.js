@@ -3,7 +3,7 @@ import { to_nibs } from "./bytes.js";
 const numOnlyRegex = /^\d+$/g;
 const bdregex = /([\d\w]+)\(([\d\w]*)(,([\d\w]+))*\)/g;
 
-export const parseBaseDisplace = (o, base, symbols) => {
+export const parseBaseDisplace = (o, base, symbols, err) => {
   const INDEX = 0;
   const noBD = o.match(numOnlyRegex);
   if (noBD) {
@@ -32,7 +32,8 @@ export const parseBaseDisplace = (o, base, symbols) => {
   } else if (symbols[o.toLowerCase()]) {
     return [INDEX, base, ...to_nibs(symbols[o.toLowerCase()].pc, 3)];
   } else {
-    console.warn("Missing symbol:", o);
+    console.warn("Missing symbol:", o, err);
+    err && err.push({ type: "W", msg: "missing symbol -  " + o });
   }
   return [INDEX, base, 0, 0, 0];
 };
