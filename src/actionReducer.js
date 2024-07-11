@@ -143,6 +143,10 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
       {
         try {
           s.zads.console = [`assembling... (${Date.now()})`];
+          if (!s.program) {
+            s.zads.console.push("no program (press 'new')");
+            throw new Error("no program");
+          }
           const { stmts, bytes, symbols, addressing, err } = assemble(
             value,
             (eqs) => {
@@ -220,7 +224,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
         } catch (e) {
           console.warn("error:", e);
           s.zads.console.push("failed. Error in source.");
-          s.program.src = value;
+          if (s.program) s.program.src = value;
         }
       }
       break;
