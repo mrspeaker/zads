@@ -134,7 +134,7 @@ const actionReducer = (s, render, sprite_render) => (type, value) => {
     case "ASSEMBLE_SRC":
       {
         try {
-          s.zads.console = ["assembling..."];
+          s.zads.console = [`assembling... (${Date.now()})`];
           const { stmts, bytes, symbols, addressing } = assemble(
             value,
             (eqs) => {
