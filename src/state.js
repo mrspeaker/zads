@@ -38,7 +38,7 @@ export const mk_state = () => ({
   cyclesPerFrame: 2,
   sprites: {
     num_sprites: 2,
-    use_maps: false,
+    use_maps: true,
     cur_sprite: 0,
     cur_colour: 0,
     pen_size: 1,
@@ -50,7 +50,9 @@ export const mk_state = () => ({
       .map((_, i) => mk_sprite(i)),
     map_w: 16,
     map_h: 16,
-    map: Array(16 * 16).fill(0),
+    map: Array(16 * 16)
+      .fill(0)
+      .map((v, i) => (i < 16 ? 1 : 0)),
   },
 });
 

@@ -1,73 +1,128 @@
 const defaultPrograms = {
-  "load register": `         l     1,a1          load register
-         bcr   b'1111',14    return to caller
-a1       dc    f'42'`,
-  "loop de loop": `         l     1,a1
-loop     bct   1,loop
-         bcr   b'1111',14
-a1       dc    f'20'`,
-  max: `max      csect
-         Using max,15
-         l     1,w1          get First number
-         l     2,w2          Get second number
-         cr    1,2           set the condition code
-         bc    b'0010',onehigh  branch if W1 higher
-         st    2,w3          else store second number
-         bcr   b'1111',14    return to caller
-onehigh  st    1,w3          save first number as max
-         bcr   b'1111',14    return to caller
-w1       dc    f'321'        First number
-w2       dc    f'123'        Second number
-w3       ds    f             Maximum
-         end   max
+  "01: load register": `*====== Loading registers =======
+
+* Watch the registers as you step through the
+* program.
+* Press "assemble" then "run"
+* (or "step" to single-step)
+
+        l    1,num  load num into R1
+        la   2,55
+        lr   3,1    copy R1 to R3
+
+done    bcr  b15,14
+
+num     dc   f'42'`,
+  "02: looping": `*====== Looping with branch-on-count =========
+* Watch R1 as you step through the loop
+
+        l    1,count  number of times to loop
+
+loop    ds   0h
+        bct  1,loop   go to loop
+
+done    bcr  15,14  return
+
+count   dc   f'10'
 `,
-  sprites: `sprite   csect                 
-         mvi   211(,15),4
-         mvi   215(,15),2
-         mvi   219(,15),15
-         mvi   223(,15),15
-         mvi   231(,15),0
-         
-         l     3,zero
-loop     ds    0
-         xi    211(,15),b'00001011'
-         l     1,216(,15)     load spr x
-         l     2,220(,15)     spr y
+  "03: cc": `* ========== condition codes ==========
+* Watch the cc in the top right (or the
+* execution output) to see the CC change
+* based on comparison
 
-         ch    3,236(,15)     is right?
-         be    left
-         ahi   1,1            add 1
-         
-left     ch    3,232(,15)     is left
-         be    up
-         ahi   1,-1
+        l    r1,num  loop 10 times
 
-up       ch    3,240(,15)    is up?
-         be    down
-         ahi   2,-1
+loop    ds   0h
+        cfi  r1,5     check if 5 yet
+        be   done     yes! finish...
+        bct  r1,loop  else loop again
 
-down     ch    3,244(,15)
-         be    done
-         ahi   2,1           
-         
-done     st    1,216(,15)     store x
-         st    2,220(,15)     store y
-  
-         b     loop
+done    bcr  r15,r14  return
 
+        asmdreg
 
-         bcr   b'1111',14
-zero     dc    f'0'
-          
-         end   sprite
-    
+num     dc   f'10'`,
+  "04: output": `* ========== condition codes ==========
+* outputting to the screen.
+* 'screen' is a special symbol that points
+* to the memory location for output.
+
+        la   r2,screen
+
+        l    r1,num
+loop    ds   0h
+
+        mvi  0(r2),1
+        ahi  r2,1      screen += 1
+
+        bct  r1,loop
+
+done    bcr  r15,r14  return
+
+        asmdreg
+
+num     dc   f'256'`,
+  "05: sprites": `*====== moving sprites =======
+
+* draws a keyboard-controllable sprite using
+* the image 'sprite 2', as well as another
+* moving sprite from 'sprite 3'
+* (Go to the drawing tab to change them)
+
+    mvi spr0_idx,2  set img for sprite 0
+    mvi spr0_x,60   put it in the middle
+    mvi spr0_y,60   of the screen
+
+    mvi spr1_idx,3  bad guy
+    mvi spr1_y,8    at the top of the screen
+
+    mvc screen(255),maps  copy the map
+
+loop    ds 0h
+
+    ic  4,spr0_x    get player pos
+    ic  5,spr0_y
+
+    ic  3,key_right  key right?
+    cfi 3,1
+    bne no_r
+    ahi 4,1
+    b moved
+
+no_r ic 3,key_left  key left?
+    cfi 3,1
+    bne no_l
+    ahi 4,-1
+    b moved
+
+no_l ic 3,key_up    key up?
+    cfi 3,1
+    bne no_u
+    ahi 5,-1
+    b moved
+
+no_u ic 3,key_down   key down?
+    cfi 3,1
+    bne moved
+    ahi 5,1
+
+moved ds 0h
+    stc 4,spr0_x     set pos in memory
+    stc 5,spr0_y
+
+    ic  3,spr1_x     move the baddie
+    ahi 3,1
+    ch  3,edge       wrap if too far
+    bl  done
+    la  3,0
+
+done ds 0h
+    stc 3,spr1_x
+
+    b  loop
+
+edge dc f'128'
 `,
-};
-
-const loadDefaultProgs = () => {
-  const progs = [{ sprites: "spr1.asm" }, { scan6: "scan6.asm" }].map(
-    ({ name, file }) => {}
-  );
 };
 
 export default defaultPrograms;
