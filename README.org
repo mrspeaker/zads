@@ -1,5 +1,33 @@
 * zardox
 
+z/assmebler assembler and emulator for learning and playing with basic HLASM.
+
+To get started, select a program from the dropdown list and hit `assemble`. This will assemble and load the program into the emulator. In the bottom right hit "run" to see it go (or hit "step" to single-step through each instruction).
+
+**  Note on errors!
+Currently there is NO ERROR REPORTING or help if you get something wrong. Sorry.
+The best thing to do is to look in the browser console and see if there is a javascript error. (I'll fix this, promise!).
+
+** Supported instructions
+You can see all the supported functions by checking the `ops.js` file. Though, support is pretty stetchy, even for the implemented instructions!
+
+** Special symbols
+
+`screen`: location in memory of the 128x128 pixel screen output. This is a 16x16 list of sprite indexes. For example, write a "1" to screen+16 will print tile #1 from the sprite-drawing screen in the first column, second row of the screen.
+
+`vic`: pointer to the sprite paramter locations. See the offsets in `vic.js`. There are also direct symbols to improve readability. There are 4 sprites available. To use other sprites change the `0` to `1`-`3` in the following:
+`spr0_idx`: the sprite tile to draw from the drawing screen (0-63)
+`spr0_x`: x location of the sprite (0-128)
+`spr0_y`: y location of the sprite (0-128)
+`key_left`: `1` if left-arrow key is down (else `0`)
+`key_right`: right arrow
+`key_up`: up arrow
+`key_down`: down arrow
+`key_fire`: `1` if the `z` key is pressed (else `0`)
+`key_fire_2`: `1` if the `x` key is pressed (else `0`)
+
+* Other notes....
+
 **  instruction format notes
 
 An instruction is one, two, or three halfwords in length and must be located in storage on a halfword boundary. Each instruction is in one of 26 basic formats: E, I, RI, RIE, RIL, RIS, RR, RRE, RRF, RRR, RRS, RS, RSI, RSL, RSY, RX, RXE, RXF, RXY, S, SI, SIL, SIY, SS, SSE, and SSF, with two variations of RI, RIL, RS, RSY, and RXY, three of RRF, and five of RIE and SS.
