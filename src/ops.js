@@ -3,6 +3,7 @@ import {
   base_displace_regs,
   bytes_to_fw,
   from_nibs,
+  fw_to_bytes,
   regset,
   regval,
   memset,
@@ -625,12 +626,19 @@ export const ops = {
     len: 4,
     f: ([i1, i2, b1, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, 0, b1, da, db, dc);
-      const a = mem[ptr];
+      // TODO: am I treating ALL memory as full words?!
+      const a = bytes_to_fw([
+        mem[ptr],
+        mem[ptr + 1],
+        mem[ptr + 2],
+        mem[ptr + 3],
+      ]);
       const val = from_nibs([i1, i2]);
       const and_val = a & val;
       // cc: 0 === zero, 1 === not zero
       psw.conditionCode = and_val === 0 ? 0 : 1;
-      mem[ptr] = and_val;
+      // TODO: am I treating ALL memory as full words?!
+      memset(fw_to_bytes(and_val), mem, ptr);
     },
     name: "AND",
     desc: "The AND of the first and second operands is placed at the first-operand location.",
