@@ -101,7 +101,7 @@ export const ops = {
         }
       }
     },
-    name: "branch on condition register",
+    name: "branch on cond reg",
     desc: "",
     type: "RR",
     pdf: "7-29",
@@ -121,7 +121,7 @@ export const ops = {
         jump(bytes_to_fw(regs[r2]), psw);
       }
     },
-    name: "branch and save register",
+    name: "branch & save reg",
     desc: "Information from the current PSW, including the updated instruction address, is saved as link information at the first-operand location. Subsequently, the instruction address in the PSW is replaced by the branch address.",
     type: "RR",
     pdf: "7-27",
@@ -210,6 +210,7 @@ export const ops = {
       }
     },
     type: "RR",
+    name: "compare r",
     desc: "The first operand is compared with the second operand, and the result is indicated in the condition code.",
     pdf: "7-56",
     form: "OP R1,R2",
@@ -323,7 +324,7 @@ export const ops = {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
       mem[ptr] = regs[r1][3];
     },
-    name: "store character",
+    name: "store char",
     desc: "Bits 56-63 of general register R1 are placed unchanged at the second-operand location. The second operand is one byte in length.",
     pdf: "7-212",
     type: "RX",
@@ -379,6 +380,7 @@ export const ops = {
       }
     },
     type: "RX",
+    name: "branch on cond",
     pdf: "7-29",
     desc: "The instruction address in the current PSW is replaced by the branch address if the condition code has one of the values specified by M1; otherwise, normal instruction sequencing proceeds with the updated instruction address.",
     form: "OP M1,D2(X2,B2)",
@@ -411,7 +413,7 @@ export const ops = {
   0x4d: {
     mn: "BAS",
     code: 0x4d,
-    name: "branch and save",
+    name: "branch & save",
     len: 4,
     f: ([r1, x2, b2, da, db, dc], regs, mem, psw) => {
       const ptr = base_displace_regs(regs, x2, b2, da, db, dc);
@@ -549,8 +551,8 @@ export const ops = {
       regset(regs[r1], regval(regs[r1]) >> shift_amount);
     },
     type: "RS",
-    name: "shift left logical",
-    desc: "shift left",
+    name: "shift right log",
+    desc: "shift right",
     pdf: "?",
     form: "OP R1,R3,D2(B2)",
     form_int: "OPOP R1 R3 B2 D2D2D2",
@@ -566,7 +568,7 @@ export const ops = {
       regset(regs[r1], regval(regs[r1]) << shift_amount);
     },
     type: "RS",
-    name: "shift left logical",
+    name: "shift left log",
     desc: "shift left",
     pdf: "?",
     form: "OP R1,R3,D2(B2)",
@@ -772,7 +774,7 @@ export const ops = {
       regset(regs[r1], res);
       psw.conditionCode = cc;
     },
-    name: "add halfword immediate",
+    name: "add hw immed",
     desc: "The second operand is added to the first operand, and the sum is placed at the first-operand location. The second operand is two bytes in length and is treated as a 16-bit signed binary integer.",
     pdf: "7-22",
     type: "RI",

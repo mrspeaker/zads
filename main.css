@@ -9,13 +9,12 @@ body {
 }
 
 :root {
-  --background-color: #fdfff4;
   --text-color: #000;
   --status-bar: rgba(225, 226, 217, 0.7);
   --highlight-warm: #E06F8B;
   --highlight-cool: #B2DCEF;
 
-  --background-color: #222;
+  --background-color: #000;
   --text-color: #eaa49c;
   --text-color-unselected: #999;
   --status-bar: #333;

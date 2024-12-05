@@ -72,7 +72,7 @@ export function injectEquates(vic, table) {
 const pal_hex_c64 = [
   "#000000",
   "#ffffff",
-  "#880000",
+  "#cc0000",
   "#aaffee",
   "#cc44cc",
   "#00cc55",
